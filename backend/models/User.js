@@ -11,10 +11,15 @@ const userSchema = new mongoose.Schema({
   location: { type: String },
   isAvailable: { type: Boolean, default: true },
   verified: { type: Boolean, default: false },
+
+  //hospital specific fields
+  hospitalName: String,
+  inventory: { type: Map, of: Number},
+  contactNumber: String,
   
   resetToken: { type: String },
   resetTokenExpire: { type: Date }
-  
+
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
