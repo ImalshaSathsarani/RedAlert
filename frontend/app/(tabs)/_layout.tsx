@@ -25,30 +25,14 @@ export default function _Layout() {
             shadowOpacity:0, 
          },
 
-        //  tabBarButton: (props) => {
-        //     const { children, ...rest } = props as React.ComponentProps<typeof Pressable>;
-        //     return (
-        //       <Pressable
-        //         {...rest}
-        //         android_ripple={null}
-        //         style={({ pressed }) => [{ 
-        //             paddingHorizontal:4 ,
-        //             alignItems:'center',
-        //             justifyContent:'center',
-        //             overflow:'visible',
-        //             opacity: 1 }]}
-        //       >
-        //         {children}
-        //       </Pressable>
-        //     );
-        //  },
+      
         
             tabBarIcon: ({ focused}:{focused:boolean})=>{
                 
-               // const focused = accessibilityState?.selected;
+             
 
                let iconName : keyof typeof Ionicons.glyphMap;
-               //let label: string;
+             
 
          switch( route.name){
                   case "home":
@@ -102,18 +86,33 @@ export default function _Layout() {
      })}>
         <Tabs.Screen
          name = "home"
+          options ={{
+            title: "Home",
+            
+         }}
         
         />
         <Tabs.Screen
          name = "chat"
+          options ={{
+            title: "Chat",
+            
+         }}
         
         />
         <Tabs.Screen
          name = "community"
+         options={{
+          title:"Community",
+         }}
         
         />
         <Tabs.Screen
          name = "profile"
+          options ={{
+            title: "Profile",
+            
+         }}
         
         />
        
