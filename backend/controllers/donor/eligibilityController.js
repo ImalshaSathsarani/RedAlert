@@ -1,4 +1,4 @@
-const Eligibility = require('../models/Eligibility');
+const Eligibility = require('../../models/Eligibility');
 
 // Helper function to check eligibility criteria
 const checkEligibility = (eligibilityData) => {
