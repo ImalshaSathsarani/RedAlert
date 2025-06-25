@@ -31,6 +31,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/eligibility', require('./routes/eligibilityRoutes'));
+app.use('/api/donor/posts', require('./routes/donor/donationPostRoutes'));
 // app.use('/api/requests', require('./routes/bloodRequestRoutes'));
 // app.use('/api/notifications', require('./routes/notificationRoutes'));
 
