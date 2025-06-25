@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createEligibilityCheck, getEligibilityCheck } = require('../controllers/eligibilityController');
+const { createEligibilityCheck, getEligibilityCheck } = require('../../controllers/donor/eligibilityController');
 
 // Create new eligibility check
 router.post('/', createEligibilityCheck);
