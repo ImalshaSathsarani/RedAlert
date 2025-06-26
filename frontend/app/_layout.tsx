@@ -49,6 +49,83 @@ export default function RootLayout() {
         headerShown: false,
       }} 
       />
+
+       <Stack.Screen
+      name = "donorLogin"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+       <Stack.Screen
+      name = "donorRegister"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+       <Stack.Screen
+      name = "eligibilityForm/eligibilityOne"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+      <Stack.Screen
+      name = "eligibilityForm/eligibilityTwo"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+      <Stack.Screen
+      name = "eligibilityForm/eligibilityThree"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+      <Stack.Screen
+      name = "eligibilityForm/eligibilityFour"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+      <Stack.Screen
+      name = "eligibilityForm/eligibilityFive"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+      <Stack.Screen
+      name = "eligibilityForm/eligibilitySix"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+      <Stack.Screen
+      name = "eligibilityForm/eligibilitySeven"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+      <Stack.Screen
+      name = "eligibilityForm/eligible"
+      options ={{
+        headerShown: false,
+      }} 
+      />
+
+      <Stack.Screen
+      name = "eligibilityForm/notEligible"
+      options ={{
+        headerShown: false,
+      }} 
+      />
       
 
   </Stack>;
