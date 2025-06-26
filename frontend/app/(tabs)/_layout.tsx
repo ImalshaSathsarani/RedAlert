@@ -115,6 +115,17 @@ export default function _Layout() {
          }}
         
         />
+        <Tabs.Screen 
+          name= "notification"
+          options={{
+            href:null
+          }} />
+
+        <Tabs.Screen 
+          name= "details"
+          options={{
+            href:null
+          }} />
        
       </Tabs>
   );
