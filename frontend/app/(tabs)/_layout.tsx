@@ -115,6 +115,10 @@ export default function _Layout() {
          }}
         
         />
+
+
+         <Tabs.Screen 
+          name= "donationHistory"
         <Tabs.Screen 
           name= "notification"
           options={{
@@ -123,6 +127,7 @@ export default function _Layout() {
 
         <Tabs.Screen 
           name= "details"
+
           options={{
             href:null
           }} />
