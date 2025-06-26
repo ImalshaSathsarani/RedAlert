@@ -6,11 +6,10 @@ export default function Index() {
   //const router = useRouter();
   return (
     <View className = "flex-1 items-center justify-center bg-white">
-      <Text className = "text-5xl font-bold text-blue-500">Welcome!</Text>
-      <Link href="/donorLogin" asChild>
-      <Text>Get Started </Text>
-      </Link>
-     
+      <Text className = "text-5xl font-bold text-blue-500">Register</Text>
+    <Link href="/eligibilityForm/eligibilityOne" asChild>
+    <Text>Eligibility One</Text>
+    </Link>
      
     </View>
   );
