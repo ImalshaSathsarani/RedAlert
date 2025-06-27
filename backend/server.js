@@ -28,8 +28,10 @@ app.get('/', (req, res) => {
 });
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/auth', require('./routes/donor/authRoutes'));
+app.use('/api/users', require('./routes/donor/userRoutes'));
+app.use('/api/eligibility', require('./routes/donor/eligibilityRoutes'));
+app.use('/api/donor/posts', require('./routes/donor/donationPostRoutes'));
 // app.use('/api/requests', require('./routes/bloodRequestRoutes'));
 // app.use('/api/notifications', require('./routes/notificationRoutes'));
 
