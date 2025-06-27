@@ -40,14 +40,14 @@ export default function EligibilityOne() {
 
 
 
-<Link href="/eligibilityForm/notEligible" asChild>
+<Link href="./notEligible" asChild>
 <Text>Not</Text></Link>
  
         
 </View>
 
   <TouchableOpacity
-        onPress={() => router.push('/home')}
+        onPress={() => router.push('/home' as any)}
         className = "mt-8 px-12 py-3  rounded-2xl self-center mb-5"
         style={{ backgroundColor: '#E72929' }}>
              <Text className = "text-white text-xl font-semibold">Home</Text>

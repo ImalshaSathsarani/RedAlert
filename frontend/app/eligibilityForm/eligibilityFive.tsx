@@ -46,13 +46,13 @@ export default function EligibilityOne() {
 
 
 <View className="flex-row justify-between mt-6">
-  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityOne')} className="bg-[#FFBFBF] h-[2px]" style={{ width:width/10}}/>
-  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityTwo')} className="bg-[#FFBFBF] h-[2px] ml-2" style={{ width:width/10}}/>
-  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityThree')} className="bg-[#FFBFBF] h-[2px] ml-2" style={{ width:width/10}}/>
-  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityFour')} className="bg-[#FFBFBF] h-[2px] ml-2" style={{ width:width/10}}/>
-  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityFive')} className="bg-primary h-[2px] ml-2" style={{ width:width/10}}/>
-  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySix')} className="bg-[#FFBFBF] h-[2px] ml-2 " style={{ width:width/10}}/>
-  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySeven')} className="bg-[#FFBFBF] h-[2px] ml-2 " style={{ width:width/10}}/>
+  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityOne' as any)} className="bg-[#FFBFBF] h-[2px]" style={{ width:width/10}}/>
+  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityTwo' as any)} className="bg-[#FFBFBF] h-[2px] ml-2" style={{ width:width/10}}/>
+  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityThree' as any)} className="bg-[#FFBFBF] h-[2px] ml-2" style={{ width:width/10}}/>
+  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityFour' as any)} className="bg-[#FFBFBF] h-[2px] ml-2" style={{ width:width/10}}/>
+  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityFive' as any)} className="bg-primary h-[2px] ml-2" style={{ width:width/10}}/>
+  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySix' as any)} className="bg-[#FFBFBF] h-[2px] ml-2 " style={{ width:width/10}}/>
+  <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySeven' as any)} className="bg-[#FFBFBF] h-[2px] ml-2 " style={{ width:width/10}}/>
 </View>
 
 <View className="border border-secondary bg-white mt-6 ml-2 rounded-md items-center" style={{
@@ -94,7 +94,7 @@ export default function EligibilityOne() {
 </View>
 
   <TouchableOpacity
-        onPress={() => router.push('/eligibilityForm/eligibilitySix')}
+        onPress={() => router.push('/eligibilityForm/eligibilitySix' as any)}
         className = "mt-4 px-12 py-3  rounded-2xl self-center mb-5"
         style={{ backgroundColor: '#E72929' }}>
              <Text className = "text-white text-xl font-semibold">Next</Text>

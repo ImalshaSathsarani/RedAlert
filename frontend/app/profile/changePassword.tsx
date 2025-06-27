@@ -31,7 +31,7 @@ export default function ChangePassword() {
           <Text className="text-2xl mb-2  text-white font-poppins ">Change Password</Text>
           
           {/* <View className= "w-12 h-12"></View> */}
-          <Link href="/profile/editProfile" asChild>
+          <Link href="./profile/editProfile" asChild>
              <TouchableOpacity>
             <Feather name ="edit" size={20} color = "#FFE2E2" 
             style = {{
