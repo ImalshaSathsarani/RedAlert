@@ -1,4 +1,5 @@
 import React from 'react'
+import MainHeader from './Headers/MainHeader'
 import {
   LineChart,
   Line,
@@ -36,9 +37,13 @@ const bloodGroupData = [
 const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#8AFFC1', '#FF9F40', '#AF7AC5', '#4BC0C0', '#F67280']
 
 const Dashboard = () => {
+
   return (
+    <>
+    <MainHeader />
+    
     <div style={{ fontFamily: 'sans-serif' ,marginLeft:30 ,marginRight:30}}>
-      <div style={{ fontSize: 40, paddingLeft: 120, paddingTop: 80, fontWeight: 'bold' }}>
+      <div style={{ fontSize: 40, paddingLeft: 120, paddingTop: 40, fontWeight: 'bold' }}>
         Welcome Colombo General Hospital!
       </div>
 
@@ -347,6 +352,7 @@ const Dashboard = () => {
         </div>
 
     </div>
+    </>
   )
 }
 

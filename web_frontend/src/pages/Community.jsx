@@ -2,7 +2,7 @@ import React from "react";
 import { FiSearch, FiMoreHorizontal, FiHeart, FiMessageCircle,FiImage, FiSmile, FiPlus  } from "react-icons/fi";
 import story from "../assets/story1.png";
 import profile from "../assets/image1.png";
-
+import MainHeader from './Headers/MainHeader'
 
 const stories = [
   { id: 1, name: "Abc", img: story },
@@ -17,6 +17,8 @@ const stories = [
 
 const Community = () => {
   return (
+    <>
+    <MainHeader />
     <div style={{ backgroundColor: "white", minHeight: "100vh", fontFamily: "Arial, sans-serif" }}>
       {/* Header & Search */}
       <div
@@ -195,7 +197,8 @@ const Community = () => {
       </div>
     </div>
     </div>
-  );
-};
+    </>
+  )
+}
 
-export default Community;
+export default Community
