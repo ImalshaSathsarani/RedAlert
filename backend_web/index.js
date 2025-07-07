@@ -31,3 +31,15 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log("listening....");
 });
+
+const bloodRequestRoutes = require("./routers/requestroutes");
+app.use("/api/request", bloodRequestRoutes);
+
+const hospitalRoutes = require("./routers/hospitalroutes");
+app.use("/api/hospital", hospitalRoutes);
+
+const communityroutes = require("./routers/communityroutes");
+app.use("/api/community", communityroutes);
+
+const dashboardRoutes = require("./routers/dashboardRoutes");
+app.use("/api/dashboard", dashboardRoutes);
