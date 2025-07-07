@@ -1,8 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import logo2 from "../assets/logo2.png";
 import { useNavigate } from 'react-router-dom';
 
 const WebPortal = () => {
+
+  const [registerFileName, setRegisterFileName] = useState(null);
+  const [letterFileName, setLetterFileName] = useState(null);
+
+  const handleRegisterFileChange = (event) =>{
+    const file = event.target.files[0];
+    if(file) setRegisterFileName(file.name);
+    else setRegisterFileName(null)
+  };
+
+  const handleLetterFileChange = (event) =>{
+    const file = event.target.files[0];
+    if(file) setLetterFileName(file.name);
+    else setLetterFileName(null)
+  };
 
     const navigate = useNavigate();
   return (
@@ -28,7 +43,7 @@ const WebPortal = () => {
         alignItems:'center',
         justifyContent:'flex-start',
         height:'auto',
-        width:'750px',
+        width:'1000px',
         border:'1px solid #FFBFBF',
         backgroundColor:'#FFE2E2',
         borderRadius:'10px',
@@ -72,7 +87,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -102,26 +117,34 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
   }}>Hospital Type
-     <input 
-    type="text"
-    placeholder="XYZ Hospital"
-    style={{
-     display: 'block',
-      backgroundColor: '#FFE2E2',
-      border: 'none',
-      fontSize: '16px',
-      fontFamily:'poppins',
-      marginTop:'6px',
-      outline: 'none',
-       width: '100%',
+     <select 
+       defaultValue=""
+       style={{
+        display:'block',
+        backgroundColor:'#FFE2E2',
+        border: '1px solid #B43929',
+        fontSize:'16px',
+        fontFamily:'poppins',
+        marginTop:'6px',
+        outline:'none',
+        width:'200px',
+        borderRadius:'6px',
+        color:'#000',
+        padding: '6px',
+       
+       }}>
+        <option value="" disabled>Select type</option>
+    <option value="Government">Government</option>
+    <option value="Private">Private</option>
+    <option value="Teaching">Teaching</option>
+    <option value="Other">Other</option>
       
-    }}
-  />
+     </select>
   </label>
   <label style={{
     display: 'block',
@@ -131,7 +154,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -160,7 +183,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -189,7 +212,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '70px',
     padding: '10px',
     marginTop:'20px'
@@ -239,7 +262,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -269,7 +292,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -299,7 +322,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -350,7 +373,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -380,7 +403,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -410,7 +433,7 @@ const WebPortal = () => {
     fontWeight: '500',
     border: '1px solid #B43929',
     borderRadius: '10px',
-    width: '650px',
+    width: '900px',
     height: '50px',
     padding: '10px',
     marginTop:'20px'
@@ -452,7 +475,9 @@ const WebPortal = () => {
     width: '100%'
   }} /> </div>
 
-   {/* <label style={{
+   <label 
+    htmlFor="registration-pdf"
+    style={{
     display: 'block',
     marginBottom: '18px',
     color: '#B43929',
@@ -468,88 +493,142 @@ const WebPortal = () => {
      <input 
     type="file"
     accept=".pdf"
-   
-    style={{
-     display: 'block',
-      backgroundColor: '#FFE2E2',
-      border: 'none',
-      fontSize: '16px',
-      fontFamily:'poppins',
-      marginTop:'6px',
-      outline: 'none',
-       width: '100%',
-      
-    }}
-  />
-  </label>
-
-   <label style={{
-    display: 'block',
-    marginBottom: '18px',
-    color: '#B43929',
-    fontSize: '14px',
-    fontWeight: '500',
-    border: '1px solid #B43929',
-    borderRadius: '10px',
-    width: '900px',
-    height: '50px',
-    padding: '10px',
-    marginTop:'20px'
-  }}>Office Letter/Stamp
-     <input 
-    type="file"
-    accept=".pdf"
-    style={{
-     display: 'block',
-      backgroundColor: '#FFE2E2',
-      border: 'none',
-      fontSize: '16px',
-      fontFamily:'poppins',
-      marginTop:'6px',
-      outline: 'none',
-       width: '100%',
-      
-    }}
-  />
-  </label> */}
-
-  <div style={{ marginTop: '20px', width: '650px' }}>
-  <label htmlFor="registration-pdf" style={{
-    display: 'block',
-    color: '#B43929',
-    fontSize: '14px',
-    fontWeight: '500',
-    marginBottom: '8px',
-    borderRadius: '10px',
-    width: '650px',
-    height: '50px',
-    padding: '10px',
-    marginTop:'20px'
-  }}>Proof of Registration
-    <input
-    type="file"
     id="registration-pdf"
-    accept=".pdf"
-    style={{ display: 'none' }} // hide default input
+    onChange={handleRegisterFileChange}
+    style={{ display:'none'}}
   />
 
-  <label htmlFor="registration-pdf" style={{
-    display: 'inline-block',
-    padding: '10px 20px',
-    backgroundColor: '#B43929',
-    color: 'white',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontFamily: 'poppins',
-    fontSize: '16px'
-  }}>
-    Upload PDF
-  </label>
-  </label>
+
+<div style={{
+   display: 'flex',
+    alignItems: 'center',
+     gap: '20px',
+    
+}}>
 
   
-</div>
+    <p style={{
+      margin:'0',
+      fontSize:'14px',
+      fontFamily:'poppins',
+      color:'black',
+     
+     
+    }}><strong>Selected File: </strong> {registerFileName ? registerFileName:'No File Chosen'}
 
+    </p>
+
+   <label 
+    htmlFor="registration-pdf" 
+    style={{
+      
+      padding:'10px 20px',
+      backgroundColor:'#FFE2E2',
+      color:'black',
+      borderRadius:'8px',
+      cursor:'pointer',
+      fontFamily: 'poppins',
+      fontSize: '16px',
+      border:'1px solid #B43929',
+      width:'100px',
+     
+      textAlign:'center'
+      
+  }}>
+    Upload
+  </label>
+  
+
+</div>
+ 
+  </label>
+
+
+ <label 
+    htmlFor="office-pdf"
+    style={{
+    display: 'block',
+    marginBottom: '18px',
+    color: '#B43929',
+    fontSize: '14px',
+    fontWeight: '500',
+    border: '1px solid #B43929',
+    borderRadius: '10px',
+    width: '900px',
+    height: '50px',
+    padding: '10px',
+    marginTop:'20px'
+  }}>Office Letter/ Stamp
+     <input 
+    type="file"
+    accept=".pdf"
+    id="office-pdf"
+    onChange={handleLetterFileChange}
+    style={{ display:'none'}}
+  />
+
+
+<div style={{
+   display: 'flex',
+    alignItems: 'center',
+     gap: '20px',
+    
+}}>
+
+  
+    <p style={{
+      margin:'0',
+      fontSize:'14px',
+      fontFamily:'poppins',
+      color:'black',
+     
+     
+    }}><strong>Selected File: </strong> {letterFileName ? letterFileName:'No File Chosen'}
+
+    </p>
+  
+   <label 
+    htmlFor="office-pdf" 
+    style={{
+      
+      padding:'10px 20px',
+      backgroundColor:'#FFE2E2',
+      color:'black',
+      borderRadius:'8px',
+      cursor:'pointer',
+      fontFamily: 'poppins',
+      fontSize: '16px',
+      border:'1px solid #B43929',
+      width:'100px',
+ 
+      textAlign:'center'
+      
+  }}>
+    Upload
+  </label>
+  
+
+</div>
+ 
+  </label>
+
+<div style={{
+  display:'flex',
+  alignItems:'center',
+  gap:'10px',
+  marginTop:'30px',
+  marginBottom:'10px',
+  fontFamily:'poppins',
+  fontSize:'14px',
+  color:'#B43929'
+}}>
+
+  <input type='checkbox' id='agree' style={{ width:'16px', height:'16px'}}/>
+     <label htmlFor="agree">
+    I agree to the <a href="/terms" style={{ color: '#B43929', textDecoration: 'underline' }}>Terms and Conditions</a>
+  </label>
+</div>
+  
       
         
 
