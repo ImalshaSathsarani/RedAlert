@@ -1,8 +1,13 @@
 import React from 'react'
+import MainHeader from './Headers/MainHeader'
 
 const RequestBlood = () => {
   return (
-    <div>
+<div>
+    <MainHeader/>
+    
+   Request blood
+
       
     </div>
   )
