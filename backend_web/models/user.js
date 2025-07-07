@@ -1,51 +1,42 @@
-const { required } = require("joi");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
-    fullName: {
-      type: String,
-      required: [false, "Full name is required"],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
-      lowercase: true,
-    },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-      minlength: 6,
-    },
-    phone: {
-      type: String,
-      required: [true, "Phone number is required"],
-    },
-    bloodType: {
-      type: String,
-      enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-    },
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     role: {
       type: String,
-      enum: ["donor", "receiver", "hospital", "admin"],
-      default: "receiver",
+      enum: ["donor", "receiver", "hospital"],
+      default: "donor",
     },
-    location: {
-      type: String,
-    },
-    isAvailable: {
-      type: Boolean,
-      default: true, // Donors can toggle availability
-    },
-    lastDonationDate: {
-      type: Date,
-    },
+    bloodType: { type: String },
+    lastDonationDate: { type: Date },
+    location: { type: String },
+    isAvailable: { type: Boolean, default: true },
+    verified: { type: Boolean, default: false },
+
+    //hospital specific fields
+    hospitalName: String,
+    inventory: { type: Map, of: Number },
+    contactNumber: String,
+
+    resetToken: { type: String },
+    resetTokenExpire: { type: Date },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 module.exports = mongoose.model("User", userSchema);

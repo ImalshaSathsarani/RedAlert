@@ -1,5 +1,6 @@
 const BloodRequest = require("../models/bloodrequest");
 const mongoose = require("mongoose");
+const Donor = require("../models/user");
 
 // ➤ Get requests over the last month grouped by date
 exports.getRequestTrends = async (req, res) => {
@@ -97,6 +98,83 @@ exports.getRecentRequests = async (req, res) => {
     res.status(200).json({ success: true, data: recent });
   } catch (error) {
     console.error("Recent Requests Error:", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getMatchedDonors = async (req, res) => {
+  try {
+    const hospitalId = req.user.id;
+
+    // 1. Get active blood requests of this hospital
+    const activeRequests = await BloodRequest.find({
+      hospitalId,
+      status: "pending",
+    }).select("bloodType");
+
+    const requiredBloodTypes = activeRequests.map((r) => r.bloodType);
+
+    if (requiredBloodTypes.length === 0) {
+      return res.status(200).json({ success: true, data: [], count: 0 });
+    }
+
+    // 2. Find matching donors
+    const matchedDonors = await Donor.find({
+      bloodGroup: { $in: requiredBloodTypes },
+      isEligible: true,
+    }).select("name bloodGroup phone lastDonation");
+
+    const donors = matchedDonors.map((donor) => ({
+      name: donor.name,
+      bloodGroup: donor.bloodGroup,
+      contact: donor.phone,
+      lastDonation: formatLastDonation(donor.lastDonation),
+    }));
+
+    // 3. Send response
+    res.status(200).json({
+      success: true,
+      data: donors,
+      count: donors.length,
+    });
+  } catch (error) {
+    console.error("Matched Donors Error:", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ➤ Helper function to format donation date
+function formatLastDonation(lastDonation) {
+  if (!lastDonation) return "No record";
+  const diff = Date.now() - new Date(lastDonation).getTime();
+  const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
+  return `${months} month${months !== 1 ? "s" : ""} ago`;
+}
+
+// ➤ Only return the count of matched donors
+exports.getMatchedDonorsCount = async (req, res) => {
+  try {
+    const hospitalId = req.user.id;
+
+    const activeRequests = await BloodRequest.find({
+      hospitalId,
+      status: "pending",
+    }).select("bloodType");
+
+    const requiredBloodTypes = activeRequests.map((r) => r.bloodType);
+
+    if (requiredBloodTypes.length === 0) {
+      return res.status(200).json({ success: true, count: 0 });
+    }
+
+    const count = await Donor.countDocuments({
+      bloodGroup: { $in: requiredBloodTypes },
+      isEligible: true,
+    });
+
+    res.status(200).json({ success: true, count });
+  } catch (error) {
+    console.error("Matched Donor Count Error:", error.message);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
