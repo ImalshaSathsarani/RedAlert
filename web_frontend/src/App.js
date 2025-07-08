@@ -14,6 +14,10 @@ import ChangePassword from './pages/Profile/ChangePassword';
 import RequestHistory from './pages/Profile/RequestHistory'
 import ProfileDetails from './pages/Profile/ProfileDetails';
 import EditProfile from './pages/Profile/EditProfile';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import RegisteredUsers from './pages/Admin/RegisteredUsers';
+import RegisteredHospitals from './pages/Admin/RegisteredHospitals';
+import Inquiries from './pages/Admin/Inquiries';
 
 
 function App() {
@@ -34,7 +38,10 @@ function App() {
         <Route path = '/requestHistory' element={<RequestHistory/>}/>
         <Route path ="/profileDetails" element={<ProfileDetails/>}/>
         <Route path ="/editProfile" element={<EditProfile/>}/>
-       
+        <Route path ="/adminDashboard" element={<AdminDashboard/>}/>
+        <Route path ="/adminRegisteredUsers" element={<RegisteredUsers/>}/>
+        <Route path ="/adminRegisteredHospitals" element={<RegisteredHospitals/>}/>
+        <Route path ="/adminInquiries" element={<Inquiries/>}/>
       </Routes>
     </Router>
   )
