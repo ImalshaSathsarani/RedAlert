@@ -6,6 +6,12 @@ import Login from './pages/Login';
 import Registration from './pages/Registration';
 import Terms from './pages/Terms';
 import RequestBlood from './pages/RequestBlood';
+import Profile from './pages/Profile/Profile';
+import ChangePassword from './pages/Profile/ChangePassword';
+import RequestHistory from './pages/Profile/RequestHistory'
+import ProfileDetails from './pages/Profile/ProfileDetails';
+import EditProfile from './pages/Profile/EditProfile';
+
 
 function App() {
   return(
@@ -17,6 +23,12 @@ function App() {
         <Route path='/registration' element ={<Registration/>}/>
         <Route path='/terms' element ={<Terms/>}/>
         <Route path ='/request-blood' element={<RequestBlood/>}/>
+        <Route path = '/profile' element = {<Profile/>}/>
+        <Route path ='/changePassword' element={<ChangePassword/>}/>
+        <Route path = '/requestHistory' element={<RequestHistory/>}/>
+        <Route path ="/profileDetails" element={<ProfileDetails/>}/>
+        <Route path ="/editProfile" element={<EditProfile/>}/>
+       
       </Routes>
     </Router>
   )
