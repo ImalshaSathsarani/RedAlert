@@ -41,7 +41,7 @@ const Dashboard = () => {
 
   return (
 
-    <div>
+  
     
     <>
     <MainHeader />

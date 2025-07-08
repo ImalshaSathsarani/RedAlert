@@ -8,8 +8,24 @@ const MainHeader = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const sidebarRef = useRef(null);
     const location = useLocation();
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     const toggleSidebar = ()=> setSidebarOpen(!sidebarOpen);
+
+    const handleLogoutClick = () => {
+  setSidebarOpen(false); // close sidebar
+  setShowLogoutConfirm(true); // show popup
+};
+
+const handleLogoutConfirm = () => {
+  setShowLogoutConfirm(false);
+  // Perform logout logic here (e.g. clear auth, redirect)
+  window.location.href = "/"; // or use navigate('/')
+};
+
+const handleLogoutCancel = () => {
+  setShowLogoutConfirm(false);
+};
 
     useEffect(()=>{
       const handleClickOutSide = (event) =>{
@@ -149,14 +165,24 @@ const MainHeader = () => {
             <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={location.pathname ==='/dashboard' ? activeSidebarLinkStyle : sidebarLinkStyle}>My Requests</Link></li>
             <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={location.pathname ==='/dashboard' ? activeSidebarLinkStyle : sidebarLinkStyle}>Find Donors</Link></li>
             <li style ={{width:'100%'}}><Link to="/community" onClick={toggleSidebar} style={location.pathname ==='/community' ? activeSidebarLinkStyle : sidebarLinkStyle}>Community</Link></li>
-            <li style ={{width:'100%'}}><Link to="/profile" onClick={toggleSidebar} style={location.pathname ==='/profile' ? activeSidebarLinkStyle : sidebarLinkStyle}>Profile</Link></li>
+            <li style ={{width:'100%'}}><Link to="/profileDetails" onClick={toggleSidebar} style={location.pathname ==='/profileDetails' || location.pathname ==='/editProfile' || location.pathname ==='/changePassword' || location.pathname ==='/requestHistory' ? activeSidebarLinkStyle : sidebarLinkStyle}>Profile</Link></li>
             <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={sidebarLinkStyle}>Blood Inventory</Link></li>
-            <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={sidebarLinkStyle}>Notification</Link></li>
+            <li style ={{width:'100%'}}><Link to="/notification" onClick={toggleSidebar} style={sidebarLinkStyle}>Notification</Link></li>
             <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={sidebarLinkStyle}>Help</Link></li>  
-            <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={sidebarLinkStyle}>Logout</Link></li>
+            <li style={{ width: '100%' }}>
+  <span onClick={handleLogoutClick} style={{ ...sidebarLinkStyle, cursor: 'pointer' }}>Logout</span>
+</li>
+
           </ul>    
         </div>
     )}
+    {showLogoutConfirm && (
+  <LogoutConfirmation
+    onConfirm={handleLogoutConfirm}
+    onCancel={handleLogoutCancel}
+  />
+)}
+
     </>
   );
 };
@@ -190,6 +216,60 @@ const activeSidebarLinkStyle ={
 const activeNavLinkStyle = {
   borderBottom: '3px solid #B43929',
   paddingBottom: '8px'
+};
+
+const LogoutConfirmation = ({ onConfirm, onCancel }) => {
+  return (
+    <div style={popupOverlayStyle}>
+      <div style={popupBoxStyle}>
+        <p style={{ fontSize: '18px', fontFamily: 'Poppins' }}>Are you sure you want to log out?</p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
+          <button onClick={onCancel} style={cancelButtonStyle}>Cancel</button>
+          <button onClick={onConfirm} style={confirmButtonStyle}>Logout</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const popupOverlayStyle = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 999
+};
+
+const popupBoxStyle = {
+  backgroundColor: 'white',
+  padding: '25px 30px',
+  borderRadius: '10px',
+  boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+  width: '320px'
+};
+
+const cancelButtonStyle = {
+  padding: '10px 15px',
+  backgroundColor: '#ccc',
+  border: 'none',
+  borderRadius: '5px',
+  fontFamily: 'Poppins',
+  cursor: 'pointer'
+};
+
+const confirmButtonStyle = {
+  padding: '10px 15px',
+  backgroundColor: '#B43929',
+  color: 'white',
+  border: 'none',
+  borderRadius: '5px',
+  fontFamily: 'Poppins',
+  cursor: 'pointer'
 };
 
 
