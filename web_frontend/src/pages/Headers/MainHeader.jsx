@@ -35,10 +35,10 @@ const MainHeader = () => {
       alignItems: 'center',
       fontFamily: 'Poppins',
       color: 'black',
-      margin:'50px',
-      border:'1px solid rgba(180, 57, 41, 0.3)',
-      borderRadius:'30px',
-      boxShadow:'0 4px 12px rgba(180,57, 41, 0.3)',
+      margin:'35px',
+      border:'1px solid rgba(61, 50, 48, 0.3)',
+      borderRadius:'40px',
+      boxShadow:'0 4px 12px rgba(92, 17, 7, 0.3)',
       position:'relative',
       zIndex: 1
       
@@ -67,17 +67,44 @@ const MainHeader = () => {
  </img>
         </div>
      
+<nav style={{
+  display: 'flex',
+  gap: '30px',
+  fontSize: '16px'
+}}>
+  <Link
+    to="/dashboard"
+    style={{
+      ...navLinkStyle,
+      ...(location.pathname === '/dashboard' ? activeNavLinkStyle : {})
+    }}
+  >
+    Dashboard
+  </Link>
+
+  <Link
+    to="/community"
+    style={{
+      ...navLinkStyle,
+      ...(location.pathname === '/community' ? activeNavLinkStyle : {})
+    }}
+  >
+    Community
+  </Link>
+
+  <Link
+    to="/profileDetails"
+    style={{
+      ...navLinkStyle,
+      ...(location.pathname === '/profileDetails' || location.pathname === '/editProfile' || location.pathname === '/changePassword' || location.pathname === '/requestHistory' ? activeNavLinkStyle : {})
+    }}
+  >
+    Profile
+  </Link>
+</nav>
 
  
-      <nav style={{
-        display: 'flex',
-        gap: '30px',
-        fontSize: '16px'
-      }}>
-        <Link to="/dashboard" style={navLinkStyle}>Dashboard</Link>
-        <Link to="/community" style={navLinkStyle}>Community</Link>
-        <Link to="/profile" style={navLinkStyle}>Profile</Link>
-      </nav>
+      
     </header>
 
     {sidebarOpen && (
@@ -137,7 +164,10 @@ const MainHeader = () => {
 const navLinkStyle = {
   color: 'black',
   textDecoration: 'none',
-  fontWeight: '500'
+  fontWeight: '600',
+  fontFamily: 'Poppins',
+  fontSize: '18px',
+ 
 };
 
 const sidebarLinkStyle = {
@@ -156,5 +186,11 @@ const activeSidebarLinkStyle ={
   backgroundColor:'#670404',
   borderRadius: '10px',
 }
+
+const activeNavLinkStyle = {
+  borderBottom: '3px solid #B43929',
+  paddingBottom: '8px'
+};
+
 
 export default MainHeader;

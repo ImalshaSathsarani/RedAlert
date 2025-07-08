@@ -9,6 +9,12 @@ import Dashboard from './pages/Dashboard';
 import Notification from './pages/Notification';
 import Terms from './pages/Terms';
 import RequestBlood from './pages/RequestBlood';
+import Profile from './pages/Profile/Profile';
+import ChangePassword from './pages/Profile/ChangePassword';
+import RequestHistory from './pages/Profile/RequestHistory'
+import ProfileDetails from './pages/Profile/ProfileDetails';
+import EditProfile from './pages/Profile/EditProfile';
+
 
 function App() {
   return(
@@ -23,6 +29,12 @@ function App() {
         <Route path ="/notification" element={<Notification/>}/>
         <Route path='/terms' element ={<Terms/>}/>
         <Route path ='/request-blood' element={<RequestBlood/>}/>
+        <Route path = '/profile' element = {<Profile/>}/>
+        <Route path ='/changePassword' element={<ChangePassword/>}/>
+        <Route path = '/requestHistory' element={<RequestHistory/>}/>
+        <Route path ="/profileDetails" element={<ProfileDetails/>}/>
+        <Route path ="/editProfile" element={<EditProfile/>}/>
+       
       </Routes>
     </Router>
   )

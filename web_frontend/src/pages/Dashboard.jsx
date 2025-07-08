@@ -1,5 +1,6 @@
 import React from 'react'
 import MainHeader from './Headers/MainHeader'
+
 import {
   LineChart,
   Line,
@@ -39,6 +40,9 @@ const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#8AFFC1', '#FF9F40', '#AF7AC5'
 const Dashboard = () => {
 
   return (
+
+    <div>
+    
     <>
     <MainHeader />
     
