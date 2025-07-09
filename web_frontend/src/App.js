@@ -18,6 +18,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import RegisteredUsers from './pages/Admin/RegisteredUsers';
 import RegisteredHospitals from './pages/Admin/RegisteredHospitals';
 import Inquiries from './pages/Admin/Inquiries';
+import AdminSideBar from './pages/Admin/AdminSideBar';
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
         <Route path ="/adminRegisteredUsers" element={<RegisteredUsers/>}/>
         <Route path ="/adminRegisteredHospitals" element={<RegisteredHospitals/>}/>
         <Route path ="/adminInquiries" element={<Inquiries/>}/>
+        <Route path="/adminSidebar" element={<AdminSideBar/>}/>
       </Routes>
     </Router>
   )
