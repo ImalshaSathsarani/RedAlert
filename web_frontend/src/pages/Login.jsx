@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 const Login = () => {
@@ -8,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   // Form submit handler
   const handleSubmit = async (e) => {
@@ -23,18 +24,13 @@ const Login = () => {
         }
       );
 
-      console.log(response.data);
-      setSuccess("Login Successful!");
-      setError("");
-
-      // You can save the token in localStorage if needed
+      // Save the token if needed
       localStorage.setItem("token", response.data.token);
 
-      // Redirect user to a dashboard page or home page if needed
-      // Example: window.location.href = "/dashboard";
+      // Redirect to dashboard
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
-      setSuccess("");
       if (err.response && err.response.data) {
         setError(err.response.data.message);
       } else {
@@ -165,7 +161,6 @@ const Login = () => {
         </button>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
 
         <p
           style={{

@@ -3,6 +3,7 @@ const authcontroller = require("../controllers/authcontroller");
 const router = express.Router();
 const { identifier } = require("../middlewares/identification");
 const multer = require("multer");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -26,6 +27,6 @@ router.post(
 
 router.post("/signin", authcontroller.signin);
 router.post("/signout", authcontroller.signout);
-router.patch("/change-password", identifier, authcontroller.changePassword);
+router.patch("/change-password", authMiddleware, authcontroller.changePassword);
 
 module.exports = router;
