@@ -100,9 +100,10 @@ exports.signup = async (req, res) => {
     designation,
     email,
     password,
-    registrationDocument,
-    officeLetter,
   } = req.body;
+
+  const registrationDocument = req.files?.registrationDocument?.[0]?.path;
+  const officeLetter = req.files?.officeLetter?.[0]?.path;
 
   try {
     const { error } = signupSchema.validate({ email, password });
