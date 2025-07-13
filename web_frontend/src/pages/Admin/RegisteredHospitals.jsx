@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DonationHistory = () => {
+const RegisteredHospitals = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const DonationHistory = () => {
   )
 }
 
-export default DonationHistory
+export default RegisteredHospitals
