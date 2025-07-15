@@ -28,7 +28,10 @@ mongoose
     console.log(err);
   });
 
+const adminRouter = require("./routers/admin");
+
 app.use("/api/auth", authRouter);
+app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "Hello from the server" });
