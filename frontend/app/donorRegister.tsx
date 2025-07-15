@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import {
   Text,
   View,
@@ -7,13 +7,15 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
+  Alert,
 } from "react-native";
 import logo2 from "../assets/images/logo2.png";
 import Icon from "react-native-vector-icons/FontAwesome";
-import RNPickerSelect from "react-native-picker-select";
 import { useState } from "react";
+import { donorAuthApi } from "../services/api";
 
 export default function Index() {
+  const router = useRouter();
   const [selected, setSelected] = useState("");
   const [visible, setVisible] = useState(false);
   const [name, setName] = useState("")
@@ -21,10 +23,84 @@ export default function Index() {
   const [password, setPassword] = useState("")
   const [confirmpassword, setconfirmPassword] = useState("")
   const [mobileNo, setmobileNo] = useState("")
+  const [bloodType, setBloodType] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
   const items = ["A+", "A-", "B+", "O+", "O-"];
 
-  //const router = useRouter();
+  const handleRegister = async () => {
+    if (!name || !email || !password || !confirmpassword || !mobileNo || !bloodType) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    if (password !== confirmpassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      console.log('Sending registration data:', {
+        name,
+        email,
+        mobileNo,
+        bloodType,
+        role: 'donor'
+      });
+
+      const userData = {
+        name,
+        email,
+        password,
+        confirmPassword: confirmpassword,
+        mobileNo,
+        bloodType,
+        role: 'donor'
+      };
+
+      const response = await donorAuthApi.register(userData);
+      console.log('Registration response:', response);
+      
+      // Store token
+      localStorage.setItem('token', response.token);
+      
+      // Show success message with more details
+      Alert.alert(
+        'Success',
+        `Registration successful!\n\nYour account has been created.\nEmail: ${email}\nRole: Donor\nBlood Type: ${bloodType}\n\nYou will be redirected to the home page...`,
+        [
+          {
+            text: 'OK',
+            onPress: () => router.push('/home'),
+            style: 'default'
+          }
+        ]
+      );
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      let errorMessage = err.response?.data?.message || 'Registration failed';
+      
+      // Show specific error messages
+      if (errorMessage.includes('User already exists')) {
+        Alert.alert('Error', 'This email is already registered. Please try another email or login.');
+      } else if (errorMessage.includes('Passwords do not match')) {
+        Alert.alert('Error', 'The passwords you entered do not match. Please try again.');
+      } else if (errorMessage.includes('All fields are required')) {
+        Alert.alert('Error', 'Please fill in all required fields before proceeding.');
+      } else {
+        Alert.alert('Error', errorMessage);
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View>
       <View className="absolute items-center ">
@@ -157,6 +233,7 @@ export default function Index() {
                       className="p-3 border-b border-gray-300"
                       onPress={() => {
                         setSelected(item);
+                        setBloodType(item);
                         setVisible(false);
                       }}
                     >
@@ -170,11 +247,26 @@ export default function Index() {
         </View>
 
         <View className="absolute top-[650px] w-full ml-[80px]">
-          <Link href="/home" asChild>
-            <TouchableOpacity className="bg-[#B43929] w-[250px] py-3 rounded-2xl">
-              <Text className="text-white font-bold text-center">Register</Text>
-            </TouchableOpacity>
-          </Link>
+          <TouchableOpacity 
+            className="bg-[#B43929] w-[250px] py-3 rounded-2xl"
+            onPress={() => {
+              console.log('Register button clicked');
+              console.log('Form data:', {
+                name,
+                email,
+                password,
+                confirmpassword,
+                mobileNo,
+                bloodType: selected
+              });
+              handleRegister();
+            }}
+            disabled={loading}
+          >
+            <Text className="text-white font-bold text-center">
+              {loading ? 'Registering...' : 'Register'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <Text className="absolute top-[720px] left-[180px] font-bold">

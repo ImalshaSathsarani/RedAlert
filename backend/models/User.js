@@ -5,8 +5,13 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  mobileNo: { type: String, required: true, unique: true },
   role: { type: String, enum: ['donor', 'receiver', 'hospital'], default: 'donor' },
-  bloodType: { type: String },
+  bloodType: { 
+    type: String, 
+    required: true,
+    enum: ['A+', 'A-', 'B+', 'O+', 'O-'] 
+  },
   lastDonationDate: { type: Date },
   location: { type: String },
   isAvailable: { type: Boolean, default: true },
