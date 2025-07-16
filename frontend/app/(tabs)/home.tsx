@@ -3,9 +3,38 @@ import { Link, useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/FontAwesome";
 import bloodbanner from "../../assets/images/bloodbanner.png";
 import image1 from "../../assets/images/image1.png";
-import { useState } from "react";
+import { Feather } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) return;
+
+        const apiUrl = 'http://localhost:5000'; // Using the same API URL as in profile.tsx
+        const response = await axios.get(
+          `${apiUrl}/api/donor/profile/me`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        setUserName(response.data.name || 'Donor');
+      } catch (error) {
+        console.error('Error fetching user name:', error);
+      }
+    };
+
+    fetchUserName();
+  }, []);
 
   const [search, setSearch] = useState("")
 
@@ -45,7 +74,7 @@ export default function Home() {
           />
         </View>
         <Text className="font-semibold top-[54px] left-[110px] text-lg">
-          Hey Amie
+          Hey {userName}
         </Text>
 
         <View className="absolute bg-white top-[55px] left-[280px] rounded-full w-[37px] h-[37px] justify-center items-center">

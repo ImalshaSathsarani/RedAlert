@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dimensions, Image, Modal, Switch, Text,  TouchableOpacity, View } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const { width,height } = Dimensions.get("window");
 export default function Profile() {
@@ -9,7 +11,52 @@ export default function Profile() {
   const [isAvailable,setIsAvailable]= useState(false);
   const [logoutModalVisible,setLogoutModalVisible] = useState(false);
   const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          router.replace('/donorLogin');
+          return;
+        }
+
+        const apiUrl = getApiUrl();
+        const response = await axios.get(
+          `${apiUrl}/api/donor/profile/me`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const getApiUrl = () => {
+    if (__DEV__) {
+      return 'http://localhost:5000';
+    }
+    return 'http://localhost:5000'; // Replace with your production URL
+  };
+
+  if (!user) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   {/* Reusable Row Style */}
 type SettingRowProps = {
   icon: React.ComponentProps<typeof Feather>["name"];
@@ -177,12 +224,12 @@ const SettingRow = ({ icon, label, rightElement, onPress }: SettingRowProps  & {
 
     
     <View className = " bg-white rounded-3xl h-[78%] w-full items-center ">
-       <Text className="text-2xl text-black font-poppins font-bold mt-12">John Doe</Text>
-     <Text className="text-sm text-secondary font-poppins">johndoe@example.com</Text>
+       <Text className="text-2xl text-black font-poppins font-bold mt-12">{user?.name || 'John Doe'}</Text>
+     <Text className="text-sm text-secondary font-poppins">{user?.email || 'johndoe@example.com'}</Text>
 
 <View className= "flex-row items-center mt-2 mb-4" >
   <View className="w-[60px] h-[60px] bg-secondary rounded-xl justify-center items-center px-2 py-2">
-    <Text className="text-xl text-black font-poppins">A+</Text>
+    <Text className="text-xl text-black font-poppins">{user?.bloodType || 'A+'}</Text>
     <Text className="text-xs text-gray-500 font-poppins">Blood Type</Text>
     </View>
     <Link href= "/donationHistory" asChild><TouchableOpacity className= "w-[60px] h-[60px] bg-secondary rounded-xl justify-center items-center px-2 py-2 ml-20">

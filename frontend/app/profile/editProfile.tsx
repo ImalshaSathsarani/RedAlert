@@ -1,10 +1,12 @@
 import { Entypo, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
+import axios, { AxiosError } from 'axios';
 
 const { width,height } = Dimensions.get("window");
 
@@ -20,6 +22,111 @@ export default function EditProfile() {
     const [selectedVaccine, setSelectedVaccine] =useState("");
     const [date, setDate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const isValidForm = () => {
+        return selectedIllness && status && smoking && alcohol && vaccinationStatus;
+    };
+
+    const handleUpdateProfile = async () => {
+        try {
+            setLoading(true);
+            console.log('Starting profile update...');
+            
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.log('No token found');
+                Alert.alert('Error', 'Please login to update profile');
+                return;
+            }
+
+            // Validate form data
+            if (!isValidForm()) {
+                Alert.alert('Error', 'Please fill in all required fields');
+                return;
+            }
+
+            const data = {
+                medicalHistory: {
+                    illness: selectedIllness,
+                    illnessStatus: status,
+                    smoking: smoking,
+                    alcohol: alcohol,
+                    vaccinationStatus: vaccinationStatus,
+                    vaccineType: selectedVaccine,
+                    doseCount: parseInt(doseCount) || 0,
+                    lastVaccinationDate: date.toISOString()
+                }
+            };
+            
+            console.log('Sending data:', JSON.stringify(data, null, 2));
+            
+            // Get the correct API URL based on environment
+            const getApiUrl = () => {
+                // First try to get the local IP address
+                try {
+                    const interfaces = require('os').networkInterfaces();
+                    for (const devName of Object.keys(interfaces)) {
+                        const iface = interfaces[devName];
+                        for (const alias of iface) {
+                            if (alias.family === 'IPv4' && !alias.internal) {
+                                return `http://${alias.address}:5000`;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.log('Failed to get local IP:', error);
+                }
+
+                // Fallback to different environments
+                if (Platform.OS === 'android') {
+                    return 'http://10.0.2.2:5000'; // Android emulator
+                } else if (Platform.OS === 'ios') {
+                    return 'http://localhost:5000'; // iOS simulator
+                }
+                
+                // For physical devices or other environments
+                return 'http://localhost:5000'; // Default to localhost
+            };
+
+            const apiUrl = getApiUrl();
+            console.log('Using API URL:', apiUrl);
+
+            const response = await axios.put(
+                `${apiUrl}/api/donor/profile/me`,
+                data,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    timeout: 10000 // 10 seconds timeout
+                }
+            );
+
+            console.log('Response received:', JSON.stringify(response.data, null, 2));
+            Alert.alert('Success', 'Profile updated successfully');
+            router.push('/(tabs)/profile');
+        } catch (error: any) {
+            console.error('Error details:', {
+                error: error,
+                response: error.response,
+                message: error.message,
+                data: error.response?.data
+            });
+            
+            let errorMessage = 'An error occurred';
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            Alert.alert('Error', errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const onChange = (event: any, selectedDate: Date | undefined) => {
     const currentDate = selectedDate || date;
@@ -160,20 +267,23 @@ export default function EditProfile() {
         </View>
 
         <View className="flex-row items-center justify-between w-full px-6 mt-5">
-            <View className ="  flex-1 h-[1px] bg-secondary mr-2"/>
-            <Text className= "text-sm font-poppins text-secondary">Health Info</Text>
-             <View className ="  flex-1 h-[1px] bg-secondary ml-2"/>
         </View>
 
-        <View className ="flex-row items-center justify-between">
-            <View className="border border-secondary rounded-xl px-4 py-2 w-[145px] h-[75px] mt-3 mr-3"> 
-            <Text className="text-sm font-poppins text-secondary">Weight</Text>
-               <TextInput
-                placeholder="50Kg"
-                className= "text-accent"
-               />
+        <View className="flex-row items-center justify-between w-full px-6 mt-5">
+          <View className="  flex-1 h-[1px] bg-secondary mr-2" />
+          <Text className="text-sm font-poppins text-secondary">Health Info</Text>
+          <View className="  flex-1 h-[1px] bg-secondary ml-2" />
         </View>
-        <View className="border border-secondary rounded-xl px-4 py-2 w-[145px] h-[75px] mt-3"> 
+
+        <View className="flex-row items-center justify-between">
+          <View className="border border-secondary rounded-xl px-4 py-2 w-[145px] h-[75px] mt-3 mr-3">
+            <Text className="text-sm font-poppins text-secondary">Weight</Text>
+            <TextInput
+              placeholder="50Kg"
+              className="text-accent"
+            />
+          </View>
+          <View className="border border-secondary rounded-xl px-4 py-2 w-[145px] h-[75px] mt-3">
             <Text className="text-sm font-poppins text-secondary ">Last Donation Date</Text>
             <TouchableOpacity onPress={() => setShowPicker(true)}>
                 <View className ="flex-row items-center justify-between mt-2">
@@ -317,11 +427,17 @@ export default function EditProfile() {
         </View>
         
     <TouchableOpacity
-        className = "mt-4 px-12 py-3  rounded-xl self-center mb-5"
-        style={{ backgroundColor: '#E72929' }}>
-             <Text className = "text-white text-xl font-semibold">Save</Text>
-
-        </TouchableOpacity>
+        className="mt-4 px-12 py-3 rounded-xl self-center mb-5"
+        style={{ backgroundColor: '#E72929' }}
+        onPress={handleUpdateProfile}
+        disabled={loading || !isValidForm()}
+    >
+        {loading ? (
+            <Text className="text-white text-xl font-semibold">Loading...</Text>
+        ) : (
+            <Text className="text-white text-xl font-semibold">Save</Text>
+        )}
+    </TouchableOpacity>
            
 
 

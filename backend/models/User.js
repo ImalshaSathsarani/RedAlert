@@ -23,8 +23,18 @@ const userSchema = new mongoose.Schema({
   contactNumber: String,
   
   resetToken: { type: String },
-  resetTokenExpire: { type: Date }
+  resetTokenExpire: { type: Date },
 
+  medicalHistory: {
+    illness: { type: String, required: true, enum: ['None', 'Diabetes', 'Hypertension', 'Asthma', 'Other'] },
+    illnessStatus: { type: String, required: true, enum: ['Ongoing', 'Recovered', 'Managed'] },
+    smoking: { type: String, required: true, enum: ['never', 'occasional', 'regular'] },
+    alcohol: { type: String, required: true, enum: ['never', 'occasional', 'regular'] },
+    vaccinationStatus: { type: String, required: true, enum: ['not_vaccinated', 'partial', 'fully'] },
+    vaccineType: { type: String, default: '' },
+    doseCount: { type: Number, default: 0 },
+    lastVaccinationDate: { type: Date, default: null }
+  }
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
