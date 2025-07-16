@@ -19,12 +19,17 @@ const bloodRequestSchema = new mongoose.Schema(
     requestTime: String,
 
     patientName: String,
-    gender: String,
+    ward: String,
     condition: String,
 
     donationLocation: String,
-    donationDate: Date,
     donationTime: String,
+
+    doctorRequestFile: {
+      type: String, // stores filename or path
+      required: false,
+    },
+
     additionalInfo: String,
 
     status: {

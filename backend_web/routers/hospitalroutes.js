@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const {
-  updateProfile,
   getProfile,
+  updateProfile,
 } = require("../controllers/hospitalcontroller");
 const authMiddleware = require("../middlewares/authMiddleware");
 
