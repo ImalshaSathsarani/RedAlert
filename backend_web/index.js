@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 
 const authRouter = require("./routers/authroutes");
+require("dotenv").config();
 
 const app = express();
 app.use(helmet());

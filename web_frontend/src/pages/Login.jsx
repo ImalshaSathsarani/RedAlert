@@ -21,6 +21,9 @@ const Login = () => {
         {
           email,
           password,
+        },
+        {
+          withCredentials: true, // ✅ VERY IMPORTANT
         }
       );
 
