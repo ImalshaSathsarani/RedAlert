@@ -7,7 +7,7 @@ const {
   getPostsByBloodType,
   getPostsByLocation,
   updatePostAvailability,
-  deleteDonationPost 
+  deleteDonationPost,
 } = require('../../controllers/donor/donationPostController');
 
 // Create new donation post

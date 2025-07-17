@@ -100,3 +100,56 @@ export const donorProfileApi = {
     }
   },
 };
+
+export const donationPostApi = {
+  getAllPosts: async () => {
+    try {
+      console.log('Fetching donation posts from:', API_BASE_URL + '/api/donor/posts');
+      const response = await api.get('/api/donor/posts');
+      console.log('Donation posts fetched:', response.data.posts);
+      return response.data.posts;
+    } catch (error: any) {
+      console.error('Error fetching donation posts:', error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to fetch donation posts';
+    }
+  },
+};
+
+export const hospitalApi = {
+  getAllHospitals: async () => {
+    try {
+      const response = await api.get('/api/community/gethospitals'); // adjust endpoint
+      console.log("Fetched hospitals:", response.data.hospitals);
+      return response.data.hospitals;
+    } catch (error: any) {
+      console.error("Error fetching hospitals:", error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to fetch hospitals';
+    }
+  }
+};
+
+export const commentApi = {
+  addComment: async (postId: string, commentText: string) => {
+    try {
+      console.log('Sending add comment:', { postId, commentText });
+      const response = await api.post('/api/community/addcomment', { postId, commentText });
+      console.log('Add comment response:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Add comment error:', error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to add comment';
+    }
+  },
+
+  getCommentsByPost: async (postId: string) => {
+    try {
+      console.log('Fetching comments for postId:', postId);
+      const response = await api.get(`/api/community/getcomment/${postId}`);
+      console.log('Comments fetched:', response.data.comments);
+      return response.data.comments;
+    } catch (error: any) {
+      console.error('Get comments error:', error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to fetch comments';
+    }
+  },
+};
