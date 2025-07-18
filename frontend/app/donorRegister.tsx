@@ -234,6 +234,13 @@ export default function Index() {
         </View>
 
         <View className="absolute top-[650px] w-full ml-[80px]">
+
+          <Link href="/eligibilityForm/eligibilityOne" asChild>
+            <TouchableOpacity className="bg-[#B43929] w-[250px] py-3 rounded-2xl">
+              <Text className="text-white font-bold text-center">Register</Text>
+            </TouchableOpacity>
+          </Link>
+
           <TouchableOpacity
             className="bg-[#B43929] w-[250px] py-3 rounded-2xl"
             onPress={() => {
@@ -254,6 +261,7 @@ export default function Index() {
               {loading ? "Registering..." : "Register"}
             </Text>
           </TouchableOpacity>
+
         </View>
 
         <Text className="absolute top-[720px] left-[180px] font-bold">
