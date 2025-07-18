@@ -5,6 +5,8 @@ import Logo from "../assets/images/logo.png";
 import { Button } from "@react-navigation/elements";
 
 export default function Index() {
+  console.log("Index screen loaded");
+
   return (
     <GetStartedBackground>
       <View style={{ alignItems: "center", marginTop: 50 }}>

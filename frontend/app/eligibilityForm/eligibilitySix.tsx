@@ -1,20 +1,65 @@
-import { Link, useRouter } from "expo-router";
-import { Dimensions, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {  useRouter } from "expo-router";
+import { Dimensions, ScrollView, Text,  TouchableOpacity, View } from "react-native";
 import GetStartedBackground from "../getStartedBackground";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Entypo } from "@expo/vector-icons";
+import { useEligibility } from "../../contexts/EligibilityContext";
+import { checkEligibility } from "../../utils/checkEligibility";
 import { useState } from "react";
-import { Entypo, Feather } from "@expo/vector-icons";
 
 
 const { width,height } = Dimensions.get("window");
 
-export default function EligibilityOne() {
+export default function EligibilitySix() {
   const router = useRouter();
-  const [date, setDate] = useState(new Date());
+  const eligibilityContext = useEligibility();
+  const formData = eligibilityContext?.formData || {};
+  const updateFormData = eligibilityContext?.updateFormData || (() => {});
+
+  const InternationalTravel3Months = formData.InternationalTravel3Months || "";
+  const TattoosPiercings6Months = formData.TattoosPiercings6Months || "";
+  const TestedPositiveInfectious = formData.TestedPositiveInfectious || "";
+  const gender = formData.Gender || "male";
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+
+  const handlePress = async () =>{
+    setLoading(true);
+    setError(null);
+    try{
+       if(gender.toLowerCase() === "male"){
+        const maleData = {
+          ...formData,
+          PregnantBreastfeedingMenstruating:"No",
+          ChronicIllnessDetails: Array.isArray(formData.ChronicIllnessDetails)
+    ? formData.ChronicIllnessDetails.join(', ')
+    : formData.ChronicIllnessDetails,
+  MedicationDetails: Array.isArray(formData.MedicationDetails)
+    ? formData.MedicationDetails.join(', ')
+    : formData.MedicationDetails,
+  AllergyDetails: Array.isArray(formData.AllergyDetails)
+    ? formData.AllergyDetails.join(', ')
+    : formData.AllergyDetails,
+  VaccineDetails: Array.isArray(formData.VaccineDetails)
+    ? formData.VaccineDetails.join(', ')
+    : formData.VaccineDetails,
+        };
+      const isEligible = await checkEligibility(maleData);
+      router.push(isEligible ? "/eligibilityForm/eligible":"/eligibilityForm/notEligible")
+    } else {
+      router.push("/eligibilityForm/eligibilitySeven");
+    }
+
+    }catch(err){
+      console.error("Error checking eligibility:", err);
+      setError("An error occurred while checking eligibility. Please try again.");
+    } finally{
+      setLoading(false);
+    }
+   
+  }
  
-  const [travel, setTravel] =useState("");
-  const [tattos, setTatto] = useState("");
-  const [positive, setPositive] = useState("")
+ console.log("Form Data in Eligibility Six:", formData);
 
  
   type CheckBoxProps = {
@@ -39,10 +84,10 @@ export default function EligibilityOne() {
   return (
      
    <GetStartedBackground>
-     <View className="px-6 mt-20  w-full">
+     <ScrollView className="px-6 mt-20  w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
         <Text className="text-lg  text-[#FFBFBF]">This quick health check helps us determine if you
-                       are currently eligible to donate blood safely.</Text>
+                       are currently eligible to donate blood safely. This is a quick check and when donating blood you will again be checked.</Text>
 
 
 <View className="flex-row justify-between mt-6">
@@ -66,8 +111,8 @@ export default function EligibilityOne() {
 <View className="w-full px-5 mt-3">
     <Text className="text-lg text-secondary mb-2  ">Have you traveled internationally in the past 3 months?</Text>
 <View className="flex-row  space-x-8 mt-5">
-    <CheckBox label="Yes" value="yes" selected={travel} onSelect={setTravel} />
-    <CheckBox label="No" value="no" selected={travel} onSelect={setTravel}/>
+    <CheckBox label="Yes" value="Yes" selected={InternationalTravel3Months} onSelect={(val)=>updateFormData('InternationalTravel3Months',val)} />
+    <CheckBox label="No" value="No" selected={InternationalTravel3Months} onSelect={(val)=>updateFormData('InternationalTravel3Months',val)}/>
 </View>
 
 </View>
@@ -76,8 +121,8 @@ export default function EligibilityOne() {
 <View className="w-full px-5 mt-5">
     <Text className="text-lg text-secondary mb-2  ">Have you gotten any tattoos/piercings in the past 6 months?</Text>
 <View className="flex-row  space-x-8 mt-5">
-    <CheckBox label="Yes" value="yes" selected={tattos} onSelect={setTatto} />
-    <CheckBox label="No" value="no" selected={tattos} onSelect={setTatto}/>
+    <CheckBox label="Yes" value="Yes" selected={TattoosPiercings6Months} onSelect={(val)=>updateFormData('TattoosPiercings6Months',val)} />
+    <CheckBox label="No" value="No" selected={TattoosPiercings6Months} onSelect={(val)=>updateFormData('TattoosPiercings6Months',val)}/>
 </View>
 
 </View>
@@ -86,8 +131,8 @@ export default function EligibilityOne() {
 <View className="w-full px-5 mt-5">
     <Text className="text-lg text-secondary mb-2  ">Have you ever tested positive for HIV, Hepatitis B/C, or malaria?</Text>
 <View className="flex-row  space-x-8 mt-5">
-    <CheckBox label="Yes" value="yes" selected={positive} onSelect={setPositive} />
-    <CheckBox label="No" value="no" selected={positive} onSelect={setPositive}/>
+    <CheckBox label="Yes" value="Yes" selected={TestedPositiveInfectious} onSelect={(val)=>updateFormData('TestedPositiveInfectious',val)} />
+    <CheckBox label="No" value="No" selected={TestedPositiveInfectious} onSelect={(val)=>updateFormData('TestedPositiveInfectious',val)}/>
 </View>
 
 </View>
@@ -98,16 +143,66 @@ export default function EligibilityOne() {
         
 </View>
 
-  <TouchableOpacity
-        onPress={() => router.push('/eligibilityForm/eligibilitySeven' as any)}
+  {/* <TouchableOpacity
+        onPress={handlePress}
         className = "mt-4 px-12 py-3  rounded-2xl self-center mb-5"
-        style={{ backgroundColor: '#E72929' }}>
-             <Text className = "text-white text-xl font-semibold">Next</Text>
+        style={{ backgroundColor:loading? '#aaa': '#E72929' }}>
+             <Text className = "text-white text-xl font-semibold">
+              {loading ? "Checking..." : (gender.toLowerCase() === "male" ? "Check" : "Next")}</Text>
 
         </TouchableOpacity>
+{loading && (
+  <Text className="text-center text-lg text-secondary mt-3">Checking eligibility...</Text>
+)}
+
+{error && (
+  <Text className="text-center text-red-500 mt-2">{error}</Text>
+)} */}
+{gender.toLowerCase() === "female" ? (
+  // For female: Show Previous and Next buttons
+  <View className="flex-row justify-between mt-6 mb-10 px-10">
+    <TouchableOpacity
+      onPress={() => router.push("/eligibilityForm/eligibilityFive")}
+      className="px-10 py-3 rounded-2xl"
+      style={{ backgroundColor: "#BFBFBF" }}
+    >
+      <Text className="text-white text-xl font-semibold">Previous</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      onPress={() => router.push("/eligibilityForm/eligibilitySeven")}
+      className="px-10 py-3 rounded-2xl"
+      style={{ backgroundColor: "#E72929" }}
+    >
+      <Text className="text-white text-xl font-semibold">Next</Text>
+    </TouchableOpacity>
+  </View>
+) : (
+  // For male: Show only Check button
+  <>
+    <TouchableOpacity
+      onPress={handlePress}
+      className="mt-4 px-12 py-3 rounded-2xl self-center mb-5"
+      style={{ backgroundColor: loading ? "#aaa" : "#E72929" }}
+    >
+      <Text className="text-white text-xl font-semibold">
+        {loading ? "Checking..." : "Check"}
+      </Text>
+    </TouchableOpacity>
+
+    {loading && (
+      <Text className="text-center text-lg text-secondary mt-3">
+        Checking eligibility...
+      </Text>
+    )}
+    {error && (
+      <Text className="text-center text-red-500 mt-2">{error}</Text>
+    )}
+  </>
+)}
 
 
-      </View>
+      </ScrollView>
    </GetStartedBackground>
   
   );

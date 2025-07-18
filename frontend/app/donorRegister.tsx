@@ -170,7 +170,7 @@ export default function Index() {
         </View>
 
         <View className="absolute top-[650px] w-full ml-[80px]">
-          <Link href="/home" asChild>
+          <Link href="/eligibilityForm/eligibilityOne" asChild>
             <TouchableOpacity className="bg-[#B43929] w-[250px] py-3 rounded-2xl">
               <Text className="text-white font-bold text-center">Register</Text>
             </TouchableOpacity>

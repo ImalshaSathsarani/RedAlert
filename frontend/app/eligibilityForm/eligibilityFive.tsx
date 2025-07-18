@@ -1,20 +1,23 @@
-import { Link, useRouter } from "expo-router";
-import { Dimensions, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {  useRouter } from "expo-router";
+import { Dimensions, ScrollView, Text,  TouchableOpacity, View } from "react-native";
 import GetStartedBackground from "../getStartedBackground";
-import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { useState } from "react";
-import { Entypo, Feather } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { useEligibility } from "../../contexts/EligibilityContext";
+
 
 
 const { width,height } = Dimensions.get("window");
 
-export default function EligibilityOne() {
+export default function EligibilityFive() {
   const router = useRouter();
-  const [date, setDate] = useState(new Date());
- 
-  const [smoke, setSmoke] =useState("");
-  const [alcohol, setAlcohol] = useState("");
-  
+  const eligibilityContext = useEligibility();
+  const formData = eligibilityContext?.formData || {};
+  const updateFormData = eligibilityContext?.updateFormData || (() => {});
+  const SmokingHabits = formData.SmokingHabits || "";
+  const AlcoholDrinking = formData.AlcoholDrinking || "";
+
 
  
   type CheckBoxProps = {
@@ -39,10 +42,10 @@ export default function EligibilityOne() {
   return (
      
    <GetStartedBackground>
-     <View className="px-6 mt-20  w-full">
+     <ScrollView className="px-6 mt-20  w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
         <Text className="text-lg  text-[#FFBFBF]">This quick health check helps us determine if you
-                       are currently eligible to donate blood safely.</Text>
+                       are currently eligible to donate blood safely. This is a quick check and when donating blood you will again be checked.</Text>
 
 
 <View className="flex-row justify-between mt-6">
@@ -66,9 +69,9 @@ export default function EligibilityOne() {
 <View className="w-full px-5 mt-3">
     <Text className="text-lg text-secondary mb-2  ">Do you smoke?</Text>
 <View className="flex-column  space-y-8">
-    <CheckBox label="Yes, Regularly" value="regular" selected={smoke} onSelect={setSmoke} />
-    <CheckBox label="Occasionally" value="occasional" selected={smoke} onSelect={setSmoke}/>
-    <CheckBox label="No" value="no" selected={smoke} onSelect={setSmoke}/>
+    <CheckBox label="Yes, Regularly" value="Yes" selected={SmokingHabits} onSelect={(val)=>updateFormData('SmokingHabits',val)} />
+    <CheckBox label="Occasionally" value="Occasionally" selected={SmokingHabits} onSelect={(val)=>updateFormData('SmokingHabits',val)}/>
+    <CheckBox label="No" value="No" selected={SmokingHabits} onSelect={(val)=>updateFormData('SmokingHabits',val)}/>
 </View>
 
 </View>
@@ -77,9 +80,9 @@ export default function EligibilityOne() {
 <View className="w-full px-5 mt-8">
     <Text className="text-lg text-secondary mb-2  ">Do you  consume alcohol?</Text>
 <View className="flex-column  space-y-8">
-    <CheckBox label="Yes, Regularly" value="regular" selected={alcohol} onSelect={setAlcohol} />
-    <CheckBox label="Occasionally" value="occasional" selected={alcohol} onSelect={setAlcohol}/>
-    <CheckBox label="No" value="no" selected={alcohol} onSelect={setAlcohol}/>
+    <CheckBox label="Yes, Regularly" value="Yes" selected={AlcoholDrinking} onSelect={(val)=>updateFormData('AlcoholDrinking',val)} />
+    <CheckBox label="Occasionally" value="Occasionally" selected={AlcoholDrinking} onSelect={(val)=>updateFormData('AlcoholDrinking',val)}/>
+    <CheckBox label="No" value="No" selected={AlcoholDrinking} onSelect={(val)=>updateFormData('AlcoholDrinking',val)}/>
 </View>
 
 </View>
@@ -93,16 +96,35 @@ export default function EligibilityOne() {
         
 </View>
 
-  <TouchableOpacity
+  {/* <TouchableOpacity
         onPress={() => router.push('/eligibilityForm/eligibilitySix' as any)}
         className = "mt-4 px-12 py-3  rounded-2xl self-center mb-5"
         style={{ backgroundColor: '#E72929' }}>
              <Text className = "text-white text-xl font-semibold">Next</Text>
 
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+
+        <View className="flex-row justify-between mt-6 mb-10 px-10">
+  <TouchableOpacity
+    onPress={() => router.push("/eligibilityForm/eligibilityFour")}
+    className="px-10 py-3 rounded-2xl"
+    style={{ backgroundColor: '#BFBFBF' }}
+  >
+    <Text className="text-white text-xl font-semibold">Previous</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    onPress={() => router.push("/eligibilityForm/eligibilitySix")}
+    className="px-10 py-3 rounded-2xl"
+    style={{ backgroundColor: '#E72929' }}
+  >
+    <Text className="text-white text-xl font-semibold">Next</Text>
+  </TouchableOpacity>
+</View>
 
 
-      </View>
+
+      </ScrollView>
    </GetStartedBackground>
   
   );

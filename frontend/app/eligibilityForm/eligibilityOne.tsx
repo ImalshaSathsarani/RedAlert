@@ -1,9 +1,10 @@
 import { Link, useRouter } from "expo-router";
-import { Dimensions, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Dimensions, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import GetStartedBackground from "../getStartedBackground";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from "react";
 import { Feather } from "@expo/vector-icons";
+import { useEligibility } from "../../contexts/EligibilityContext";
 
 
 const { width,height } = Dimensions.get("window");
@@ -12,21 +13,27 @@ export default function EligibilityOne() {
   const router = useRouter();
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
+  const eligibilityContext = useEligibility();
+  const formData = eligibilityContext?.formData || {};
+  const updateFormData = eligibilityContext?.updateFormData || (() => {});
+  const gender = formData.Gender?.toLowerCase?.() || "";
+
 
   const onChange = (event: any, selectedDate: Date | undefined) => {
       const currentDate = selectedDate || date;
         setShowPicker(Platform.OS === 'ios');
         setShowPicker(false); // for iOS keep showing picker
         setDate(currentDate);
+        updateFormData("LastDonationDate", currentDate.toISOString())
       };
-  
-      const formattedDate = date.toLocaleDateString('en-GB');
+
+       const formattedDate = new Date(formData.LastDonationDate || date).toLocaleDateString('en-GB');
   return (
    <GetStartedBackground>
-     <View className="px-6 mt-20  w-full">
+     <ScrollView className="px-6 mt-20  w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
         <Text className="text-lg  text-[#FFBFBF]">This quick health check helps us determine if you
-                       are currently eligible to donate blood safely.</Text>
+                       are currently eligible to donate blood safely. This is a quick check and when donating blood you will again be checked.</Text>
 
 
 <View className="flex-row justify-between mt-6">
@@ -36,6 +43,7 @@ export default function EligibilityOne() {
   <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityFour' as any)} className="bg-[#FFBFBF] h-[2px] ml-2" style={{ width:width/10}}/>
   <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilityFive' as any)} className="bg-[#FFBFBF] h-[2px] ml-2" style={{ width:width/10}}/>
   <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySix' as any)} className="bg-[#FFBFBF] h-[2px] ml-2 " style={{ width:width/10}}/>
+
   <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySeven' as any)} className="bg-[#FFBFBF] h-[2px] ml-2 " style={{ width:width/10}}/>
 </View>
 
@@ -50,6 +58,8 @@ export default function EligibilityOne() {
                <TextInput
                 placeholder="50Kg"
                 className= "text-accent"
+                onChangeText={(text)=> updateFormData("Weight", text.trim())}
+                value={formData.Weight || ""}
                />
         </View>
 
@@ -58,6 +68,10 @@ export default function EligibilityOne() {
                <TextInput
                 placeholder="22 Years"
                 className= "text-accent"
+                keyboardType="numeric"
+                onChangeText={(text)=> updateFormData("Age", text.trim())}
+                value = {formData.Age || ""}
+                
                />
         </View>
 
@@ -66,6 +80,8 @@ export default function EligibilityOne() {
                <TextInput
                 placeholder="Female"
                 className= "text-accent"
+                onChangeText={(text) => updateFormData("Gender", text.trim())}
+                value={formData.Gender || ""}
                />
         </View>
 
@@ -99,7 +115,7 @@ export default function EligibilityOne() {
         </TouchableOpacity>
 
 
-      </View>
+      </ScrollView>
    </GetStartedBackground>
   );
 }

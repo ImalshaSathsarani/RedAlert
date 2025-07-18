@@ -60,7 +60,7 @@ export default function donorLogin() {
         <Icon className="ml-[20px]" name="facebook" size={22} />
       </View>
 
-      <View className="flex-row justify-center items-center absolute top-[750px] w-full">
+      <View className="flex-row justify-center items-center absolute top-[700px] w-full">
         <Text className="font-bold text-black">Haven't any account? </Text>
         <Link href="/donorRegister" asChild>
           <Text className="font-bold text-[#B43929] ml-1">Sign Up</Text>

@@ -1,20 +1,59 @@
-import { Link, useRouter } from "expo-router";
-import { Dimensions, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Dimensions, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import GetStartedBackground from "../getStartedBackground";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Entypo } from "@expo/vector-icons";
+import { useEligibility } from "../../contexts/EligibilityContext";
+import { checkEligibility } from "../../utils/checkEligibility";
 import { useState } from "react";
-import { Entypo, Feather } from "@expo/vector-icons";
+
 
 
 const { width,height } = Dimensions.get("window");
 
-export default function EligibilityOne() {
+export default function EligibilitySeven() {
   const router = useRouter();
-  const [date, setDate] = useState(new Date());
- 
-  const [pregnant, setPregnant] =useState("");
+  const eligibilityContext = useEligibility();
+  const formData = eligibilityContext?.formData || {};
+  const updateFormData = eligibilityContext?.updateFormData || (() => {});
+  const PregnantBreastfeedingMenstruating = formData.PregnantBreastfeedingMenstruating || "";
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
- 
+  const handleCheck = async () =>{
+    setLoading(true);
+    setError(null);
+    try{
+      const payLoad = {
+        ...formData,
+        ChronicIllnessDetails: Array.isArray(formData.ChronicIllnessDetails)
+    ? formData.ChronicIllnessDetails.join(', ')
+    : formData.ChronicIllnessDetails,
+  MedicationDetails: Array.isArray(formData.MedicationDetails)
+    ? formData.MedicationDetails.join(', ')
+    : formData.MedicationDetails,
+  AllergyDetails: Array.isArray(formData.AllergyDetails)
+    ? formData.AllergyDetails.join(', ')
+    : formData.AllergyDetails,
+  VaccineDetails: Array.isArray(formData.VaccineDetails)
+    ? formData.VaccineDetails.join(', ')
+    : formData.VaccineDetails,
+      }
+
+      const isEligible = await checkEligibility(payLoad);
+
+      setTimeout(() => {
+      router.push(isEligible ? "/eligibilityForm/eligible" : "/eligibilityForm/notEligible");
+    }, 300); // 300ms is enough for UI to show
+    }catch(err){
+      console.error("Error checking eligibility:", err);
+      setError("An error occurred while checking eligibility. Please try again.");
+    } finally{
+      setLoading(false);
+    }
+    
+  }
+
+ console.log("Form Data in Eligibility Seven:", formData);
   type CheckBoxProps = {
       label: string;
       value: string;
@@ -37,10 +76,10 @@ export default function EligibilityOne() {
   return (
      
    <GetStartedBackground>
-     <View className="px-6 mt-20  w-full">
+     <ScrollView className="px-6 mt-20  w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
         <Text className="text-lg  text-[#FFBFBF]">This quick health check helps us determine if you
-                       are currently eligible to donate blood safely.</Text>
+                       are currently eligible to donate blood safely. This is a quick check and when donating blood you will again be checked.</Text>
 
 
 <View className="flex-row justify-between mt-6">
@@ -66,8 +105,8 @@ export default function EligibilityOne() {
 <View className="w-full px-5 mt-3">
     <Text className="text-lg text-secondary mb-2  ">Are you currently pregnant, breastfeeding, or menstruating?</Text>
 <View className="flex-row  space-x-8 mt-5">
-    <CheckBox label="Yes" value="yes" selected={pregnant} onSelect={setPregnant} />
-    <CheckBox label="No" value="no" selected={pregnant} onSelect={setPregnant}/>
+    <CheckBox label="Yes" value="Yes" selected={PregnantBreastfeedingMenstruating} onSelect={(val)=>updateFormData('PregnantBreastfeedingMenstruating',val)} />
+    <CheckBox label="No" value="No" selected={PregnantBreastfeedingMenstruating} onSelect={(val)=>updateFormData('PregnantBreastfeedingMenstruating',val)}/>
 </View>
 
 </View>
@@ -79,15 +118,23 @@ export default function EligibilityOne() {
 </View>
 
   <TouchableOpacity
-        onPress={() => router.push('/eligibilityForm/eligible' as any)}
+        onPress={handleCheck}
+        disabled={loading}
         className = "mt-4 px-12 py-3  rounded-2xl self-center mb-5"
-        style={{ backgroundColor: '#E72929' }}>
-             <Text className = "text-white text-xl font-semibold">Check</Text>
+        style={{ backgroundColor:loading? '#aaa' : '#E72929' }}>
+             <Text className = "text-white text-xl font-semibold">{loading ? "Checking..." : "Check"}</Text>
 
         </TouchableOpacity>
 
+{loading && (
+  <Text className="text-center text-lg text-secondary mt-3">Checking eligibility...</Text>
+)}
 
-      </View>
+{error && (
+  <Text className="text-center text-red-500 mt-2">{error}</Text>
+)}
+
+      </ScrollView>
    </GetStartedBackground>
   
   );
