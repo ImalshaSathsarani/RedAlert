@@ -1,17 +1,52 @@
-import { Link } from "expo-router";
-import { Text, TextInput, View, Image, TouchableOpacity } from "react-native";
+import { Link, useRouter } from "expo-router";
+import { Text, TextInput, View, Image, TouchableOpacity, Alert } from "react-native";
+import { useState } from "react";
 import GetStartedBackground from "./getStartedBackground";
 import logo2 from "../assets/images/logo2.png";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useState } from "react";
+import { donorAuthApi } from "../services/api";
 
 export default function donorLogin() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const [email, setEmail] = useState("")
-  const [Password, setPassword] = useState("")
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError("Please fill in both email and password");
+      return;
+    }
 
+    setLoading(true);
+    setError("");
 
+    try {
+      const response = await donorAuthApi.login({
+        email,
+        password
+      });
 
+      // Store token
+      localStorage.setItem('token', response.token);
+      
+      // Show success message
+      Alert.alert(
+        'Success',
+        'Login successful! You will be redirected to the home page.'
+      );
+      
+      // Navigate to home
+      router.push('/home');
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.message || 'Login failed');
+      Alert.alert('Error', err.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View>
@@ -36,7 +71,7 @@ export default function donorLogin() {
           placeholder="Password"
           placeholderTextColor="#00000"
           className="ml-5 font-bold"
-          value={Password}
+          value={password}
           onChangeText={setPassword}
         />
       </View>
@@ -46,8 +81,14 @@ export default function donorLogin() {
       </View>
 
       <View className="absolute top-[540px] w-full items-center ">
-        <TouchableOpacity className="bg-[#B43929]  w-[250px] py-3 rounded-2xl">
-          <Text className="text-white font-bold text-center">Login</Text>
+        <TouchableOpacity 
+          className="bg-[#B43929]  w-[250px] py-3 rounded-2xl"
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text className="text-white font-bold text-center">
+            {loading ? 'Logging in...' : 'Login'}
+          </Text>
         </TouchableOpacity>
       </View>
 

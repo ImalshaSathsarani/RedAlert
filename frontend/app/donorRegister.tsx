@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import {
   Text,
   View,
@@ -7,24 +7,104 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
+  Alert,
 } from "react-native";
 import logo2 from "../assets/images/logo2.png";
 import Icon from "react-native-vector-icons/FontAwesome";
-import RNPickerSelect from "react-native-picker-select";
 import { useState } from "react";
+import { donorAuthApi } from "../services/api";
 
 export default function Index() {
+  const router = useRouter();
   const [selected, setSelected] = useState("");
   const [visible, setVisible] = useState(false);
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmpassword, setconfirmPassword] = useState("")
-  const [mobileNo, setmobileNo] = useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmpassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [mobileNo, setMobileNo] = useState("");
+  const [bloodType, setBloodType] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const items = ["A+", "A-", "B+", "O+", "O-"];
 
-  //const router = useRouter();
+  const handleRegister = async () => {
+    if (!name || !email || !password || !confirmpassword || !mobileNo || !bloodType) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
+    if (password !== confirmpassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      console.log("Sending registration data:", {
+        name,
+        email,
+        mobileNo,
+        bloodType,
+        role: "donor",
+      });
+
+      const userData = {
+        name,
+        email,
+        password,
+        confirmPassword: confirmpassword,
+        mobileNo,
+        bloodType,
+        role: "donor",
+      };
+
+      const response = await donorAuthApi.register(userData);
+      console.log("Registration response:", response);
+
+      // Store token
+      localStorage.setItem("token", response.token);
+
+      // Show success message with more details
+      Alert.alert(
+        "Success",
+        `Registration successful!\n\nYour account has been created.\nEmail: ${email}\nRole: Donor\nBlood Type: ${bloodType}\n\nYou will be redirected to the home page...`,
+        [
+          {
+            text: "OK",
+            onPress: () => router.push("/home"),
+            style: "default",
+          },
+        ]
+      );
+    } catch (err: any) {
+      console.error("Registration error:", err);
+      let errorMessage = err.response?.data?.message || "Registration failed";
+
+      if (errorMessage.includes("User already exists")) {
+        Alert.alert(
+          "Error",
+          "This email is already registered. Please try another email or login."
+        );
+      } else if (errorMessage.includes("Passwords do not match")) {
+        Alert.alert("Error", "The passwords you entered do not match. Please try again.");
+      } else if (errorMessage.includes("All fields are required")) {
+        Alert.alert("Error", "Please fill in all required fields before proceeding.");
+      } else {
+        Alert.alert("Error", errorMessage);
+      }
+
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View>
       <View className="absolute items-center ">
@@ -32,109 +112,92 @@ export default function Index() {
       </View>
 
       <View className="absolute space-y-3">
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="user" size={20} color="#00000" />
+        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px]">
+          <Icon className="ml-[-15px]" name="user" size={20} color="#000" />
           <TextInput
             placeholder="Full Name"
-            placeholderTextColor="#00000"
+            placeholderTextColor="#000"
             className="ml-5 font-bold"
+            style={{ flex: 1, fontWeight: "600" }}
             value={name}
             onChangeText={setName}
           />
         </View>
 
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="user" size={20} color="#00000" />
+        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px]">
+          <Icon className="ml-[-15px]" name="envelope" size={20} color="#000" />
           <TextInput
             placeholder="E mail"
-            placeholderTextColor="#00000"
+            placeholderTextColor="#000"
             className="ml-5 font-bold"
+            style={{ flex: 1, fontWeight: "600" }}
             value={email}
             onChangeText={setEmail}
           />
         </View>
 
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="lock" size={20} color="#00000" />
+        {/* Password input with eye icon */}
+        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] items-center">
+          <Icon className="ml-[-15px]" name="lock" size={20} color="#000" />
           <TextInput
             placeholder="Password"
-            placeholderTextColor="#00000"
+            placeholderTextColor="#000"
             className="ml-5 font-bold"
+            style={{ flex: 1, fontWeight: "600" }}
             value={password}
             onChangeText={setPassword}
+            secureTextEntry={!showPassword}
           />
+          <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)}>
+            <Icon
+              name={showPassword ? "eye" : "eye-slash"}
+              size={20}
+              color="#000"
+              style={{ marginLeft: 10 }}
+            />
+          </TouchableOpacity>
         </View>
 
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="lock" size={20} color="#00000" />
+        {/* Confirm Password input with eye icon */}
+        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] items-center">
+          <Icon className="ml-[-15px]" name="lock" size={20} color="#000" />
           <TextInput
             placeholder="Confirm Password"
-            placeholderTextColor="#00000"
+            placeholderTextColor="#000"
             className="ml-5 font-bold"
+            style={{ flex: 1, fontWeight: "600" }}
             value={confirmpassword}
-            onChangeText={setconfirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={!showConfirmPassword}
           />
+          <TouchableOpacity onPress={() => setShowConfirmPassword((prev) => !prev)}>
+            <Icon
+              name={showConfirmPassword ? "eye" : "eye-slash"}
+              size={20}
+              color="#000"
+              style={{ marginLeft: 10 }}
+            />
+          </TouchableOpacity>
         </View>
 
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="phone" size={20} color="#00000" />
+        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px]">
+          <Icon className="ml-[-15px]" name="phone" size={20} color="#000" />
           <TextInput
             placeholder="Mobile Number"
-            placeholderTextColor="#00000"
+            placeholderTextColor="#000"
             className="ml-5 font-bold"
+            style={{ flex: 1, fontWeight: "600" }}
             value={mobileNo}
-            onChangeText={setmobileNo}
+            onChangeText={setMobileNo}
           />
         </View>
-
-        {/* <View className="flex-row items-center px-6 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] w-[260px]">
-          <RNPickerSelect
-            onValueChange={(value) => setSelected(value)}
-            value={selected}
-            placeholder={{ label: "Select Blood Group", value: null }}
-            items={[
-              { label: "A+", value: "A+" },
-              { label: "A-", value: "A-" },
-              { label: "B+", value: "B+" },
-              { label: "O+", value: "O+" },
-            ]}
-            style={{
-              viewContainer: {
-                backgroundColor: "#e4c8c2", // Match parent view
-                borderRadius: 12,
-              },
-              inputIOS: {
-                backgroundColor: "#e4c8c2",
-                color: "#000",
-                fontSize: 16,
-                paddingVertical: 10,
-                paddingLeft: 8,
-                paddingRight: 20,
-                borderRadius: 12,
-              },
-              inputAndroid: {
-                backgroundColor: "#e4c8c2",
-                color: "#000",
-                fontSize: 16,
-                paddingVertical: 8,
-                paddingLeft: 8,
-                paddingRight: 20,
-                borderRadius: 12,
-              },
-              iconContainer: {
-                right: 10,
-              },
-            }}
-            useNativeAndroidPickerStyle={false}
-          />
-        </View> */}
 
         <View className="ml-[60px] mt-10 ">
           {/* Dropdown Button */}
           <TouchableOpacity
             onPress={() => setVisible(true)}
             className="bg-[#e4c8c2] px-10 py-3 rounded-xl flex-row justify-between items-center"
-            style={{ width: 300 }} // OR use Tailwind width classes like w-[260px]
+            style={{ width: 300 }}
           >
             <Text className="text-black font-bold">
               {selected ? selected : "Select Blood Group"}
@@ -157,6 +220,7 @@ export default function Index() {
                       className="p-3 border-b border-gray-300"
                       onPress={() => {
                         setSelected(item);
+                        setBloodType(item);
                         setVisible(false);
                       }}
                     >
@@ -170,11 +234,34 @@ export default function Index() {
         </View>
 
         <View className="absolute top-[650px] w-full ml-[80px]">
+
           <Link href="/eligibilityForm/eligibilityOne" asChild>
             <TouchableOpacity className="bg-[#B43929] w-[250px] py-3 rounded-2xl">
               <Text className="text-white font-bold text-center">Register</Text>
             </TouchableOpacity>
           </Link>
+
+          <TouchableOpacity
+            className="bg-[#B43929] w-[250px] py-3 rounded-2xl"
+            onPress={() => {
+              console.log("Register button clicked");
+              console.log("Form data:", {
+                name,
+                email,
+                password,
+                confirmpassword,
+                mobileNo,
+                bloodType: selected,
+              });
+              handleRegister();
+            }}
+            disabled={loading}
+          >
+            <Text className="text-white font-bold text-center">
+              {loading ? "Registering..." : "Register"}
+            </Text>
+          </TouchableOpacity>
+
         </View>
 
         <Text className="absolute top-[720px] left-[180px] font-bold">

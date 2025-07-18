@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
   }
 };*/
 
-const jwt = require("jsonwebtoken");
+/*const jwt = require("jsonwebtoken");
 
 // Auth Middleware for verifying JWT tokens
 module.exports = (req, res, next) => {
@@ -42,6 +42,35 @@ module.exports = (req, res, next) => {
     req.user = decoded; // Example decoded = { id: '...', email: '...', iat: ..., exp: ... }
 
     // Proceed to the next middleware or route handler
+    next();
+  } catch (error) {
+    console.error("Auth Error:", error.message);
+    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+  }
+};*/
+
+const jwt = require("jsonwebtoken");
+
+module.exports = (req, res, next) => {
+  //const token = req.cookies.token; // <-- read from cookies
+
+  let token;
+
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1];
+  } else if (req.cookies && req.cookies.token) {
+    // Fallback to token in cookies
+    token = req.cookies.token;
+  }
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
     next();
   } catch (error) {
     console.error("Auth Error:", error.message);
