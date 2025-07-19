@@ -393,10 +393,11 @@ const Dashboard = () => {
               borderRadius: 12,
               padding: "20px 30px",
               fontSize: 28,
-              width: 650,
-              height: 250,
               display: "flex",
               flexDirection: "column",
+              minHeight: 250, 
+              width: "fit-content",
+              height: "fit-content",
             }}
           >
             <div
@@ -559,7 +560,7 @@ const Dashboard = () => {
               padding: "20px 30px",
               fontSize: 28,
               width: "100%",
-              height: 230,
+              height: "fit-content",
               display: "flex",
               flexDirection: "column",
             }}

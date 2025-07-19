@@ -202,6 +202,13 @@ const Community = () => {
           <hr style={{ borderColor: "#ccc", marginTop: 15 }} />
         </div>
 
+        <div
+          style={{
+            maxHeight: "calc(100vh - 300px)", // adjust to fit your layout
+            overflowY: "auto",
+            paddingBottom: 100, // so bottom post isn't hidden behind input bar
+          }}
+        >
         {/* Posts */}
         {posts.map((post) => (
           <div
@@ -300,29 +307,44 @@ const Community = () => {
           </div>
         ))}
 
+        </div>
+        {/* Fixed Input Bar */}
         <div
           style={{
             backgroundColor: "#B43929",
             padding: "20px 30px",
             color: "white",
-            marginLeft: 80,
-            marginRight: 80,
             borderRadius: 10,
             height: 50,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            position: "fixed",
+            bottom: 20,
+            left: 80,
+            right: 80,
+            zIndex: 10,
           }}
         >
-          {/* Left: Text */}
           <input
             type="text"
             value={newPostMessage}
             onChange={(e) => setNewPostMessage(e.target.value)}
             placeholder="Type here..."
+            style={{
+              flex: 1,
+              marginRight: 20,
+              border: "none",
+              outline: "none",
+              fontSize: 16,
+              padding: 10,
+              borderRadius: 6,
+              backgroundColor: "transparent",
+              color:'white',
+    
+            }}
           />
 
-          {/* Right: Icons */}
           <div
             style={{
               display: "flex",
@@ -331,16 +353,8 @@ const Community = () => {
               marginRight: 10,
             }}
           >
-            <FiImage
-              size={22}
-              style={{ cursor: "pointer" }}
-              title="Add Image"
-            />
-            <FiSmile
-              size={22}
-              style={{ cursor: "pointer" }}
-              title="Add Sticker"
-            />
+            <FiImage size={22} style={{ cursor: "pointer" }} title="Add Image" />
+            <FiSmile size={22} style={{ cursor: "pointer" }} title="Add Sticker" />
             <FiPlus
               size={22}
               style={{ cursor: "pointer" }}
@@ -349,6 +363,7 @@ const Community = () => {
             />
           </div>
         </div>
+
       </div>
     </>
   );
