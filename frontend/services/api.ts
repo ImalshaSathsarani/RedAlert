@@ -153,3 +153,17 @@ export const commentApi = {
     }
   },
 };
+
+export const chatApi = {
+  sendMessage: async (message: string) => {
+    try {
+      console.log("Sending message to chatbot:", message);
+      const response = await api.post('/api/chatbot/chat', { message });
+      console.log("Chatbot response:", response.data);
+      return response.data.reply;  // assuming backend returns { reply: "some text" }
+    } catch (error: any) {
+      console.error("Chat error:", error.response?.data || error.message);
+      throw error.response?.data?.message || "Failed to get chatbot reply";
+    }
+  }
+};
