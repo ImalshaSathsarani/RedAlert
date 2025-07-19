@@ -1,31 +1,114 @@
 import { Entypo, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, Alert, Platform } from "react-native";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Platform } from 'react-native';
 import axios, { AxiosError } from 'axios';
+import api from '../../services/api';
+import * as ImagePicker from 'expo-image-picker';
 
 const { width,height } = Dimensions.get("window");
 
 export default function EditProfile() {
-    
-    const router = useRouter();
-    const [selectedIllness,setSelectedIllness] =useState("None");
-    const [status, setStatus] =useState("Ongoing");
-    const [smoking, setSmoking] =useState("")
-    const [alcohol, setAlcohol] = useState("");
-    const [vaccinationStatus, setVaccinationStatus] = useState("");
-    const [doseCount, setDoseCount] = useState("");
-    const [selectedVaccine, setSelectedVaccine] =useState("");
-    const [date, setDate] = useState(new Date());
-    const [showPicker, setShowPicker] = useState(false);
-    const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
 
-    const isValidForm = () => {
-        return selectedIllness && status && smoking && alcohol && vaccinationStatus;
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        base64: true
+      });
+
+      if (!result.canceled) {
+        const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+        setImage(base64Image);
+        
+        // Save to AsyncStorage
+        try {
+          await AsyncStorage.setItem('userProfileImage', base64Image);
+          console.log('Image saved locally');
+        } catch (error) {
+          console.error('Error saving image locally:', error);
+        }
+
+        // Upload to backend
+        try {
+          const token = await AsyncStorage.getItem('token');
+          if (!token) {
+            throw new Error('No token found');
+          }
+
+          // Convert base64 to blob
+          const fetchResponse = await fetch(base64Image);
+          const blob = await fetchResponse.blob();
+
+          const formData = new FormData();
+          formData.append('image', blob, 'profile.jpg');
+
+          // Upload to backend
+          try {
+            const uploadResponse = await api.post('/donor/profile/upload-image', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+
+            if (uploadResponse.status === 200) {
+              setImage(base64Image);
+            } else {
+              throw new Error('Image upload failed');
+            }
+          } catch (error) {
+            console.error('Error uploading image:', error);
+            Alert.alert('Error', 'Failed to upload image. Please try again.');
+            throw error; // Re-throw to be caught by the outer catch block
+          }
+        } catch (error) {
+          console.error('Error in image processing:', error);
+          Alert.alert('Error', 'Failed to process image. Please try again.');
+        }
+      } else {
+        Alert.alert('Error', 'No image selected');
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Error', 'Failed to pick image. Please try again.');
+    }
+  }
+
+  const uploadImage = async () => {
+    if (!image) return;
+
+    // Here you would typically upload the image to your backend
+    // For now, we'll just log the image URI
+    console.log('Selected image:', image);
+  };
+
+  const router = useRouter();
+  // Form state
+  const [selectedIllness, setSelectedIllness] = useState("None");
+  const [status, setStatus] = useState("Ongoing");
+  const [smoking, setSmoking] = useState("");
+  const [alcohol, setAlcohol] = useState("");
+  const [vaccinationStatus, setVaccinationStatus] = useState("");
+  const [doseCount, setDoseCount] = useState("");
+  const [selectedVaccine, setSelectedVaccine] = useState("");
+  
+  // Date picker state
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+  
+  // Loading state
+  const [loading, setLoading] = useState(false);
+
+  const isValidForm = () => {
+        // Medical history fields are optional for profile update
+        return true;
     };
 
     const handleUpdateProfile = async () => {
@@ -63,76 +146,57 @@ export default function EditProfile() {
             
             // Get the correct API URL based on environment
             const getApiUrl = () => {
-                // First try to get the local IP address
-                try {
-                    const interfaces = require('os').networkInterfaces();
-                    for (const devName of Object.keys(interfaces)) {
-                        const iface = interfaces[devName];
-                        for (const alias of iface) {
-                            if (alias.family === 'IPv4' && !alias.internal) {
-                                return `http://${alias.address}:5000`;
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.log('Failed to get local IP:', error);
-                }
-
-                // Fallback to different environments
                 if (Platform.OS === 'android') {
-                    return 'http://10.0.2.2:5000'; // Android emulator
+                    console.log('Using API URL from configuration');
+                    return api.defaults.baseURL;
                 } else if (Platform.OS === 'ios') {
-                    return 'http://localhost:5000'; // iOS simulator
+                    return 'http://192.168.93.76:5000'; // iOS simulator
                 }
                 
                 // For physical devices or other environments
-                return 'http://localhost:5000'; // Default to localhost
+                return 'http://192.168.93.76:5000'; // WiFi IP for mobile devices
             };
 
             const apiUrl = getApiUrl();
             console.log('Using API URL:', apiUrl);
 
-            const response = await axios.put(
-                `${apiUrl}/api/donor/profile/me`,
-                data,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    timeout: 10000 // 10 seconds timeout
-                }
-            );
+            try {
+                const response = await api.put(
+                    '/donor/profile/me',
+                    data,
+                    {
+                    }
+                );
 
-            console.log('Response received:', JSON.stringify(response.data, null, 2));
-            Alert.alert('Success', 'Profile updated successfully');
-            router.push('/(tabs)/profile');
-        } catch (error: any) {
-            console.error('Error details:', {
-                error: error,
-                response: error.response,
-                message: error.message,
-                data: error.response?.data
-            });
-            
-            let errorMessage = 'An error occurred';
-            if (error.response?.data?.message) {
-                errorMessage = error.response.data.message;
-            } else if (error.message) {
-                errorMessage = error.message;
+                console.log('Response received:', JSON.stringify(response.data, null, 2));
+                Alert.alert('Success', 'Profile updated successfully');
+                router.push('/(tabs)/profile');
+            } catch (error: AxiosError | any) {
+                let errorMessage = 'An unexpected error occurred';
+                if (error.response?.data?.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                console.error('Error details:', {
+                    error: error,
+                    message: error.message,
+                    data: error.response?.data
+                });
+                
+                Alert.alert('Error', errorMessage);
             }
-            
-            Alert.alert('Error', errorMessage);
         } finally {
             setLoading(false);
         }
     };
 
     const onChange = (event: any, selectedDate: Date | undefined) => {
-    const currentDate = selectedDate || date;
-      setShowPicker(Platform.OS === 'ios');
-      setShowPicker(false); // for iOS keep showing picker
-      setDate(currentDate);
+        const currentDate = selectedDate || date;
+        setShowPicker(Platform.OS === 'ios');
+        setShowPicker(false); // for iOS keep showing picker
+        setDate(currentDate);
     };
 
     const formattedDate = date.toLocaleDateString('en-GB');
@@ -197,15 +261,32 @@ export default function EditProfile() {
 
         </View>
 
-        <Image 
-        source={require("../../assets/images/ProfileImg.jpg")}
-        style={{
-          width:width*0.3,
-          height:width*0.3,
-          borderColor:'#E72929',
-          borderWidth:1,
+        <TouchableOpacity
+          onPress={pickImage}
+          className="rounded-full mt-6"
+          style={{
+            width: width * 0.3,
+            height: width * 0.3,
+            borderColor: '#E72929',
+            borderWidth: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
-        className="rounded-full mt-6"/>
+        >
+          {image ? (
+            <Image
+              source={{ uri: image }}
+              style={{ width: '100%', height: '100%' }}
+              className="rounded-full"
+            />
+          ) : (
+            <Image
+              source={require("../../assets/images/ProfileImg.jpg")}
+              style={{ width: '100%', height: '100%' }}
+              className="rounded-full"
+            />
+          )}
+        </TouchableOpacity>
 
         <View className="flex-row items-center justify-between w-full px-6 mt-3">
             <View className ="  flex-1 h-[1px] bg-secondary mr-2"/>

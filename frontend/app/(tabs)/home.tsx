@@ -1,4 +1,4 @@
-import { Text, TextInput, View, Image } from "react-native";
+import { Text, TextInput, View, Image, TouchableOpacity } from "react-native";
 import { Link, useRouter } from "expo-router";
 import Icon from "react-native-vector-icons/FontAwesome";
 import bloodbanner from "../../assets/images/bloodbanner.png";
@@ -9,7 +9,31 @@ import axios from 'axios';
 import { useState, useEffect } from "react";
 
 export default function Home() {
+  const router = useRouter();
   const [userName, setUserName] = useState('');
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      try {
+        // Try to load image URL from backend first
+        const imageUrl = await AsyncStorage.getItem('userProfileImageUrl');
+        if (imageUrl) {
+          setProfileImage(imageUrl);
+          return;
+        }
+
+        // Fallback to local image if no backend URL
+        const localImage = await AsyncStorage.getItem('userProfileImage');
+        if (localImage) {
+          setProfileImage(localImage);
+        }
+      } catch (error) {
+        console.error('Error loading profile image:', error);
+      }
+    };
+    loadProfileImage();
+  }, []);
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -17,9 +41,8 @@ export default function Home() {
         const token = await AsyncStorage.getItem('token');
         if (!token) return;
 
-        const apiUrl = 'http://localhost:5000'; // Using the same API URL as in profile.tsx
         const response = await axios.get(
-          `${apiUrl}/api/donor/profile/me`,
+          `http://192.168.93.76:5000/api/donor/profile/me`,
           {
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -64,14 +87,33 @@ export default function Home() {
             overflow: "hidden", // Ensures the image fits the circular shape
           }}
         >
-          <Image
-            source={image1} // replace with actual path
+          <TouchableOpacity
+            onPress={() => router.push('/profile')}
             style={{
               width: "100%",
               height: "100%",
-              resizeMode: "cover", // Ensures the image fills the circle
             }}
-          />
+          >
+            {profileImage ? (
+              <Image
+                source={{ uri: profileImage }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+                resizeMode="cover"
+              />
+            ) : (
+              <Image
+                source={{ uri: 'https://example.com/default-profile-image.jpg' }} 
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+                resizeMode="cover"
+              />
+            )}
+          </TouchableOpacity>
         </View>
         <Text className="font-semibold top-[54px] left-[110px] text-lg">
           Hey {userName}

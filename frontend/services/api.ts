@@ -1,6 +1,8 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = Platform.OS === 'android' ? 'http://127.0.0.1:5000' : 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -8,6 +10,22 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Add request interceptor to add token to requests
+api.interceptors.request.use(
+  async (config) => {
+    const token = await AsyncStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export default api;
 
 // Add error handling for all requests
 api.interceptors.response.use(
@@ -20,14 +38,14 @@ api.interceptors.response.use(
 
 // Add a request interceptor to include token in requests
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
+  async (config) => {
+    const token = await AsyncStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
+  (error: any) => {
     return Promise.reject(error);
   }
 );
@@ -35,10 +53,15 @@ api.interceptors.request.use(
 // Add a response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
       // Handle unauthorized access
-      localStorage.removeItem('token');
+      try {
+        await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem('user');
+      } catch (err) {
+        console.error('Error cleaning up auth data:', err);
+      }
     }
     return Promise.reject(error);
   }
@@ -63,7 +86,20 @@ export const donorAuthApi = {
     } catch (error: any) {
       console.error('Full error object:', error);
       console.error('Error response:', error.response?.data);
-      throw error.response?.data?.message || 'Registration failed';
+      
+      if (!error.response) {
+        // Network error or server not reachable
+        throw new Error('Could not reach the server. Please check your internet connection and try again.');
+      } else if (error.response.status === 400) {
+        // Bad request
+        throw new Error('Invalid registration data. Please check your input and try again.');
+      } else if (error.response.status === 500) {
+        // Server error
+        throw new Error('Server error occurred. Please try again later.');
+      } else {
+        // Other errors
+        throw new Error(error.response?.data?.message || 'Registration failed');
+      }
     }
   },
 

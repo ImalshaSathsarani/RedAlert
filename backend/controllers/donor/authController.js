@@ -9,8 +9,44 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
+exports.changePassword = async (req, res) => {
+  console.log('Received change password request');
+  console.log('User ID:', req.user.id);
+  console.log('Current Password:', req.body.currentPassword);
+  console.log('New Password:', req.body.newPassword);
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      console.error('User not found');
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
+    if (!isMatch) {
+      console.error('Invalid current password');
+      return res.status(400).json({ message: 'Invalid current password' });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.newPassword, salt);
+
+    // Update user password
+    user.password = hashedPassword;
+    await user.save();
+
+    console.log('Password changed successfully for user:', user._id);
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Error changing password', error: error.message });
+  }
+};
+
 exports.registerUser = async (req, res) => {
-  const { name, email, password, confirmPassword, mobileNo, bloodType, role } = req.body;
+  const { name, email, password, confirmPassword, mobileNo, bloodType } = req.body;
 
   // Validate required fields
   if (!name || !email || !password || !confirmPassword || !mobileNo || !bloodType) {
@@ -32,7 +68,16 @@ exports.registerUser = async (req, res) => {
       password, 
       mobileNo,
       bloodType,
-      role: role || 'donor'
+      medicalHistory: {
+        illness: null,
+        illnessStatus: null,
+        smoking: null,
+        alcohol: null,
+        vaccinationStatus: null,
+        vaccineType: '',
+        doseCount: 0,
+        lastVaccinationDate: null
+      }
     });
     
     if (user) {
@@ -54,6 +99,7 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
+  console.log("requested");
   const { email, password } = req.body;
 
   try {
@@ -101,22 +147,59 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
+exports.changePassword = async (req, res) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const { userId } = req.user;
+
+  try {
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    // Check if current password is correct
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) return res.status(400).json({ msg: 'Current password is incorrect' });
+
+    // Check if new password matches confirm password
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ msg: 'New password and confirm password do not match' });
+    }
+
+    // Check password strength (optional)
+    if (newPassword.length < 6) {
+      return res.status(400).json({ msg: 'Password must be at least 6 characters' });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    // Save the user
+    await user.save();
+
+    res.json({ msg: 'Password changed successfully' });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// Keep the existing resetPassword endpoint
 exports.resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
   try {
     const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() }
+      resetToken: token,
+      resetTokenExpire: { $gt: Date.now() }
     });
 
     if (!user) return res.status(400).json({ msg: 'Invalid or expired token' });
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
+    user.resetToken = undefined;
+    user.resetTokenExpire = undefined;
 
     await user.save();
 
@@ -124,6 +207,5 @@ exports.resetPassword = async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
-  
 };
 

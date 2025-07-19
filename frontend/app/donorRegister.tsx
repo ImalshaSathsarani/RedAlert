@@ -8,50 +8,45 @@ import {
   Modal,
   FlatList,
   Alert,
+  ScrollView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅
 import logo2 from "../assets/images/logo2.png";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useState } from "react";
 import { donorAuthApi } from "../services/api";
 
-export default function Index() {
+export default function DonorRegister() {
   const router = useRouter();
   const [selected, setSelected] = useState("");
   const [visible, setVisible] = useState(false);
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmpassword, setconfirmPassword] = useState("")
-  const [mobileNo, setmobileNo] = useState("")
-  const [bloodType, setBloodType] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmpassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [mobileNo, setMobileNo] = useState("");
+  const [bloodType, setBloodType] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const items = ["A+", "A-", "B+", "O+", "O-"];
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmpassword || !mobileNo || !bloodType) {
-      setError('Please fill in all required fields');
+      Alert.alert("Error", "Please fill in all required fields");
       return;
     }
 
     if (password !== confirmpassword) {
-      setError('Passwords do not match');
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
 
     setLoading(true);
-    setError('');
 
     try {
-      console.log('Sending registration data:', {
-        name,
-        email,
-        mobileNo,
-        bloodType,
-        role: 'donor'
-      });
-
       const userData = {
         name,
         email,
@@ -59,234 +54,161 @@ export default function Index() {
         confirmPassword: confirmpassword,
         mobileNo,
         bloodType,
-        role: 'donor'
       };
 
       const response = await donorAuthApi.register(userData);
-      console.log('Registration response:', response);
-      
-      // Store token
-      localStorage.setItem('token', response.token);
-      
-      // Show success message with more details
-      Alert.alert(
-        'Success',
-        `Registration successful!\n\nYour account has been created.\nEmail: ${email}\nRole: Donor\nBlood Type: ${bloodType}\n\nYou will be redirected to the home page...`,
-        [
-          {
-            text: 'OK',
-            onPress: () => router.push('/home'),
-            style: 'default'
-          }
-        ]
-      );
+
+      // ✅ Store token in AsyncStorage for mobile
+      await AsyncStorage.setItem("token", response.token);
+
+      Alert.alert("Success", "Registration successful!", [
+        {
+          text: "OK",
+          onPress: () => router.push("/home"),
+        },
+      ]);
     } catch (err: any) {
-      console.error('Registration error:', err);
-      let errorMessage = err.response?.data?.message || 'Registration failed';
-      
-      // Show specific error messages
-      if (errorMessage.includes('User already exists')) {
-        Alert.alert('Error', 'This email is already registered. Please try another email or login.');
-      } else if (errorMessage.includes('Passwords do not match')) {
-        Alert.alert('Error', 'The passwords you entered do not match. Please try again.');
-      } else if (errorMessage.includes('All fields are required')) {
-        Alert.alert('Error', 'Please fill in all required fields before proceeding.');
-      } else {
-        Alert.alert('Error', errorMessage);
-      }
-      
-      setError(errorMessage);
+      console.error("Registration error:", err);
+      let errorMessage = err.response?.data?.message || "Registration failed";
+      Alert.alert("Error", errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View>
-      <View className="absolute items-center ">
-        <Image source={logo2} style={{ width: 400, height: 400 }} />
+    <ScrollView contentContainerStyle={{ alignItems: "center", padding: 20 }}>
+      <Image source={logo2} style={{ width: 200, height: 200, marginTop: 20 }} />
+
+      {/* Full Name */}
+      <View style={{ flexDirection: "row", padding: 10, borderRadius: 10, backgroundColor: "#e4c8c2", marginTop: 10, width: 300 }}>
+        <Icon name="user" size={20} color="#000" />
+        <TextInput
+          placeholder="Full Name"
+          placeholderTextColor="#000"
+          style={{ marginLeft: 10, flex: 1 }}
+          value={name}
+          onChangeText={setName}
+        />
       </View>
 
-      <View className="absolute space-y-3">
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="user" size={20} color="#00000" />
-          <TextInput
-            placeholder="Full Name"
-            placeholderTextColor="#00000"
-            className="ml-5 font-bold"
-            value={name}
-            onChangeText={setName}
-          />
-        </View>
+      {/* Email */}
+      <View style={{ flexDirection: "row", padding: 10, borderRadius: 10, backgroundColor: "#e4c8c2", marginTop: 10, width: 300 }}>
+        <Icon name="envelope" size={20} color="#000" />
+        <TextInput
+          placeholder="Email"
+          placeholderTextColor="#000"
+          style={{ marginLeft: 10, flex: 1 }}
+          value={email}
+          onChangeText={setEmail}
+        />
+      </View>
 
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="user" size={20} color="#00000" />
-          <TextInput
-            placeholder="E mail"
-            placeholderTextColor="#00000"
-            className="ml-5 font-bold"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
+      {/* Password */}
+      <View style={{ flexDirection: "row", padding: 10, borderRadius: 10, backgroundColor: "#e4c8c2", marginTop: 10, width: 300, alignItems: "center" }}>
+        <Icon name="lock" size={20} color="#000" />
+        <TextInput
+          placeholder="Password"
+          placeholderTextColor="#000"
+          style={{ marginLeft: 10, flex: 1 }}
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Icon name={showPassword ? "eye" : "eye-slash"} size={20} color="#000" />
+        </TouchableOpacity>
+      </View>
 
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="lock" size={20} color="#00000" />
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#00000"
-            className="ml-5 font-bold"
-            value={password}
-            onChangeText={setPassword}
-          />
-        </View>
+      {/* Confirm Password */}
+      <View style={{ flexDirection: "row", padding: 10, borderRadius: 10, backgroundColor: "#e4c8c2", marginTop: 10, width: 300, alignItems: "center" }}>
+        <Icon name="lock" size={20} color="#000" />
+        <TextInput
+          placeholder="Confirm Password"
+          placeholderTextColor="#000"
+          style={{ marginLeft: 10, flex: 1 }}
+          secureTextEntry={!showConfirmPassword}
+          value={confirmpassword}
+          onChangeText={setConfirmPassword}
+        />
+        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+          <Icon name={showConfirmPassword ? "eye" : "eye-slash"} size={20} color="#000" />
+        </TouchableOpacity>
+      </View>
 
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="lock" size={20} color="#00000" />
-          <TextInput
-            placeholder="Confirm Password"
-            placeholderTextColor="#00000"
-            className="ml-5 font-bold"
-            value={confirmpassword}
-            onChangeText={setconfirmPassword}
-          />
-        </View>
+      {/* Mobile Number */}
+      <View style={{ flexDirection: "row", padding: 10, borderRadius: 10, backgroundColor: "#e4c8c2", marginTop: 10, width: 300 }}>
+        <Icon name="phone" size={20} color="#000" />
+        <TextInput
+          placeholder="Mobile Number"
+          placeholderTextColor="#000"
+          style={{ marginLeft: 10, flex: 1 }}
+          value={mobileNo}
+          onChangeText={setMobileNo}
+        />
+      </View>
 
-        <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] ">
-          <Icon className="ml-[-15px]" name="phone" size={20} color="#00000" />
-          <TextInput
-            placeholder="Mobile Number"
-            placeholderTextColor="#00000"
-            className="ml-5 font-bold"
-            value={mobileNo}
-            onChangeText={setmobileNo}
-          />
-        </View>
-
-        {/* <View className="flex-row items-center px-6 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px] w-[260px]">
-          <RNPickerSelect
-            onValueChange={(value) => setSelected(value)}
-            value={selected}
-            placeholder={{ label: "Select Blood Group", value: null }}
-            items={[
-              { label: "A+", value: "A+" },
-              { label: "A-", value: "A-" },
-              { label: "B+", value: "B+" },
-              { label: "O+", value: "O+" },
-            ]}
-            style={{
-              viewContainer: {
-                backgroundColor: "#e4c8c2", // Match parent view
-                borderRadius: 12,
-              },
-              inputIOS: {
-                backgroundColor: "#e4c8c2",
-                color: "#000",
-                fontSize: 16,
-                paddingVertical: 10,
-                paddingLeft: 8,
-                paddingRight: 20,
-                borderRadius: 12,
-              },
-              inputAndroid: {
-                backgroundColor: "#e4c8c2",
-                color: "#000",
-                fontSize: 16,
-                paddingVertical: 8,
-                paddingLeft: 8,
-                paddingRight: 20,
-                borderRadius: 12,
-              },
-              iconContainer: {
-                right: 10,
-              },
-            }}
-            useNativeAndroidPickerStyle={false}
-          />
-        </View> */}
-
-        <View className="ml-[60px] mt-10 ">
-          {/* Dropdown Button */}
-          <TouchableOpacity
-            onPress={() => setVisible(true)}
-            className="bg-[#e4c8c2] px-10 py-3 rounded-xl flex-row justify-between items-center"
-            style={{ width: 300 }} // OR use Tailwind width classes like w-[260px]
-          >
-            <Text className="text-black font-bold">
-              {selected ? selected : "Select Blood Group"}
-            </Text>
-            <Text className="text-black">▼</Text>
-          </TouchableOpacity>
-
-          {/* Dropdown Modal */}
-          <Modal visible={visible} transparent animationType="fade">
-            <TouchableOpacity
-              className="flex-1 justify-center items-center bg-black/30"
-              onPress={() => setVisible(false)}
-            >
-              <View className="bg-white w-[280px] rounded-lg overflow-hidden">
-                <FlatList
-                  data={items}
-                  keyExtractor={(item) => item}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      className="p-3 border-b border-gray-300"
-                      onPress={() => {
-                        setSelected(item);
-                        setBloodType(item);
-                        setVisible(false);
-                      }}
-                    >
-                      <Text className="text-black">{item}</Text>
-                    </TouchableOpacity>
-                  )}
-                />
-              </View>
-            </TouchableOpacity>
-          </Modal>
-        </View>
-
-        <View className="absolute top-[650px] w-full ml-[80px]">
-          <TouchableOpacity 
-            className="bg-[#B43929] w-[250px] py-3 rounded-2xl"
-            onPress={() => {
-              console.log('Register button clicked');
-              console.log('Form data:', {
-                name,
-                email,
-                password,
-                confirmpassword,
-                mobileNo,
-                bloodType: selected
-              });
-              handleRegister();
-            }}
-            disabled={loading}
-          >
-            <Text className="text-white font-bold text-center">
-              {loading ? 'Registering...' : 'Register'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text className="absolute top-[720px] left-[180px] font-bold">
-          - OR -
+      {/* Blood Group Dropdown */}
+      <TouchableOpacity
+        onPress={() => setVisible(true)}
+        style={{ backgroundColor: "#e4c8c2", padding: 10, borderRadius: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 10, width: 300 }}
+      >
+        <Text style={{ color: "#000", fontWeight: "bold" }}>
+          {selected ? selected : "Select Blood Group"}
         </Text>
+        <Text style={{ color: "#000" }}>▼</Text>
+      </TouchableOpacity>
 
-        <View className="flex-row absolute top-[760px] left-[175px]">
-          <Icon name="google" size={22} />
-          <Icon className="ml-[20px]" name="facebook" size={22} />
-        </View>
+      <Modal visible={visible} transparent animationType="fade">
+        <TouchableOpacity
+          style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.3)" }}
+          onPress={() => setVisible(false)}
+        >
+          <View style={{ backgroundColor: "white", width: 280, borderRadius: 10, overflow: "hidden" }}>
+            <FlatList
+              data={items}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={{ padding: 10, borderBottomWidth: 1, borderColor: "#ccc" }}
+                  onPress={() => {
+                    setSelected(item);
+                    setBloodType(item);
+                    setVisible(false);
+                  }}
+                >
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
-        <View className="flex-row justify-center items-center absolute top-[810px] w-full ml-[20px]">
-          <Text className="font-bold text-black">
-            Already have an account?{" "}
-          </Text>
-          <Link href="/donorLogin" asChild>
-            <Text className="font-bold text-[#B43929] ml-1">Sign In</Text>
-          </Link>
-        </View>
+      {/* Register Button */}
+      <TouchableOpacity
+        style={{ backgroundColor: "#B43929", padding: 10, borderRadius: 20, marginTop: 20, width: 250 }}
+        onPress={handleRegister}
+        disabled={loading}
+      >
+        <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+          {loading ? "Registering..." : "Register"}
+        </Text>
+      </TouchableOpacity>
+
+      <Text style={{ marginTop: 20, fontWeight: "bold" }}>- OR -</Text>
+
+      <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10 }}>
+        <Icon name="google" size={22} style={{ marginRight: 20 }} />
+        <Icon name="facebook" size={22} />
       </View>
-    </View>
+
+      <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 20 }}>
+        <Text style={{ fontWeight: "bold", color: "#000" }}>Already have an account? </Text>
+        <Link href="/donorLogin" asChild>
+          <Text style={{ fontWeight: "bold", color: "#B43929" }}>Sign In</Text>
+        </Link>
+      </View>
+    </ScrollView>
   );
 }

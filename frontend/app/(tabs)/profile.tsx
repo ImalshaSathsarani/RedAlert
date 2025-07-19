@@ -12,7 +12,22 @@ export default function Profile() {
   const [logoutModalVisible,setLogoutModalVisible] = useState(false);
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      try {
+        const savedImage = await AsyncStorage.getItem('userProfileImage');
+        if (savedImage) {
+          setProfileImage(savedImage);
+        }
+      } catch (error) {
+        console.error('Error loading profile image:', error);
+      }
+    };
+    loadProfileImage();
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -44,9 +59,9 @@ export default function Profile() {
 
   const getApiUrl = () => {
     if (__DEV__) {
-      return 'http://localhost:5000';
+      return 'http://192.168.93.76:5000';
     }
-    return 'http://localhost:5000'; // Replace with your production URL
+    return 'http://192.168.93.76:5000'; // Replace with your production URL
   };
 
   if (!user) {
@@ -201,15 +216,29 @@ const SettingRow = ({ icon, label, rightElement, onPress }: SettingRowProps  & {
       }}
       className = "rounded-full -top-[115] -right-[10]"/>
 
-      <Image source = {require('../../assets/images/check.png')}
-       style={{
-        width:width*0.07,
-        height:width*0.07,
-        position:"relative",
-        bottom:150,
-        left:100,
-       }}
-      />
+      {profileImage ? (
+        <Image 
+          source={{ uri: profileImage }}
+          style={{
+            width: width * 0.07,
+            height: width * 0.07,
+            position: "relative",
+            bottom: 150,
+            left: 100,
+            borderRadius: 100, // Make it circular
+          }}
+        />
+      ) : (
+        <Image source = {require('../../assets/images/check.png')}
+          style={{
+            width: width * 0.07,
+            height: width * 0.07,
+            position: "relative",
+            bottom: 150,
+            left: 100,
+          }}
+        />
+      )}
 
      </View>
      
