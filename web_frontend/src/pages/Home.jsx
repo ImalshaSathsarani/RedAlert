@@ -1,7 +1,8 @@
-import React from 'react';
-import { FaGooglePlay, FaApple } from 'react-icons/fa';
-import donorImage from '../assets/web.png';
-import logo2 from '../assets/logo2.png'; // Import your logo image
+import React from "react";
+import { FaGooglePlay, FaApple } from "react-icons/fa";
+import donorImage from "../assets/web.png";
+import logo2 from "../assets/logo2.png"; // Import your logo image
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
@@ -211,14 +212,22 @@ const Home = () => {
           <nav className="nav">
             <a href="#">About Us</a>
             <a href="#">Contact Us</a>
-            <button className="request-btn">Request Blood</button>
+            <Link to="/login">
+              <button className="request-btn">Request Blood</button>
+            </Link>
           </nav>
         </header>
 
         <main className="main-section">
           <div className="text-content">
-            <h1>Your Blood, <br />Their Hope</h1>
-            <p>A simple way to connect donors with those who need lifesaving blood.</p>
+            <h1>
+              Your Blood, <br />
+              Their Hope
+            </h1>
+            <p>
+              A simple way to connect donors with those who need lifesaving
+              blood.
+            </p>
             <div className="app-buttons">
               <button className="icon-button google-btn">
                 <FaGooglePlay size={20} /> Google Play
@@ -248,7 +257,9 @@ const Home = () => {
               <p>Privacy Policy • Terms</p>
             </div>
           </div>
-          <p className="footer-bottom">© 2025 RedAlert. All rights reserved. Version 1.0.0</p>
+          <p className="footer-bottom">
+            © 2025 RedAlert. All rights reserved. Version 1.0.0
+          </p>
         </footer>
       </div>
     </>
