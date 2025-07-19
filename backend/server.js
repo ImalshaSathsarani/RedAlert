@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const http = require('http');
 
 // Import middleware and handlers
+const { protect } = require('./middleware/authMiddleware');
 // const { corsOption } = require('./middleware/corsMiddleware'); // Optional custom CORS
 // If you're not using a custom config, just use `cors()` below
 
@@ -19,7 +20,12 @@ const app = express();
 // Middleware
 app.use(express.json()); // Parse JSON
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
-app.use(cors()); // Use basic CORS (or cors(corsOption) if defined)
+// CORS configuration
+app.use(cors({
+    origin: '*', // Allow all origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+})); // Use basic CORS (or cors(corsOption) if defined)
 app.use(morgan('dev')); // HTTP request logging
 
 // Basic Route
@@ -29,8 +35,8 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/auth', require('./routes/donor/authRoutes'));
-app.use('/api/users', require('./routes/donor/userRoutes'));
-app.use('/api/eligibility', require('./routes/donor/eligibilityRoutes'));
+app.use('/api/donor/profile', require('./routes/donor/userRoutes')); // Changed from /api/users to /api/donor/profile
+app.use('/api/donor/eligibility', require('./routes/donor/eligibilityRoutes'));
 app.use('/api/donor/posts', require('./routes/donor/donationPostRoutes'));
 app.use('/api/community',require('./routes/communityRoutes'))
 app.use('/api/chatbot', require('./routes/chatRoutes'));
@@ -51,8 +57,13 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-const server = http.createServer(app);
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const HOST = '0.0.0.0';
+
+// Start server
+const server = app.listen(PORT, HOST, () => {
+    console.log(`Server running on http://${HOST}:${PORT}`);
+});
+// Remove duplicate server creation
 
 // Socket.io (if needed in the future)
 // const io = require('socket.io')(server, { cors: { origin: '*' } });

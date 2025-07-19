@@ -5,6 +5,7 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -33,10 +34,11 @@ type DonationPost = {
 const getFullProfilePicture = (pic?: string) => {
   if (!pic) return null;
   if (pic.startsWith("http")) return pic;
-  return `https://YOUR_BACKEND_URL${pic}`; // Replace with your backend URL
+  return `http://192.168.189.76:5000${pic}`;
 };
 
 export default function Home() {
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [posts, setPosts] = useState<DonationPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,14 +90,27 @@ export default function Home() {
             overflow: "hidden",
           }}
         >
-          <Image
-            source={image1}
-            style={{
-              width: "100%",
-              height: "100%",
-              resizeMode: "cover",
-            }}
-          />
+          <TouchableOpacity>
+            {profileImage ? (
+              <Image
+                source={{ uri: profileImage }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+                resizeMode="cover"
+              />
+            ) : (
+              <Image
+                source={{ uri: 'https://example.com/default-profile-image.jpg' }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+                resizeMode="cover"
+              />
+            )}
+          </TouchableOpacity>
         </View>
         <Text
           style={{

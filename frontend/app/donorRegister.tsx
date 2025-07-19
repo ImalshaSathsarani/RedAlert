@@ -8,13 +8,15 @@ import {
   Modal,
   FlatList,
   Alert,
+  ScrollView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅
 import logo2 from "../assets/images/logo2.png";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useState } from "react";
 import { donorAuthApi } from "../services/api";
 
-export default function Index() {
+export default function DonorRegister() {
   const router = useRouter();
   const [selected, setSelected] = useState("");
   const [visible, setVisible] = useState(false);
@@ -106,12 +108,13 @@ export default function Index() {
   };
 
   return (
-    <View>
-      <View className="absolute items-center ">
-        <Image source={logo2} style={{ width: 400, height: 400 }} />
-      </View>
+    <ScrollView>
+      <View>
+        <View className="absolute items-center">
+          <Image source={logo2} style={{ width: 400, height: 400 }} />
+        </View>
 
-      <View className="absolute space-y-3">
+        <View className="absolute space-y-3">
         <View className="flex-row px-10 py-3 rounded-xl bg-[#e4c8c2] mt-[33vh] ml-[60px]">
           <Icon className="ml-[-15px]" name="user" size={20} color="#000" />
           <TextInput
@@ -264,24 +267,21 @@ export default function Index() {
 
         </View>
 
-        <Text className="absolute top-[720px] left-[180px] font-bold">
-          - OR -
-        </Text>
+        <Text style={{ textAlign: 'center', marginVertical: 20, fontWeight: 'bold' }}>- OR -</Text>
 
-        <View className="flex-row absolute top-[760px] left-[175px]">
-          <Icon name="google" size={22} />
-          <Icon className="ml-[20px]" name="facebook" size={22} />
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
+          <Icon name="google" size={22} style={{ marginRight: 20 }} />
+          <Icon name="facebook" size={22} />
         </View>
 
-        <View className="flex-row justify-center items-center absolute top-[810px] w-full ml-[20px]">
-          <Text className="font-bold text-black">
-            Already have an account?{" "}
-          </Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10, marginBottom: 20 }}>
+          <Text style={{ fontWeight: 'bold', color: '#000' }}>Already have an account? </Text>
           <Link href="/donorLogin" asChild>
-            <Text className="font-bold text-[#B43929] ml-1">Sign In</Text>
+            <Text style={{ fontWeight: 'bold', color: '#B43929' }}>Sign In</Text>
           </Link>
         </View>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }

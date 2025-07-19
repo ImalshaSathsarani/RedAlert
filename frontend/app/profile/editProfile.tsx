@@ -1,31 +1,202 @@
 import { Entypo, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, Alert, Platform } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Platform } from 'react-native';
+import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios, { AxiosError } from 'axios';
+import api from '../../services/api';
+import * as ImagePicker from 'expo-image-picker';
 
 const { width,height } = Dimensions.get("window");
 
 export default function EditProfile() {
-    
-    const router = useRouter();
-    const [selectedIllness,setSelectedIllness] =useState("None");
-    const [status, setStatus] =useState("Ongoing");
-    const [smoking, setSmoking] =useState("")
-    const [alcohol, setAlcohol] = useState("");
-    const [vaccinationStatus, setVaccinationStatus] = useState("");
-    const [doseCount, setDoseCount] = useState("");
-    const [selectedVaccine, setSelectedVaccine] =useState("");
-    const [date, setDate] = useState(new Date());
-    const [showPicker, setShowPicker] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
+
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        base64: true
+      });
+
+      if (!result.canceled) {
+        const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+        setImage(base64Image);
+        
+        // Save to AsyncStorage
+        try {
+          await AsyncStorage.setItem('userProfileImage', base64Image);
+          console.log('Image saved locally');
+        } catch (error) {
+          console.error('Error saving image locally:', error);
+        }
+
+        // Upload to backend
+        try {
+          const token = await AsyncStorage.getItem('token');
+          if (!token) {
+            throw new Error('No token found');
+          }
+
+          // Convert base64 to blob
+          const fetchResponse = await fetch(base64Image);
+          const blob = await fetchResponse.blob();
+
+          const formData = new FormData();
+          formData.append('image', blob, 'profile.jpg');
+
+          // Upload to backend
+          try {
+            const uploadResponse = await api.post('/donor/profile/upload-image', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+
+            if (uploadResponse.status === 200) {
+              setImage(base64Image);
+            } else {
+              throw new Error('Image upload failed');
+            }
+          } catch (error) {
+            console.error('Error uploading image:', error);
+            Alert.alert('Error', 'Failed to upload image. Please try again.');
+            throw error; // Re-throw to be caught by the outer catch block
+          }
+        } catch (error) {
+          console.error('Error in image processing:', error);
+          Alert.alert('Error', 'Failed to process image. Please try again.');
+        }
+      } else {
+        Alert.alert('Error', 'No image selected');
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Error', 'Failed to pick image. Please try again.');
+    }
+  }
+
+  const uploadImage = async () => {
+    if (!image) return;
+
+    // Here you would typically upload the image to your backend
+    // For now, we'll just log the image URI
+    console.log('Selected image:', image);
+  };
+
+  const router = useRouter();
+  // Form state
+  const [selectedIllness, setSelectedIllness] = useState("None");
+  const [status, setStatus] = useState("Ongoing");
+  const [smoking, setSmoking] = useState("");
+  const [alcohol, setAlcohol] = useState("");
+  const [vaccinationStatus, setVaccinationStatus] = useState("");
+  const [doseCount, setDoseCount] = useState("");
+  const [selectedVaccine, setSelectedVaccine] = useState("");
+  
+  // Date picker state
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+  
+  // Loading state
+  const [loading, setLoading] = useState(false);
+
+  const isValidForm = () => {
+        // Medical history fields are optional for profile update
+        return true;
+    };
+
+    const handleUpdateProfile = async () => {
+        try {
+            setLoading(true);
+            console.log('Starting profile update...');
+            
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.log('No token found');
+                Alert.alert('Error', 'Please login to update profile');
+                return;
+            }
+
+            // Validate form data
+            if (!isValidForm()) {
+                Alert.alert('Error', 'Please fill in all required fields');
+                return;
+            }
+
+            const data = {
+                medicalHistory: {
+                    illness: selectedIllness,
+                    illnessStatus: status,
+                    smoking: smoking,
+                    alcohol: alcohol,
+                    vaccinationStatus: vaccinationStatus,
+                    vaccineType: selectedVaccine,
+                    doseCount: parseInt(doseCount) || 0,
+                    lastVaccinationDate: date.toISOString()
+                }
+            };
+            
+            console.log('Sending data:', JSON.stringify(data, null, 2));
+            
+            // Get the correct API URL based on environment
+            const getApiUrl = () => {
+                if (Platform.OS === 'android') {
+                    console.log('Using API URL from configuration');
+                    return api.defaults.baseURL;
+                } else if (Platform.OS === 'ios') {
+                    return 'http://192.168.189.76:5000'; // iOS simulator
+                }
+                
+                // For physical devices or other environments
+                return 'http://192.168.189.76:5000'; // WiFi IP for mobile devices
+            };
+
+            const apiUrl = getApiUrl();
+            console.log('Using API URL:', apiUrl);
+
+            try {
+                const response = await api.put(
+                    '/donor/profile/me',
+                    data,
+                    {
+                    }
+                );
+
+                console.log('Response received:', JSON.stringify(response.data, null, 2));
+                Alert.alert('Success', 'Profile updated successfully');
+                router.push('/(tabs)/profile');
+            } catch (error: AxiosError | any) {
+                let errorMessage = 'An unexpected error occurred';
+                if (error.response?.data?.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                console.error('Error details:', {
+                    error: error,
+                    message: error.message,
+                    data: error.response?.data
+                });
+                
+                Alert.alert('Error', errorMessage);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const onChange = (event: any, selectedDate: Date | undefined) => {
-    const currentDate = selectedDate || date;
-      setShowPicker(Platform.OS === 'ios');
-      setShowPicker(false); // for iOS keep showing picker
-      setDate(currentDate);
+        const currentDate = selectedDate || date;
+        setShowPicker(Platform.OS === 'ios');
+        setShowPicker(false); // for iOS keep showing picker
+        setDate(currentDate);
     };
 
     const formattedDate = date.toLocaleDateString('en-GB');
@@ -90,15 +261,32 @@ export default function EditProfile() {
 
         </View>
 
-        <Image 
-        source={require("../../assets/images/ProfileImg.jpg")}
-        style={{
-          width:width*0.3,
-          height:width*0.3,
-          borderColor:'#E72929',
-          borderWidth:1,
+        <TouchableOpacity
+          onPress={pickImage}
+          className="rounded-full mt-6"
+          style={{
+            width: width * 0.3,
+            height: width * 0.3,
+            borderColor: '#E72929',
+            borderWidth: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
-        className="rounded-full mt-6"/>
+        >
+          {image ? (
+            <Image
+              source={{ uri: image }}
+              style={{ width: '100%', height: '100%' }}
+              className="rounded-full"
+            />
+          ) : (
+            <Image
+              source={require("../../assets/images/ProfileImg.jpg")}
+              style={{ width: '100%', height: '100%' }}
+              className="rounded-full"
+            />
+          )}
+        </TouchableOpacity>
 
         <View className="flex-row items-center justify-between w-full px-6 mt-3">
             <View className ="  flex-1 h-[1px] bg-secondary mr-2"/>
@@ -160,20 +348,23 @@ export default function EditProfile() {
         </View>
 
         <View className="flex-row items-center justify-between w-full px-6 mt-5">
-            <View className ="  flex-1 h-[1px] bg-secondary mr-2"/>
-            <Text className= "text-sm font-poppins text-secondary">Health Info</Text>
-             <View className ="  flex-1 h-[1px] bg-secondary ml-2"/>
         </View>
 
-        <View className ="flex-row items-center justify-between">
-            <View className="border border-secondary rounded-xl px-4 py-2 w-[145px] h-[75px] mt-3 mr-3"> 
-            <Text className="text-sm font-poppins text-secondary">Weight</Text>
-               <TextInput
-                placeholder="50Kg"
-                className= "text-accent"
-               />
+        <View className="flex-row items-center justify-between w-full px-6 mt-5">
+          <View className="  flex-1 h-[1px] bg-secondary mr-2" />
+          <Text className="text-sm font-poppins text-secondary">Health Info</Text>
+          <View className="  flex-1 h-[1px] bg-secondary ml-2" />
         </View>
-        <View className="border border-secondary rounded-xl px-4 py-2 w-[145px] h-[75px] mt-3"> 
+
+        <View className="flex-row items-center justify-between">
+          <View className="border border-secondary rounded-xl px-4 py-2 w-[145px] h-[75px] mt-3 mr-3">
+            <Text className="text-sm font-poppins text-secondary">Weight</Text>
+            <TextInput
+              placeholder="50Kg"
+              className="text-accent"
+            />
+          </View>
+          <View className="border border-secondary rounded-xl px-4 py-2 w-[145px] h-[75px] mt-3">
             <Text className="text-sm font-poppins text-secondary ">Last Donation Date</Text>
             <TouchableOpacity onPress={() => setShowPicker(true)}>
                 <View className ="flex-row items-center justify-between mt-2">
@@ -317,11 +508,17 @@ export default function EditProfile() {
         </View>
         
     <TouchableOpacity
-        className = "mt-4 px-12 py-3  rounded-xl self-center mb-5"
-        style={{ backgroundColor: '#E72929' }}>
-             <Text className = "text-white text-xl font-semibold">Save</Text>
-
-        </TouchableOpacity>
+        className="mt-4 px-12 py-3 rounded-xl self-center mb-5"
+        style={{ backgroundColor: '#E72929' }}
+        onPress={handleUpdateProfile}
+        disabled={loading || !isValidForm()}
+    >
+        {loading ? (
+            <Text className="text-white text-xl font-semibold">Loading...</Text>
+        ) : (
+            <Text className="text-white text-xl font-semibold">Save</Text>
+        )}
+    </TouchableOpacity>
            
 
 

@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dimensions, Image, Modal, Switch, Text,  TouchableOpacity, View } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const { width,height } = Dimensions.get("window");
 export default function Profile() {
@@ -9,7 +11,67 @@ export default function Profile() {
   const [isAvailable,setIsAvailable]= useState(false);
   const [logoutModalVisible,setLogoutModalVisible] = useState(false);
   const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      try {
+        const savedImage = await AsyncStorage.getItem('userProfileImage');
+        if (savedImage) {
+          setProfileImage(savedImage);
+        }
+      } catch (error) {
+        console.error('Error loading profile image:', error);
+      }
+    };
+    loadProfileImage();
+  }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          router.replace('/donorLogin');
+          return;
+        }
+
+        const apiUrl = getApiUrl();
+        const response = await axios.get(
+          `${apiUrl}/api/donor/profile/me`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const getApiUrl = () => {
+    if (__DEV__) {
+      return 'http://192.168.189.76:5000';
+    }
+    return 'http://192.168.189.76:5000'; // Replace with your production URL
+  };
+
+  if (!user) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   {/* Reusable Row Style */}
 type SettingRowProps = {
   icon: React.ComponentProps<typeof Feather>["name"];
@@ -154,15 +216,29 @@ const SettingRow = ({ icon, label, rightElement, onPress }: SettingRowProps  & {
       }}
       className = "rounded-full -top-[115] -right-[10]"/>
 
-      <Image source = {require('../../assets/images/check.png')}
-       style={{
-        width:width*0.07,
-        height:width*0.07,
-        position:"relative",
-        bottom:150,
-        left:100,
-       }}
-      />
+      {profileImage ? (
+        <Image 
+          source={{ uri: profileImage }}
+          style={{
+            width: width * 0.07,
+            height: width * 0.07,
+            position: "relative",
+            bottom: 150,
+            left: 100,
+            borderRadius: 100, // Make it circular
+          }}
+        />
+      ) : (
+        <Image source = {require('../../assets/images/check.png')}
+          style={{
+            width: width * 0.07,
+            height: width * 0.07,
+            position: "relative",
+            bottom: 150,
+            left: 100,
+          }}
+        />
+      )}
 
      </View>
      
@@ -177,12 +253,12 @@ const SettingRow = ({ icon, label, rightElement, onPress }: SettingRowProps  & {
 
     
     <View className = " bg-white rounded-3xl h-[78%] w-full items-center ">
-       <Text className="text-2xl text-black font-poppins font-bold mt-12">John Doe</Text>
-     <Text className="text-sm text-secondary font-poppins">johndoe@example.com</Text>
+       <Text className="text-2xl text-black font-poppins font-bold mt-12">{user?.name || 'John Doe'}</Text>
+     <Text className="text-sm text-secondary font-poppins">{user?.email || 'johndoe@example.com'}</Text>
 
 <View className= "flex-row items-center mt-2 mb-4" >
   <View className="w-[60px] h-[60px] bg-secondary rounded-xl justify-center items-center px-2 py-2">
-    <Text className="text-xl text-black font-poppins">A+</Text>
+    <Text className="text-xl text-black font-poppins">{user?.bloodType || 'A+'}</Text>
     <Text className="text-xs text-gray-500 font-poppins">Blood Type</Text>
     </View>
     <Link href= "/donationHistory" asChild><TouchableOpacity className= "w-[60px] h-[60px] bg-secondary rounded-xl justify-center items-center px-2 py-2 ml-20">
