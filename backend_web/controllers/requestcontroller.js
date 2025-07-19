@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const BloodRequest = require("../models/bloodrequest");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
-exports.createBloodRequest = async (req, res) => {
+/*exports.createBloodRequest = async (req, res) => {
   try {
     const newRequest = new BloodRequest({
       ...req.body,
@@ -9,6 +11,60 @@ exports.createBloodRequest = async (req, res) => {
     });
 
     await newRequest.save();
+    res.status(201).json({
+      success: true,
+      message: "Blood request created",
+      data: newRequest,
+    });
+  } catch (error) {
+    console.error("Blood Request Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};*/
+
+exports.createBloodRequest = async (req, res) => {
+  try {
+    const {
+      hospitalName,
+      city,
+      contactPersonName,
+      emergencyContact,
+      bloodType,
+      quantity,
+      urgency,
+      requiredDate,
+      requiredTime,
+      patientName,
+      ward, // not used in model
+      medicalCondition,
+      donationLocation,
+      donationTime,
+      additionalInfo,
+    } = req.body;
+
+    const doctorRequestFile = req.files?.doctorRequestFile?.[0]?.filename;
+
+    const newRequest = new BloodRequest({
+      hospitalId: new mongoose.Types.ObjectId(req.user.id),
+      hospitalName,
+      district: city,
+      contactPerson: contactPersonName,
+      emergencyPhone: emergencyContact,
+      bloodType: bloodType,
+      quantity,
+      urgencyLevel: urgency,
+      requestDate: requiredDate,
+      requestTime: requiredTime,
+      patientName,
+      condition: medicalCondition,
+      donationLocation,
+      donationTime,
+      doctorRequestFile,
+      additionalInfo,
+    });
+
+    await newRequest.save();
+
     res.status(201).json({
       success: true,
       message: "Blood request created",
@@ -43,6 +99,7 @@ exports.getHospitalRequests = async (req, res) => {
       name: req.patientName,
       date: req.createdAt,
       status: req.status,
+      bloodType: req.bloodType,
     }));
 
     res.status(200).json({ success: true, data: formattedRequests });

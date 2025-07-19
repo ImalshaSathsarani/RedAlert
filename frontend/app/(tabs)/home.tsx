@@ -1,69 +1,71 @@
-import { Text, TextInput, View, Image, TouchableOpacity } from "react-native";
-import { Link, useRouter } from "expo-router";
+import {
+  Text,
+  TextInput,
+  View,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
+import { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import bloodbanner from "../../assets/images/bloodbanner.png";
 import image1 from "../../assets/images/image1.png";
-import { Feather } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import { useState, useEffect } from "react";
+import { donationPostApi } from "../../services/api";
+
+type Hospital = {
+  hospitalName?: string;
+  name?: string;
+  profilePicture?: string;
+  email?: string;
+};
+
+type DonationPost = {
+  createdAt: string;
+  message: string;
+  views: number;
+  contactInfo: string;
+  createdBy: {
+    id: Hospital;
+    model: string;
+  };
+};
+
+const getFullProfilePicture = (pic?: string) => {
+  if (!pic) return null;
+  if (pic.startsWith("http")) return pic;
+  return `http://192.168.189.76:5000${pic}`;
+};
 
 export default function Home() {
-  const router = useRouter();
-  const [userName, setUserName] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [posts, setPosts] = useState<DonationPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadProfileImage = async () => {
+    const fetchPosts = async () => {
       try {
-        // Try to load image URL from backend first
-        const imageUrl = await AsyncStorage.getItem('userProfileImageUrl');
-        if (imageUrl) {
-          setProfileImage(imageUrl);
-          return;
-        }
-
-        // Fallback to local image if no backend URL
-        const localImage = await AsyncStorage.getItem('userProfileImage');
-        if (localImage) {
-          setProfileImage(localImage);
-        }
+        const data = await donationPostApi.getAllPosts();
+        setPosts(data);
       } catch (error) {
-        console.error('Error loading profile image:', error);
-      }
-    };
-    loadProfileImage();
-  }, []);
-
-  useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) return;
-
-        const response = await axios.get(
-          `http://192.168.93.76:5000/api/donor/profile/me`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-        setUserName(response.data.name || 'Donor');
-      } catch (error) {
-        console.error('Error fetching user name:', error);
+        console.error("Failed to load posts:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchUserName();
+    fetchPosts();
   }, []);
 
-  const [search, setSearch] = useState("")
-
+  // Filter posts based on search input (case insensitive)
+  const filteredPosts = posts.filter((post) =>
+    post.message.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <View>
+    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+      {/* Top Red Section */}
       <View
         style={{
           width: "100%",
@@ -73,6 +75,7 @@ export default function Home() {
           borderBottomRightRadius: 50,
         }}
       >
+        {/* Profile Image */}
         <View
           style={{
             position: "absolute",
@@ -84,16 +87,10 @@ export default function Home() {
             height: 60,
             alignSelf: "center",
             transform: [{ translateX: -0.5 * 60 }],
-            overflow: "hidden", // Ensures the image fits the circular shape
+            overflow: "hidden",
           }}
         >
-          <TouchableOpacity
-            onPress={() => router.push('/profile')}
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          >
+          <TouchableOpacity>
             {profileImage ? (
               <Image
                 source={{ uri: profileImage }}
@@ -105,7 +102,7 @@ export default function Home() {
               />
             ) : (
               <Image
-                source={{ uri: 'https://example.com/default-profile-image.jpg' }} 
+                source={{ uri: 'https://example.com/default-profile-image.jpg' }}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -115,44 +112,227 @@ export default function Home() {
             )}
           </TouchableOpacity>
         </View>
-        <Text className="font-semibold top-[54px] left-[110px] text-lg">
-          Hey {userName}
+        <Text
+          style={{
+            fontWeight: "600",
+            position: "absolute",
+            top: 54,
+            left: 110,
+            fontSize: 18,
+            color: "white",
+          }}
+        >
+          Hey Amie
         </Text>
 
-        <View className="absolute bg-white top-[55px] left-[280px] rounded-full w-[37px] h-[37px] justify-center items-center">
+        {/* Notification and Plus Icons */}
+        <View
+          style={{
+            position: "absolute",
+            backgroundColor: "white",
+            top: 55,
+            left: 280,
+            borderRadius: 37 / 2,
+            width: 37,
+            height: 37,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Icon name="bell" size={20} color="#000000" />
         </View>
-        <View className="absolute bg-white top-[55px] left-[340px] rounded-full w-[37px] h-[37px] justify-center items-center">
+        <View
+          style={{
+            position: "absolute",
+            backgroundColor: "white",
+            top: 55,
+            left: 340,
+            borderRadius: 37 / 2,
+            width: 37,
+            height: 37,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Icon name="plus" size={20} color="#000000" />
         </View>
-        <View className="items-center justify-center absolute w-[330px] bg-white top-[130px] left-1/2 -translate-x-1/2 h-[135px] z-10 rounded-3xl">
+
+        {/* Banner */}
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            width: 330,
+            backgroundColor: "white",
+            top: 130,
+            left: "50%",
+            marginLeft: -165, // to center horizontally (half width negative)
+            height: 135,
+            zIndex: 10,
+            borderRadius: 24,
+            overflow: "hidden",
+          }}
+        >
           <Image
             source={bloodbanner}
-            style={{ width: "100%", height: "100%", borderRadius: 20 }}
+            style={{ width: "100%", height: "100%" }}
             resizeMode="cover"
           />
         </View>
-        <View className="flex-row items-center justify-between absolute w-[330px] bg-white top-[280px] left-1/2 -translate-x-1/2 h-[45px] z-10 rounded-3xl px-4">
+
+        {/* Search Bar */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            position: "absolute",
+            width: 330,
+            backgroundColor: "white",
+            top: 280,
+            left: "50%",
+            marginLeft: -165,
+            height: 45,
+            zIndex: 10,
+            borderRadius: 24,
+            paddingHorizontal: 15,
+          }}
+        >
           <TextInput
-            className="flex-1 font-semibold text-md"
             placeholder="Find donor..."
-            style={{ paddingRight: 36 }}
+            style={{ flex: 1, fontWeight: "600", fontSize: 16 }}
             value={search}
             onChangeText={setSearch}
-          />
+            />
           <Icon name="search" size={20} color="#000000" />
         </View>
       </View>
 
-      <View>
-        <View className="flex-row items-center justify-between mt-6 px-6">
-          <Text className="font-bold text-xl">Emergency Blood</Text>
-          <Text className="font-bold text-md">View All</Text>
+      {/* Emergency Blood Section */}
+      <View style={{ marginTop: 30, paddingHorizontal: 20 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 15,
+          }}
+        >
+          <Text
+            style={{
+              fontWeight: "700",
+              fontSize: 22,
+              color: "#222",
+            }}
+          >
+            Emergency Blood
+          </Text>
+          <Text
+            style={{
+              fontWeight: "700",
+              fontSize: 16,
+              color: "#E72929",
+            }}
+          >
+            View All
+          </Text>
         </View>
-        <View className="items-center justify-center absolute w-[360px] bg-white top-[70px] left-1/2 -translate-x-1/2 h-[135px] z-10 rounded-3xl">
-          {/* Add content here to make it visible */}
-        </View>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#E72929" />
+        ) : filteredPosts.length === 0 ? (
+          <Text style={{ textAlign: "center", color: "#999", fontSize: 16 }}>
+            No donation posts found.
+          </Text>
+        ) : (
+          filteredPosts.map((post, index) => {
+            const hospital = post.createdBy.id;
+            return (
+              <View
+                key={index}
+                style={{
+                  backgroundColor: "#fff",
+                  borderRadius: 15,
+                  padding: 15,
+                  marginBottom: 15,
+                  shadowColor: "#000",
+                  shadowOpacity: 0.1,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowRadius: 8,
+                  elevation: 5,
+                  borderWidth: 1,
+                  borderColor: "#eee",
+                }}
+              >
+                {/* Header row: profile pic + hospital name + date */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <Image
+                    source={
+                      hospital?.profilePicture
+                        ? { uri: getFullProfilePicture(hospital.profilePicture) }
+                        : image1
+                    }
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 24,
+                      marginRight: 12,
+                      borderWidth: 1,
+                      borderColor: "#E72929",
+                    }}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{ fontWeight: "700", fontSize: 16, color: "#222" }}
+                    >
+                      {hospital?.hospitalName || hospital?.name || "Unknown Hospital"}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: "#666", marginTop: 2 }}>
+                      {new Date(post.createdAt).toLocaleString()}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Post message */}
+                <Text
+                  style={{
+                    fontSize: 15,
+                    color: "#444",
+                    lineHeight: 22,
+                    marginBottom: 12,
+                  }}
+                >
+                  {post.message}
+                </Text>
+
+                {/* Contact info row */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    borderTopWidth: 1,
+                    borderTopColor: "#eee",
+                    paddingTop: 10,
+                  }}
+                >
+                  <Text style={{ fontSize: 14, color: "#555" }}>
+                    📞 {post.contactInfo}
+                  </Text>
+                  <Text style={{ fontSize: 14, color: "#555" }}>
+                    📧 {hospital?.email || "N/A"}
+                  </Text>
+                </View>
+              </View>
+            );
+          })
+        )}
       </View>
-    </View>
+    </ScrollView>
   );
 }

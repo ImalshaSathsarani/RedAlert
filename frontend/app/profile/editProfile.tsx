@@ -150,11 +150,11 @@ export default function EditProfile() {
                     console.log('Using API URL from configuration');
                     return api.defaults.baseURL;
                 } else if (Platform.OS === 'ios') {
-                    return 'http://192.168.93.76:5000'; // iOS simulator
+                    return 'http://192.168.189.76:5000'; // iOS simulator
                 }
                 
                 // For physical devices or other environments
-                return 'http://192.168.93.76:5000'; // WiFi IP for mobile devices
+                return 'http://192.168.189.76:5000'; // WiFi IP for mobile devices
             };
 
             const apiUrl = getApiUrl();

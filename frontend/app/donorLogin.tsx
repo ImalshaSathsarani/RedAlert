@@ -149,10 +149,17 @@ export default function DonorLogin() {
         <Icon name="facebook" size={22} />
       </View>
 
-      <View style={{ flexDirection: "row", marginTop: 30 }}>
-        <Text style={{ fontWeight: "bold", color: "#000" }}>
-          Haven't any account?{" "}
-        </Text>
+      <Text className="absolute top-[610px] left-[180px] font-bold">
+        - OR -
+      </Text>
+
+      <View className="flex-row absolute top-[660px] left-[175px]">
+        <Icon name="google" size={22} />
+        <Icon className="ml-[20px]" name="facebook" size={22} />
+      </View>
+
+      <View className="flex-row justify-center items-center absolute top-[700px] w-full">
+        <Text className="font-bold text-black">Haven't any account? </Text>
         <Link href="/donorRegister" asChild>
           <Text style={{ fontWeight: "bold", color: "#B43929" }}>Sign Up</Text>
         </Link>

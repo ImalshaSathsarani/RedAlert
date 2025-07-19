@@ -226,6 +226,14 @@ exports.signin = async (req, res) => {
       { expiresIn: "1d" }
     );
 
+    // 4. Set token in HttpOnly cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+      sameSite: "Lax",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
     res.status(200).json({
       success: true,
       message: "Login successful",

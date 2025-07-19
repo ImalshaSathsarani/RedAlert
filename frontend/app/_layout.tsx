@@ -1,7 +1,8 @@
-import { Stack } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import './globals.css';
+import { EligibilityProvider } from "../contexts/EligibilityContext";
 
 export default function RootLayout() {
 
@@ -14,13 +15,11 @@ export default function RootLayout() {
     return null; // or <AppLoading />
   }
 
-  
-  return <Stack>
-    <Stack.Screen 
-         name ="index" 
-         options={{
-          title:"Welcome",
-          headerShown:false}}/>
+
+  return (
+  <EligibilityProvider> 
+    <Stack>
+    <Stack.Screen name ="index" options={{title:"Welcome",headerShown:false}}/>
           
      <Stack.Screen
       name = "(tabs)"
@@ -128,5 +127,7 @@ export default function RootLayout() {
       />
       
 
-  </Stack>;
+  </Stack>
+  </EligibilityProvider>
+  );
 }

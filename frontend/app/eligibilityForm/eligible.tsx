@@ -40,8 +40,7 @@ export default function EligibilityOne() {
 
 
 
-<Link href="./notEligible" asChild>
-<Text>Not</Text></Link>
+
  
         
 </View>

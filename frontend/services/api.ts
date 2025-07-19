@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-const API_BASE_URL = Platform.OS === 'android' ? 'http://10.33.65.70:5000' : 'http://localhost:5000';
+const API_BASE_URL = Platform.OS === 'android' ? 'http://192.168.189.76:5000' : 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -135,4 +135,71 @@ export const donorProfileApi = {
       throw error.response?.data?.message || 'Failed to fetch profile';
     }
   },
+};
+
+export const donationPostApi = {
+  getAllPosts: async () => {
+    try {
+      console.log('Fetching donation posts from:', API_BASE_URL + '/api/donor/posts');
+      const response = await api.get('/api/donor/posts');
+      console.log('Donation posts fetched:', response.data.posts);
+      return response.data.posts;
+    } catch (error: any) {
+      console.error('Error fetching donation posts:', error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to fetch donation posts';
+    }
+  },
+};
+
+export const hospitalApi = {
+  getAllHospitals: async () => {
+    try {
+      const response = await api.get('/api/community/gethospitals'); // adjust endpoint
+      console.log("Fetched hospitals:", response.data.hospitals);
+      return response.data.hospitals;
+    } catch (error: any) {
+      console.error("Error fetching hospitals:", error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to fetch hospitals';
+    }
+  }
+};
+
+export const commentApi = {
+  addComment: async (postId: string, commentText: string) => {
+    try {
+      console.log('Sending add comment:', { postId, commentText });
+      const response = await api.post('/api/community/addcomment', { postId, commentText });
+      console.log('Add comment response:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Add comment error:', error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to add comment';
+    }
+  },
+
+  getCommentsByPost: async (postId: string) => {
+    try {
+      console.log('Fetching comments for postId:', postId);
+      const response = await api.get(`/api/community/getcomment/${postId}`);
+      console.log('Comments fetched:', response.data.comments);
+      return response.data.comments;
+    } catch (error: any) {
+      console.error('Get comments error:', error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to fetch comments';
+    }
+  },
+};
+
+export const chatApi = {
+  sendMessage: async (message: string) => {
+    try {
+      console.log("Sending message to chatbot:", message);
+      const response = await api.post('/api/chatbot/chat', { message });
+      console.log("Chatbot response:", response.data);
+      return response.data.reply;  // assuming backend returns { reply: "some text" }
+    } catch (error: any) {
+      console.error("Chat error:", error.response?.data || error.message);
+      throw error.response?.data?.message || "Failed to get chatbot reply";
+    }
+  }
 };

@@ -38,6 +38,9 @@ app.use('/api/auth', require('./routes/donor/authRoutes'));
 app.use('/api/donor/profile', require('./routes/donor/userRoutes')); // Changed from /api/users to /api/donor/profile
 app.use('/api/donor/eligibility', require('./routes/donor/eligibilityRoutes'));
 app.use('/api/donor/posts', require('./routes/donor/donationPostRoutes'));
+app.use('/api/community',require('./routes/communityRoutes'))
+app.use('/api/chatbot', require('./routes/chatRoutes'));
+
 // app.use('/api/requests', require('./routes/bloodRequestRoutes'));
 // app.use('/api/notifications', require('./routes/notificationRoutes'));
 
