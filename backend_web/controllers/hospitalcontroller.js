@@ -3,9 +3,20 @@ const Hospital = require("../models/hospital");
 // Update Profile Controller
 exports.updateProfile = async (req, res) => {
   try {
-    const hospitalId = req.user.id; // from authMiddleware
+    const hospitalId = req.user.id;
 
-    const { hospitalName, type, name, phone, designation, email } = req.body;
+    const {
+      hospitalName,
+      type,
+      name,
+      phone,
+      designation,
+      email,
+      profilePicture, // receive the base64 string from frontend
+    } = req.body;
+
+    // console.log("Received hospitalId:", profilePicture);
+    // console.log("Received profilePicture:", profilePicture?.substring(0, 100)); // to avoid large logs
 
     const updatedHospital = await Hospital.findByIdAndUpdate(
       hospitalId,
@@ -16,8 +27,9 @@ exports.updateProfile = async (req, res) => {
         phone,
         designation,
         email,
+        ...(profilePicture && { profilePicture }), // only update if present
       },
-      { new: true } // return the updated document
+      { new: true }
     );
 
     if (!updatedHospital) {
@@ -25,6 +37,8 @@ exports.updateProfile = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Hospital not found" });
     }
+
+    console.log("Updated Hospital Profile:", updatedHospital);
 
     res.status(200).json({
       success: true,
@@ -37,19 +51,21 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
+
 exports.getProfile = async (req, res) => {
   try {
     const hospitalId = req.user.id;
 
     const hospital = await Hospital.findById(hospitalId).select(
-      "hospitalName type registrationNumber district address phone"
+      "hospitalName type registrationNumber district address phone image"
     );
 
     if (!hospital) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Hospital not found" });
+      return res.status(404).json({ success: false, message: "Hospital not found" });
     }
+
+    console.log("Hospital Document:", hospital);
+    console.log("Hospital Image Data:", hospital.image);
 
     res.status(200).json({
       success: true,
@@ -60,6 +76,7 @@ exports.getProfile = async (req, res) => {
         address: hospital.address,
         city: hospital.district,
         phoneNumber: hospital.phone,
+        image: hospital.image || "", // send image string
       },
     });
   } catch (error) {
@@ -67,3 +84,4 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+

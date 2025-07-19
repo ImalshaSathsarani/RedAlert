@@ -18,8 +18,11 @@ const EditProfile = () => {
     phone: "",
     designation: "",
     email: "",
+    profilePicture: "",  // <-- Added for base64 image
   });
+  console.log("PP: ",formData)
 
+  // Handle logout
   const handleLogout = () => {
     navigate("/login");
   };
@@ -47,6 +50,7 @@ const EditProfile = () => {
           phone: data.phoneNumber || "",
           designation: "", // add this in backend response if needed
           email: "", // also add this in backend response if needed
+          profilePicture: data.profilePicture || "", // <-- if backend returns it
         });
       } catch (error) {
         console.error("Failed to fetch profile:", error.message);
@@ -61,7 +65,22 @@ const EditProfile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Submit updated profile
+  // 🖼 Handle image upload and convert to base64 string
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          profilePicture: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // ✅ Submit updated profile including profilePicture base64
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -151,10 +170,24 @@ const EditProfile = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            position: "relative",
+            overflow: "hidden",
           }}
         >
-          <FaUser size={100} color="#B43929" />
-          <div
+          {/* Show uploaded image preview if exists, else FaUser icon */}
+          {formData.profilePicture ? (
+            <img
+              src={formData.profilePicture}
+              alt="Profile"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <FaUser size={100} color="#B43929" />
+          )}
+
+          {/* File input over camera icon */}
+          <label
+            htmlFor="profileImage"
             style={{
               position: "absolute",
               bottom: "10px",
@@ -169,7 +202,14 @@ const EditProfile = () => {
             }}
           >
             <FaCamera size={20} color="white" />
-          </div>
+            <input
+              type="file"
+              id="profileImage"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+            />
+          </label>
         </div>
         <div
           style={{
@@ -617,9 +657,7 @@ const EditProfile = () => {
 };
 
 const NavTab = ({ to, label, active }) => (
-  <div
-    style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-  >
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
     <Link
       to={to}
       style={{
