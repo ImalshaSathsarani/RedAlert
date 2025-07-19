@@ -14,6 +14,8 @@ exports.createPost = async (req, res) => {
       hospitalId: req.user.id,
       hospitalName: req.user.hospitalName, // Add hospitalName in authMiddleware or fetch it here
       message,
+      email: hospital.email,
+      emergencyPhone: hospitalUser.emergencyPhone,
     });
 
     await newPost.save();

@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const BloodRequest = require("../models/bloodrequest");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
+const CommunityPost = require("../models/communitypost");
+const Hospital = require("../models/hospital");
 
 /*exports.createBloodRequest = async (req, res) => {
   try {
@@ -44,6 +46,11 @@ exports.createBloodRequest = async (req, res) => {
 
     const doctorRequestFile = req.files?.doctorRequestFile?.[0]?.filename;
 
+    const userId = req.user.id;
+
+    // Optional: Fetch full hospital details if `req.user` doesn't have email/contact
+    const hospitalUser = await Hospital.findById(userId);
+
     const newRequest = new BloodRequest({
       hospitalId: new mongoose.Types.ObjectId(req.user.id),
       hospitalName,
@@ -65,7 +72,31 @@ exports.createBloodRequest = async (req, res) => {
 
     await newRequest.save();
 
-    res.status(201).json({
+    // 3. Automatically create a community post
+    if (additionalInfo) {
+      const post = new CommunityPost({
+        hospitalId: userId,
+        hospitalName: hospitalUser.hospitalName, // Or get from DB if not in req.user
+        message: additionalInfo,
+        email: hospitalUser.email,
+        emergencyPhone: emergencyContact,
+      });
+      await post.save();
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Blood request submitted and posted to community.",
+    });
+  } catch (error) {
+    console.error("Error in requestBlood:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while submitting blood request.",
+    });
+  }
+
+  /*res.status(201).json({
       success: true,
       message: "Blood request created",
       data: newRequest,
@@ -73,7 +104,7 @@ exports.createBloodRequest = async (req, res) => {
   } catch (error) {
     console.error("Blood Request Error:", error);
     res.status(500).json({ success: false, message: "Server error" });
-  }
+  }*/
 };
 
 exports.getAllRequests = async (req, res) => {

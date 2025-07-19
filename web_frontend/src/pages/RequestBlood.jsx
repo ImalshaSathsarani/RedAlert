@@ -815,13 +815,13 @@ const RequestBlood = () => {
               marginTop: "20px",
             }}
           >
-            Additional Information (if necessary)
+            Description for community page
             <textarea
               name="additionalInfo"
               value={formData.additionalInfo}
               onChange={handleChange}
               type="text"
-              placeholder="e.g:Bring Id"
+              placeholder="e.g: Urgently need 3 units of A+ blood group"
               style={{
                 display: "block",
                 backgroundColor: "#FFE2E2",

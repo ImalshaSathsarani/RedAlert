@@ -262,11 +262,14 @@ const Community = () => {
                 />
               </div>
             </div>
-
             <div style={{ fontSize: 14, margin: "0 20px" }}>{post.message}</div>
-
+            <p style={{ fontSize: 14, margin: "10px 20px" }}>
+              <strong>Email:</strong> {post.email || "N/A"}
+            </p>
+            <p style={{ fontSize: 14, margin: "0 20px" }}>
+              <strong>Contact:</strong> {post.emergencyPhone || "N/A"}
+            </p>
             <hr style={{ borderColor: "#ccc", marginTop: 15 }} />
-
             <div style={{ display: "flex", margin: 20 }}>
               <div
                 style={{

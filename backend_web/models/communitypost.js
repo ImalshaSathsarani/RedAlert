@@ -9,7 +9,11 @@ const communityPostSchema = new mongoose.Schema(
     },
     hospitalName: { type: String },
     message: { type: String, required: true },
+
+    email: { type: String },
+    emergencyPhone: { type: String },
   },
+
   { timestamps: true }
 );
 
