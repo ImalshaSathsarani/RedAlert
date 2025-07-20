@@ -51,17 +51,18 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-
 exports.getProfile = async (req, res) => {
   try {
     const hospitalId = req.user.id;
 
     const hospital = await Hospital.findById(hospitalId).select(
-      "hospitalName type registrationNumber district address phone image"
+      "hospitalName type registrationNumber district address phone profilePicture"
     );
 
     if (!hospital) {
-      return res.status(404).json({ success: false, message: "Hospital not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Hospital not found" });
     }
 
     console.log("Hospital Document:", hospital);
@@ -76,7 +77,7 @@ exports.getProfile = async (req, res) => {
         address: hospital.address,
         city: hospital.district,
         phoneNumber: hospital.phone,
-        image: hospital.image || "", // send image string
+        image: hospital.profilePicture || "", // send image string
       },
     });
   } catch (error) {
@@ -84,4 +85,3 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-

@@ -12,6 +12,7 @@ const ProfileDetails = () => {
     type: "",
     address: "",
     phoneNumber: "",
+    image: "", // add this
   });
 
   useEffect(() => {
@@ -129,7 +130,7 @@ const ProfileDetails = () => {
                 backgroundColor: "#f8f8f8",
                 paddingLeft: "20px",
                 paddingRight: "20px",
-                paddingTop: "10px", 
+                paddingTop: "10px",
                 paddingBottom: "10px",
                 borderRadius: "10px",
                 border: "1px solid #B43929",
@@ -165,6 +166,8 @@ const ProfileDetails = () => {
               height: "150px",
               marginTop: "160px",
               marginLeft: "400px",
+              objectFit: "cover",
+              borderRadius: "50%", // optional: make it circular
             }}
           />
         </div>
