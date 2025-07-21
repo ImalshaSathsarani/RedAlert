@@ -144,14 +144,43 @@ export default function EditProfile() {
                 medicalHistory: {
                     illness: selectedIllness,
                     illnessStatus: status,
-                    smoking: smoking,
-                    alcohol: alcohol,
-                    vaccinationStatus: vaccinationStatus,
-                    vaccineType: selectedVaccine,
+                    smoking: smoking || 'never',  // Default to 'never' if not set
+                    alcohol: alcohol || 'never',  // Default to 'never' if not set
+                    vaccinationStatus: vaccinationStatus || 'not_vaccinated',  // Default to 'not_vaccinated' if not set
+                    vaccineType: selectedVaccine || '',
                     doseCount: parseInt(doseCount) || 0,
-                    lastVaccinationDate: date.toISOString()
+                    lastVaccinationDate: date ? date.toISOString() : null
                 }
             };
+            
+            // Validate illness value matches backend expectations
+            const validIllnessValues = ['None', 'Diabetes', 'Hypertension', 'Asthma', 'Other'];
+            if (!validIllnessValues.includes(data.medicalHistory.illness)) {
+                Alert.alert('Error', 'Please select a valid illness value');
+                return;
+            }
+            
+            // Validate illness status
+            const validStatusValues = ['Ongoing', 'Recovered', 'Managed'];
+            if (!validStatusValues.includes(data.medicalHistory.illnessStatus)) {
+                Alert.alert('Error', 'Please select a valid status');
+                return;
+            }
+            
+            // Validate smoking/alcohol values
+            const validHabitValues = ['never', 'occasional', 'regular'];
+            if (!validHabitValues.includes(data.medicalHistory.smoking) || 
+                !validHabitValues.includes(data.medicalHistory.alcohol)) {
+                Alert.alert('Error', 'Please select valid values for smoking and alcohol');
+                return;
+            }
+            
+            // Validate vaccination status
+            const validVaccinationStatus = ['not_vaccinated', 'partial', 'fully'];
+            if (!validVaccinationStatus.includes(data.medicalHistory.vaccinationStatus)) {
+                Alert.alert('Error', 'Please select a valid vaccination status');
+                return;
+            }
             
             console.log('Sending data:', JSON.stringify(data, null, 2));
             
@@ -172,10 +201,15 @@ export default function EditProfile() {
             console.log('Using API URL:', apiUrl);
 
             try {
+                console.log('Sending request to:', `${apiUrl}/api/donor/profile/me`);
                 const response = await api.put(
-                    '/donor/profile/me',
+                    '/api/donor/profile/me',
                     data,
                     {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
                     }
                 );
 

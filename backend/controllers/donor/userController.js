@@ -21,32 +21,58 @@ exports.getUserProfile = async (req, res) => {
 
 exports.updateUserProfile = async (req, res) => {
   try {
-    console.log('Received update request for user:', req.user._id);
-    console.log('Update data:', req.body);
-    
+    console.log('Update request received for user:', req.user._id);
+    console.log('Update data:', JSON.stringify(req.body, null, 2));
+
     const updates = req.body;
     const userId = req.user._id;
+
+    // List of allowed updates
+    const allowedUpdates = [
+      'name', 'email', 'mobileNo', 'bloodType', 'medicalHistory',
+      'location', 'isAvailable', 'lastDonationDate'
+    ];
     
-    // Validate medical history data
+    // Check if all updates are allowed
+    const isValidOperation = Object.keys(updates).every(update => 
+      allowedUpdates.includes(update)
+    );
+
+    if (!isValidOperation) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Invalid updates!',
+        allowedUpdates
+      });
+    }
+
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Handle medical history updates
     if (updates.medicalHistory) {
-      const requiredFields = ['illness', 'illnessStatus', 'smoking', 'alcohol', 'vaccinationStatus'];
-      const missingFields = requiredFields.filter(field => !updates.medicalHistory[field]);
+      // If medicalHistory exists, update each field individually
+      if (!user.medicalHistory) {
+        user.medicalHistory = {};
+      }
       
-      if (missingFields.length > 0) {
-        console.log('Missing required fields:', missingFields);
-        return res.status(400).json({ 
-          message: 'Missing required fields',
-          missing: missingFields 
-        });
-      }
+      // Update each field that exists in the request
+      Object.keys(updates.medicalHistory).forEach(field => {
+        user.medicalHistory[field] = updates.medicalHistory[field];
+      });
 
-      // Convert doseCount to number
+      // Convert doseCount to number if it exists
       if (updates.medicalHistory.doseCount) {
-        updates.medicalHistory.doseCount = parseInt(updates.medicalHistory.doseCount);
-        console.log('Parsed doseCount:', updates.medicalHistory.doseCount);
+        user.medicalHistory.doseCount = parseInt(updates.medicalHistory.doseCount) || 0;
       }
 
-      // Handle date
+      // Handle date if it exists
       if (updates.medicalHistory.lastVaccinationDate) {
         try {
           updates.medicalHistory.lastVaccinationDate = new Date(updates.medicalHistory.lastVaccinationDate);
@@ -61,8 +87,8 @@ exports.updateUserProfile = async (req, res) => {
       }
 
       // Update user
-      const user = await User.findById(userId);
-      if (!user) {
+      const existingUser = await User.findById(userId);
+      if (!existingUser) {
         console.log('User not found:', userId);
         return res.status(404).json({ message: 'User not found' });
       }
@@ -127,8 +153,8 @@ exports.updateUserProfile = async (req, res) => {
         }
 
         // Update user with medical history reference
-        user.medicalHistory = medicalHistory._id;
-        const updatedUser = await user.save();
+        existingUser.medicalHistory = medicalHistory._id;
+        const updatedUser = await existingUser.save();
         
         // Return the updated user with medical history
         const populatedUser = await User.findById(userId)

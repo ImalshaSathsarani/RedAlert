@@ -120,18 +120,31 @@ export const donorAuthApi = {
 export const donorProfileApi = {
   updateProfile: async (data: any) => {
     try {
-      const response = await api.put('/donor/profile', data);
+      const token = await AsyncStorage.getItem('token');
+      const response = await api.put('/api/donor/profile/me', data, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       return response.data;
     } catch (error: any) {
+      console.error('Profile update error:', error.response?.data || error.message);
       throw error.response?.data?.message || 'Profile update failed';
     }
   },
 
   getProfile: async () => {
     try {
-      const response = await api.get('/donor/profile');
+      const token = await AsyncStorage.getItem('token');
+      const response = await api.get('/api/donor/profile/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       return response.data;
     } catch (error: any) {
+      console.error('Fetch profile error:', error.response?.data || error.message);
       throw error.response?.data?.message || 'Failed to fetch profile';
     }
   },
