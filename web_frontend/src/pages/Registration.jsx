@@ -81,6 +81,9 @@ const WebPortal = () => {
       );
 
       console.log(response.data);
+     
+     localStorage.setItem("hospitalId", response.data.hospitalId);
+
       alert("Registration Successful!");
       navigate("/login");
     } catch (error) {
@@ -258,7 +261,7 @@ const WebPortal = () => {
           Registration Number
           <input
             name="registrationNumber"
-            type="number"
+            type="text"
             placeholder="1234567"
             value={formDataValues.registrationNumber}
             onChange={handleInputChange}

@@ -11,7 +11,11 @@ import { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import bloodbanner from "../../assets/images/bloodbanner.png";
 import image1 from "../../assets/images/image1.png";
+import homeBanner from "../../assets/images/HomeBanner.png" 
 import { donationPostApi } from "../../services/api";
+import { Link } from "expo-router";
+import { logout } from "@/utils/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Hospital = {
   hospitalName?: string;
@@ -42,7 +46,28 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [posts, setPosts] = useState<DonationPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
 
+  
+  useEffect(() => {
+  const fetchUnreadNotifications = async () => {
+    try {
+      // const userData = await AsyncStorage.getItem("user");
+      const userId = await AsyncStorage.getItem("userId");
+
+      if (!userId) return;
+
+      const res = await fetch(`http://192.168.238.203:8000/api/notifications/unread-count/${userId}`);
+      const data = await res.json();
+      setUnreadCount(data.unreadCount);
+    } catch (err) {
+      console.error("Failed to fetch unread count:", err);
+    }
+  };
+
+  fetchUnreadNotifications();
+}, []);
+  
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -64,7 +89,7 @@ export default function Home() {
   );
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <ScrollView style={{ flex: 1, backgroundColor: "#fff", paddingBottom:500 }}>
       {/* Top Red Section */}
       <View
         style={{
@@ -81,7 +106,7 @@ export default function Home() {
             position: "absolute",
             backgroundColor: "#FDE047",
             top: 40,
-            left: 60,
+            left: 45,
             borderRadius: 30,
             width: 60,
             height: 60,
@@ -117,7 +142,7 @@ export default function Home() {
             fontWeight: "600",
             position: "absolute",
             top: 54,
-            left: 110,
+            left: 90,
             fontSize: 18,
             color: "white",
           }}
@@ -131,7 +156,7 @@ export default function Home() {
             position: "absolute",
             backgroundColor: "white",
             top: 55,
-            left: 280,
+            left: 260,
             borderRadius: 37 / 2,
             width: 37,
             height: 37,
@@ -139,23 +164,59 @@ export default function Home() {
             alignItems: "center",
           }}
         >
-          <Icon name="bell" size={20} color="#000000" />
+         <Link href = "/notification" asChild><Icon name="bell" size={20} color="#000000" /></Link> 
         </View>
+        {/* <View
+  style={{
+    position: "absolute",
+    top: 55,
+    left: 260,
+    width: 37,
+    height: 37,
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+  <Link href="/notification" asChild>
+    <View style={{ position: "relative" }}>
+      <Icon name="bell" size={20} color="#000000" />
+      {unreadCount > 0 && (
+        <View
+          style={{
+            position: "absolute",
+            top: -5,
+            right: -5,
+            backgroundColor: "white",
+            width: 10,
+            height: 10,
+            borderRadius: 5,
+            borderWidth: 1,
+            borderColor: "white",
+          }}
+        />
+      )}
+    </View>
+  </Link>
+</View> */}
+
+        <TouchableOpacity onPress={logout}>
         <View
           style={{
             position: "absolute",
             backgroundColor: "white",
             top: 55,
-            left: 340,
+            left: 310,
             borderRadius: 37 / 2,
             width: 37,
             height: 37,
             justifyContent: "center",
             alignItems: "center",
+            
           }}
         >
           <Icon name="plus" size={20} color="#000000" />
         </View>
+        </TouchableOpacity>
 
         {/* Banner */}
         <View
@@ -165,7 +226,7 @@ export default function Home() {
             position: "absolute",
             width: 330,
             backgroundColor: "white",
-            top: 130,
+            top: 115,
             left: "50%",
             marginLeft: -165, // to center horizontally (half width negative)
             height: 135,
@@ -175,7 +236,7 @@ export default function Home() {
           }}
         >
           <Image
-            source={bloodbanner}
+            source={homeBanner}
             style={{ width: "100%", height: "100%" }}
             resizeMode="cover"
           />
@@ -190,7 +251,7 @@ export default function Home() {
             position: "absolute",
             width: 330,
             backgroundColor: "white",
-            top: 280,
+            top: 270,
             left: "50%",
             marginLeft: -165,
             height: 45,
@@ -210,7 +271,7 @@ export default function Home() {
       </View>
 
       {/* Emergency Blood Section */}
-      <View style={{ marginTop: 30, paddingHorizontal: 20 }}>
+      <ScrollView style={{ marginTop: 20, paddingHorizontal: 20 }}>
         <View
           style={{
             flexDirection: "row",
@@ -332,7 +393,7 @@ export default function Home() {
             );
           })
         )}
-      </View>
+      </ScrollView>
     </ScrollView>
   );
 }

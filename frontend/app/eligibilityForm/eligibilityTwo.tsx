@@ -307,7 +307,7 @@ export default function EligibilityTwo() {
       onPress={() => selected !== value && onSelect(value)}
       className="flex-row items-center my-1"
     >
-      <View className="w-5 h-5 border border-secondary rounded mr-2 justify-center items-center ml-5">
+      <View className="w-5 h-5 border border-tertiary rounded mr-2 justify-center items-center ml-5">
         {selected === value && <Entypo name="check" size={16} color="#E72929" />}
       </View>
       <Text className="text-md font-poppins text-accent">{label}</Text>
@@ -318,7 +318,7 @@ export default function EligibilityTwo() {
     <GetStartedBackground>
       <ScrollView className="px-6 mt-20 w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
-        <Text className="text-lg text-[#FFBFBF]">
+        <Text className="text-lg text-tertiary">
           This quick health check helps us determine if you are currently eligible to donate blood safely. This is a quick check and
           when donating blood you will again be checked.
         </Text>
@@ -346,10 +346,10 @@ export default function EligibilityTwo() {
             paddingBottom: 40,
           }}
         >
-          <Text className="text-2xl text-secondary text-center mt-5">Health Status</Text>
+          <Text className="text-2xl text-tertiary text-center mt-5">Health Status</Text>
 
           <View className="w-full px-5 mt-3">
-            <Text className="text-lg text-secondary mb-2">Do you have any chronic illness?</Text>
+            <Text className="text-lg text-tertiary mb-2">Do you have any chronic illness?</Text>
             <View className="flex-row space-x-8">
               <CheckBox
                 label="Yes"
@@ -388,7 +388,7 @@ export default function EligibilityTwo() {
 
           {ChronicIllness === "Yes" && (
             <View className="w-full px-5 mt-3 z-50">
-              <Text className="text-lg text-secondary mb-2">If yes, specify (Chronic Illness)</Text>
+              <Text className="text-lg text-tertiary mb-2">If yes, specify (Chronic Illness)</Text>
               <MultiSelect
                 items={chronicIllnessItems}
                 uniqueKey="id"
@@ -405,13 +405,17 @@ export default function EligibilityTwo() {
                 displayKey="name"
                 submitButtonColor="#E72929"
                 submitButtonText="Confirm"
-                styleMainWrapper={{ marginBottom: 10 }}
+                styleMainWrapper={{ marginBottom: 10, paddingRight: 10, }}
+                  styleDropdownMenuSubsection={{
+    paddingRight: 10,
+  }}
+  
               />
             </View>
           )}
 
           <View className="w-full px-5 mt-3">
-            <Text className="text-lg text-secondary mb-2">Are you currently taking any medications?</Text>
+            <Text className="text-lg text-tertiary mb-2">Are you currently taking any medications?</Text>
             <View className="flex-row space-x-8">
               <CheckBox
                 label="Yes"
@@ -449,7 +453,7 @@ export default function EligibilityTwo() {
 
           {Medications === "Yes" && (
             <View className="w-full px-5 mt-5 z-40">
-              <Text className="text-lg text-secondary mb-2">If yes, specify (Medications)</Text>
+              <Text className="text-lg text-tertiary mb-2">If yes, specify (Medications)</Text>
               <MultiSelect
                 items={medicationItems}
                 uniqueKey="id"

@@ -16,7 +16,7 @@ export default function EligibilityOne() {
    <GetStartedBackground>
      <View className="px-6 mt-20 w-full">
        
-        <Text className="text-xl mt-10 text-accent">Great news! You’re eligible to donate blood.You can now register as a donor on RedAlert and help save lives.Let’s get you signed up and ready to make a difference!</Text>
+        <Text className="text-xl mt-10 text-accent">Great news! You’re eligible to donate blood.You can now help save lives.Let’s get ready to make a difference!</Text>
 
 
 

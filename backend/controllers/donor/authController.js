@@ -112,6 +112,7 @@ exports.loginUser = async (req, res) => {
         role: user.role,
         token: generateToken(user._id),
       });
+      
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }

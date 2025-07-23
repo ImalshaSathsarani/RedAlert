@@ -30,8 +30,9 @@ export default function DonorLogin() {
     try {
       const response = await donorAuthApi.login({ email, password });
       
-      if (response.token) {
+      if (response.token && response._id) {
         // Save token in AsyncStorage
+        await AsyncStorage.setItem("userId", response._id);
         await AsyncStorage.setItem("token", response.token);
         
         // Save user data if it exists
@@ -39,6 +40,7 @@ export default function DonorLogin() {
           await AsyncStorage.setItem("user", JSON.stringify(response.user));
         }
         
+         console.log("User ID saved to AsyncStorage:", response._id);
         Alert.alert("Success", "Login successful!", [
           {
             text: "OK",
@@ -142,24 +144,19 @@ export default function DonorLogin() {
         style={{
           flexDirection: "row",
           justifyContent: "center",
-          marginTop: 20,
+          marginTop: 30,
+          marginBottom:25
         }}
       >
-        <Icon name="google" size={22} style={{ marginRight: 30 }} />
+        <Icon name="google" size={22} style={{ marginRight: 60 }} />
         <Icon name="facebook" size={22} />
       </View>
 
-      <Text className="absolute top-[610px] left-[180px] font-bold">
-        - OR -
-      </Text>
+     
 
-      <View className="flex-row absolute top-[660px] left-[175px]">
-        <Icon name="google" size={22} />
-        <Icon className="ml-[20px]" name="facebook" size={22} />
-      </View>
-
-      <View className="flex-row justify-center items-center absolute top-[700px] w-full">
-        <Text className="font-bold text-black">Haven't any account? </Text>
+      
+      <View className="flex-row justify-center items-center w-full">
+        <Text className="font-bold text-black">Haven&#39;t any account? </Text>
         <Link href="/donorRegister" asChild>
           <Text style={{ fontWeight: "bold", color: "#B43929" }}>Sign Up</Text>
         </Link>

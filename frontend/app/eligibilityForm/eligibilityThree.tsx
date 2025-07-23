@@ -341,7 +341,7 @@ export default function EligibilityThree() {
       onPress={() => onSelect(value)}
       className="flex-row items-center my-1"
     >
-      <View className="w-5 h-5 border border-secondary rounded mr-2 justify-center items-center ml-5">
+      <View className="w-5 h-5 border border-tertiary rounded mr-2 justify-center items-center ml-5">
         {selected === value && <Entypo name="check" size={16} color="#E72929" />}
       </View>
       <Text className="text-md font-poppins text-accent">{label}</Text>
@@ -352,7 +352,7 @@ export default function EligibilityThree() {
     <GetStartedBackground>
       <ScrollView className="px-6 mt-20 w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
-        <Text className="text-lg text-[#FFBFBF]">
+        <Text className="text-lg text-tertiary">
           This quick health check helps us determine if you are currently eligible
           to donate blood safely. This is a quick check and when donating blood
           you will again be checked.
@@ -388,12 +388,12 @@ export default function EligibilityThree() {
             paddingBottom: 40,
           }}
         >
-          <Text className="text-2xl text-secondary text-center mt-5">
+          <Text className="text-2xl text-tertiary text-center mt-5">
             Health Status
           </Text>
 
           <View className="w-full px-5 mt-3">
-            <Text className="text-lg text-secondary mb-2">
+            <Text className="text-lg text-tertiary mb-2">
               Have you had any cold, fever, or infection in the past 7 days?
             </Text>
             <View className="flex-row space-x-8 mt-3">
@@ -413,7 +413,7 @@ export default function EligibilityThree() {
           </View>
 
           <View className="w-full px-5 mt-5">
-            <Text className="text-lg text-secondary mb-2">
+            <Text className="text-lg text-tertiary mb-2">
               Have you undergone any surgery in the past 6 months?
             </Text>
             <View className="flex-row space-x-8 mt-3">
@@ -433,7 +433,7 @@ export default function EligibilityThree() {
           </View>
 
           <View className="w-full px-5 mt-5">
-            <Text className="text-lg text-secondary mb-2">
+            <Text className="text-lg text-tertiary mb-2">
               Do you have any known allergies?
             </Text>
             <View className="flex-row space-x-8 mt-3">
@@ -472,8 +472,8 @@ export default function EligibilityThree() {
 
           {Allergies === "Yes" && (
             <View className="w-full px-5 mt-3 z-50">
-              <Text className="text-lg text-secondary mb-2">
-                If yes, specify (Allergies). 
+              <Text className="text-lg text-tertiary mb-2">
+                If yes, specify (Allergies) 
               </Text>
               <MultiSelect
                 items={allergyItems}

@@ -16,6 +16,8 @@ const userSchema = new mongoose.Schema(
     location: { type: String },
     isAvailable: { type: Boolean, default: true },
     verified: { type: Boolean, default: false },
+    profilePicture: { type: String },
+
 
     //hospital specific fields
     hospitalName: String,
@@ -24,6 +26,9 @@ const userSchema = new mongoose.Schema(
 
     resetToken: { type: String },
     resetTokenExpire: { type: Date },
+    expoPushToken: {
+  type: String
+}
   },
   { timestamps: true }
 );

@@ -83,3 +83,69 @@ exports.getEligibilityCheck = async (req, res) => {
     res.status(500).json({ message: 'Error fetching eligibility check', error: error.message });
   }
 };
+
+
+
+
+exports.submitEligibility = async (req, res) => {
+  const {
+    userId,
+    weight,
+    age,
+    gender,
+    lastDonationDate,
+    chronicIllness,
+    chronicIllnessDetails,
+    medications,
+    medicationDetails,
+    coldFever7Days,
+    surgery6Months,
+    allergies,
+    allergyDetails,
+    vaccinated4Weeks,
+    vaccineDetails,
+    smokingHabits,
+    alcoholDrinking,
+    internationalTravel3Months,
+    tattoosPiercing6Months,
+    testedPositiveInfectious,
+    pregnantBreastfeedingMenstruating,
+    isEligible
+  } = req.body;
+
+  if (!userId || !weight || !age || !gender) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  try {
+    const eligibility = await Eligibility.create({
+      userId,
+      weight,
+      age,
+      gender,
+      lastDonationDate,
+      chronicIllness,
+      chronicIllnessDetails,
+      medications,
+      medicationDetails,
+      coldFever7Days,
+      surgery6Months,
+      allergies,
+      allergyDetails,
+      vaccinated4Weeks,
+      vaccineDetails,
+      smokingHabits,
+      alcoholDrinking,
+      internationalTravel3Months,
+      tattoosPiercing6Months,
+      testedPositiveInfectious,
+      pregnantBreastfeedingMenstruating,
+      isEligible
+    });
+
+    res.status(201).json(eligibility);
+  } catch (error) {
+    console.error("Eligibility submission error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};

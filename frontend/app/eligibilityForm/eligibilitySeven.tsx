@@ -5,6 +5,7 @@ import { Entypo } from "@expo/vector-icons";
 import { useEligibility } from "../../contexts/EligibilityContext";
 import { checkEligibility } from "../../utils/checkEligibility";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
@@ -23,6 +24,8 @@ export default function EligibilitySeven() {
     setLoading(true);
     setError(null);
     try{
+      const userId = await AsyncStorage.getItem("userId");
+      console.log("User id:", userId);
       const payLoad = {
         ...formData,
         ChronicIllnessDetails: Array.isArray(formData.ChronicIllnessDetails)
@@ -41,6 +44,43 @@ export default function EligibilitySeven() {
 
       const isEligible = await checkEligibility(payLoad);
 
+      const eligibilityData ={
+        userId,
+        weight: parseFloat(formData.Weight),
+        age: parseInt(formData.Age),
+        gender: formData.Gender.toLowerCase(),
+        lastDonationDate: formData.LastDonationDate,
+        chronicIllness:formData.ChronicIllness,
+        chronicIllnessDetails:payLoad.ChronicIllnessDetails,
+        medications:formData.Medications,
+        medicationDetails:payLoad.MedicationDetails,
+        coldFever7Days:formData.ColdFever7Days,
+        surgery6Months:formData.Surgery6Months,
+        allergies:formData.Allergies,
+        allergyDetails:payLoad.AllergyDetails,
+        vaccinated4Weeks:formData.Vaccinated4Weeks,
+        vaccineDetails: payLoad.VaccineDetails,
+        smokingHabits:formData.SmokingHabits,
+        alcoholDrinking:formData.AlcoholDrinking,
+        internationalTravel3Months:formData.InternationalTravel3Months,
+        tattoosPiercing6Months:formData.TattoosPiercing6Months ||"No",
+        testedPositiveInfectious:formData.TestedPositiveInfectious,
+        pregnantBreastfeedingMenstruating:formData.PregnantBreastfeedingMenstruating,
+        isEligible
+      }
+
+const res=await fetch("http://192.168.154.203:5000/api/eligibility/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eligibilityData)
+    });
+
+    if (!res.ok) {
+  const errorData = await res.json();
+  console.error("Eligibility API error:", errorData);
+  throw new Error(errorData.message || "Failed to submit eligibility");
+}
+console.log("Frontend Data Eligible:", eligibilityData)
       setTimeout(() => {
       router.push(isEligible ? "/eligibilityForm/eligible" : "/eligibilityForm/notEligible");
     }, 300); // 300ms is enough for UI to show
@@ -65,7 +105,7 @@ export default function EligibilitySeven() {
     <TouchableOpacity
       onPress={()=>onSelect(value)}
       className="flex-row items-center my-1">
-        <View className="w-5 h-5 border border-secondary rounded mr-2 justify-center items-center ml-5">
+        <View className="w-5 h-5 border border-tertiary rounded mr-2 justify-center items-center ml-5">
             {selected === value && <Entypo name="check" size={16}  color="#E72929"/>}
         </View>
         <Text className="text-md font-poppins text-accent">{label}</Text>
@@ -78,7 +118,7 @@ export default function EligibilitySeven() {
    <GetStartedBackground>
      <ScrollView className="px-6 mt-20  w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
-        <Text className="text-lg  text-[#FFBFBF]">This quick health check helps us determine if you
+        <Text className="text-lg  text-tertiary">This quick health check helps us determine if you
                        are currently eligible to donate blood safely. This is a quick check and when donating blood you will again be checked.</Text>
 
 
@@ -92,18 +132,18 @@ export default function EligibilitySeven() {
   <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySeven' as any)} className="bg-primary h-[2px] ml-2 " style={{ width:width/10}}/>
 </View>
 
-<View className="border border-secondary bg-white mt-6 ml-2 rounded-md items-center" style={{
+<View className="border border-tertiary bg-white mt-6 ml-2 rounded-md items-center" style={{
   height:height/1.55,
   width:width/1.2
 }} >
-<Text className="text-2xl text-secondary text-center mt-5">Female-Specific</Text>
+<Text className="text-2xl text-tertiary text-center mt-5">Female-Specific</Text>
 
 
 
 
 
 <View className="w-full px-5 mt-3">
-    <Text className="text-lg text-secondary mb-2  ">Are you currently pregnant, breastfeeding, or menstruating?</Text>
+    <Text className="text-lg text-tertiary mb-2  ">Are you currently pregnant, breastfeeding, or menstruating?</Text>
 <View className="flex-row  space-x-8 mt-5">
     <CheckBox label="Yes" value="Yes" selected={PregnantBreastfeedingMenstruating} onSelect={(val)=>updateFormData('PregnantBreastfeedingMenstruating',val)} />
     <CheckBox label="No" value="No" selected={PregnantBreastfeedingMenstruating} onSelect={(val)=>updateFormData('PregnantBreastfeedingMenstruating',val)}/>

@@ -24,4 +24,9 @@ router.get(
   requestController.getHospitalRequests
 );
 
+router.get("/blood-request/pending", requestController.getPendingBloodRequests)
+
+router.get("/blood-requests/:id", requestController.getBloodRequestDetails)
+
+router.get("/donors/find/:requestId",requestController.findMatchingDonors)
 module.exports = router;
