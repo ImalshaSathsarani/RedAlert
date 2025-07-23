@@ -1,5 +1,14 @@
 const User = require('../../models/User');
 const MedicalHistory = require('../../models/MedicalHistory');
+const { v4: uuidv4 } = require('uuid');
+const path = require('path');
+const fs = require('fs');
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, '../../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 exports.getUserProfile = async (req, res) => {
   try {
@@ -121,12 +130,15 @@ exports.updateUserProfile = async (req, res) => {
         user.medicalHistory = medicalHistory._id;
         const updatedUser = await user.save();
         
+        // Return the updated user with medical history
+        const populatedUser = await User.findById(userId)
+          .populate('medicalHistory')
+          .select('-password');
+          
         console.log('Profile updated successfully for user:', userId);
         console.log('Updated medical history:', medicalHistory);
         
-        // Return the updated user with medical history
-        const response = await updatedUser.populate('medicalHistory');
-        return res.status(200).json(response.select('-password'));
+        return res.status(200).json(populatedUser);
       } catch (validationError) {
         console.error('Validation error:', validationError);
         return res.status(400).json({ 
@@ -152,6 +164,46 @@ exports.updateUserProfile = async (req, res) => {
     console.error('Database error:', error);
     res.status(500).json({ 
       message: 'Update Failed',
+      error: error.message 
+    });
+  }
+};
+
+exports.uploadProfileImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file provided' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate a unique filename
+    const fileExt = path.extname(req.file.originalname).toLowerCase();
+    const filename = `profile-${user._id}-${uuidv4()}${fileExt}`;
+    const filePath = path.join(uploadsDir, filename);
+
+    // Save the file
+    fs.writeFileSync(filePath, req.file.buffer);
+
+    // Update user's profile picture
+    const imageUrl = `/uploads/${filename}`;
+    user.profilePicture = imageUrl;
+    await user.save();
+
+    res.status(200).json({ 
+      success: true, 
+      imageUrl,
+      message: 'Profile image uploaded successfully' 
+    });
+
+  } catch (error) {
+    console.error('Error uploading profile image:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error uploading profile image',
       error: error.message 
     });
   }

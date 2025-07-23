@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   mobileNo: { type: String, required: true, unique: true },
   role: { type: String, enum: ['donor', 'receiver', 'hospital'], default: 'donor' },
+  profilePicture: { type: String, default: '' },
   bloodType: { 
     type: String, 
     required: true,

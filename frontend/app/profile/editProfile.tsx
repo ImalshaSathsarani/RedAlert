@@ -11,75 +11,86 @@ import * as ImagePicker from 'expo-image-picker';
 
 const { width,height } = Dimensions.get("window");
 
+type ApiError = {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  request?: any;
+  message?: string;
+};
+
 export default function EditProfile() {
   const [image, setImage] = useState<string | null>(null);
 
   const pickImage = async () => {
     try {
+      // Request permission to access the media library
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission required', 'Please grant camera roll permissions to upload images.');
+        return;
+      }
+
+      // Launch the image library
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 1,
-        base64: true
+        quality: 0.8,
       });
 
-      if (!result.canceled) {
-        const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
-        setImage(base64Image);
-        
-        // Save to AsyncStorage
-        try {
-          await AsyncStorage.setItem('userProfileImage', base64Image);
-          console.log('Image saved locally');
-        } catch (error) {
-          console.error('Error saving image locally:', error);
-        }
+      console.log('Image picker result:', result);
 
-        // Upload to backend
-        try {
-          const token = await AsyncStorage.getItem('token');
-          if (!token) {
-            throw new Error('No token found');
-          }
-
-          // Convert base64 to blob
-          const fetchResponse = await fetch(base64Image);
-          const blob = await fetchResponse.blob();
-
-          const formData = new FormData();
-          formData.append('image', blob, 'profile.jpg');
-
-          // Upload to backend
-          try {
-            const uploadResponse = await api.post('/donor/profile/upload-image', formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            });
-
-            if (uploadResponse.status === 200) {
-              setImage(base64Image);
-            } else {
-              throw new Error('Image upload failed');
-            }
-          } catch (error) {
-            console.error('Error uploading image:', error);
-            Alert.alert('Error', 'Failed to upload image. Please try again.');
-            throw error; // Re-throw to be caught by the outer catch block
-          }
-        } catch (error) {
-          console.error('Error in image processing:', error);
-          Alert.alert('Error', 'Failed to process image. Please try again.');
-        }
-      } else {
-        Alert.alert('Error', 'No image selected');
+      if (result.canceled) {
+        console.log('User cancelled image picker');
+        return;
       }
-    } catch (error) {
-      console.error('Error picking image:', error);
-      Alert.alert('Error', 'Failed to pick image. Please try again.');
+
+      if (!result.assets || result.assets.length === 0) {
+        console.log('No image selected');
+        return;
+      }
+
+      const asset = result.assets[0];
+      const uri = asset.uri;
+      const fileName = uri.split('/').pop();
+      const fileType = asset.mimeType || 'image/jpeg';
+      
+      // Create form data
+      const formData = new FormData();
+      formData.append('image', {
+        uri,
+        name: fileName,
+        type: fileType,
+      } as any);
+
+      // Upload to backend
+      const response = await api.post('/api/donor/profile/me/upload-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        setImage(uri);
+        await AsyncStorage.setItem('userProfileImage', response.data.imageUrl);
+        Alert.alert('Success', 'Profile image updated successfully!');
+      } else {
+        throw new Error('Image upload failed');
+      }
+    } catch (error: unknown) {
+      console.error('Error in image picking/uploading:', error);
+      let errorMessage = 'Failed to process image. Please try again.';
+      
+      if (error && typeof error === 'object' && 'message' in error) {
+        errorMessage = (error as { message: string }).message;
+      }
+      
+      Alert.alert('Error', errorMessage);
     }
-  }
+  };
 
   const uploadImage = async () => {
     if (!image) return;
@@ -150,11 +161,11 @@ export default function EditProfile() {
                     console.log('Using API URL from configuration');
                     return api.defaults.baseURL;
                 } else if (Platform.OS === 'ios') {
-                    return 'http://192.168.189.76:5000'; // iOS simulator
+                    return 'http://192.168.8.198:5000'; // iOS simulator
                 }
                 
                 // For physical devices or other environments
-                return 'http://192.168.189.76:5000'; // WiFi IP for mobile devices
+                return 'http://192.168.8.198:5000'; // WiFi IP for mobile devices
             };
 
             const apiUrl = getApiUrl();

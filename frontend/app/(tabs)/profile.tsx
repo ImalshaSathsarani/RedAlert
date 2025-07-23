@@ -59,9 +59,9 @@ export default function Profile() {
 
   const getApiUrl = () => {
     if (__DEV__) {
-      return 'http://192.168.189.76:5000';
+      return 'http://192.168.8.198:5000';
     }
-    return 'http://192.168.189.76:5000'; // Replace with your production URL
+    return 'http://192.168.8.198:5000'; // Replace with your production URL
   };
 
   if (!user) {

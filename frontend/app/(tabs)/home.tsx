@@ -13,9 +13,12 @@ import bloodbanner from "../../assets/images/bloodbanner.png";
 import image1 from "../../assets/images/image1.png";
 import homeBanner from "../../assets/images/HomeBanner.png" 
 import { donationPostApi } from "../../services/api";
+
 import { Link } from "expo-router";
 import { logout } from "@/utils/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
 
 type Hospital = {
   hospitalName?: string;
@@ -38,7 +41,7 @@ type DonationPost = {
 const getFullProfilePicture = (pic?: string) => {
   if (!pic) return null;
   if (pic.startsWith("http")) return pic;
-  return `http://192.168.189.76:5000${pic}`;
+  return `http://192.168.8.198:5000${pic}`;
 };
 
 export default function Home() {
@@ -46,7 +49,11 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [posts, setPosts] = useState<DonationPost[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const [userName, setUserName] = useState("");
+
 
   
   useEffect(() => {
@@ -69,6 +76,35 @@ export default function Home() {
 }, []);
   
   useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // First try to get the profile image from AsyncStorage
+        const savedImage = await AsyncStorage.getItem('userProfileImage');
+        if (savedImage) {
+          setProfileImage(getFullProfilePicture(savedImage));
+        }
+        
+        // Then fetch the latest profile data from the server
+        const response = await api.get('/api/donor/profile/me');
+        if (response.data) {
+          setUserName(response.data.name || "User");
+          
+          // If we have a profile picture from the server, use it
+          if (response.data.profilePicture) {
+            const serverImage = getFullProfilePicture(response.data.profilePicture);
+            setProfileImage(serverImage);
+            // Update the local storage with the latest image
+            await AsyncStorage.setItem('userProfileImage', response.data.profilePicture);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        // If there's an error, we'll just use the locally saved image if available
+      }
+    };
+
+    fetchUserProfile();
+    
     const fetchPosts = async () => {
       try {
         const data = await donationPostApi.getAllPosts();
@@ -126,17 +162,21 @@ export default function Home() {
                 resizeMode="cover"
               />
             ) : (
-              <Image
-                source={{ uri: 'https://example.com/default-profile-image.jpg' }}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
-                resizeMode="cover"
-              />
+              <View style={{
+                width: "100%",
+                height: "100%",
+                backgroundColor: "#FDE047",
+                justifyContent: "center",
+                alignItems: "center"
+              }}>
+                <Text style={{ fontSize: 24, color: "#E72929", fontWeight: 'bold' }}>
+                  {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                </Text>
+              </View>
             )}
           </TouchableOpacity>
         </View>
+        
         <Text
           style={{
             fontWeight: "600",
@@ -147,7 +187,7 @@ export default function Home() {
             color: "white",
           }}
         >
-          Hey Amie
+          Hey {userName || "User"}
         </Text>
 
         {/* Notification and Plus Icons */}
