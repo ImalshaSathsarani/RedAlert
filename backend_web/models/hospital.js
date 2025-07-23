@@ -18,7 +18,7 @@ const hospitalSchema = new mongoose.Schema(
 
      profilePicture: {
       type: String, // URL or file path for profile picture
-      default: "/uploads/default-profile.png", // optional default picture
+      default: null, // optional default picture
     },
 
     registrationDocument: {

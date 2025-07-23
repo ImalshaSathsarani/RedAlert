@@ -19,6 +19,8 @@ import RegisteredUsers from './pages/Admin/RegisteredUsers';
 import RegisteredHospitals from './pages/Admin/RegisteredHospitals';
 import Inquiries from './pages/Admin/Inquiries';
 import AdminSideBar from './pages/Admin/AdminSideBar';
+import FindDonorsPage from './pages/FindDonors';
+import RequestDetailsPage from './pages/BloodRequestDetails';
 
 
 function App() {
@@ -44,6 +46,8 @@ function App() {
         <Route path ="/adminRegisteredHospitals" element={<RegisteredHospitals/>}/>
         <Route path ="/adminInquiries" element={<Inquiries/>}/>
         <Route path="/adminSidebar" element={<AdminSideBar/>}/>
+        <Route path="/findDonors" element = {<FindDonorsPage/>}/>
+        <Route path="/requests/:id" element={<RequestDetailsPage />} />
       </Routes>
     </Router>
   )

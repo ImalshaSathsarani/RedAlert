@@ -43,7 +43,7 @@ export default function _Layout() {
               iconName = focused ? "globe" : "globe-outline";
               //label = "Community";
               break;
-            case "chat":
+            case "chatScreen":
               iconName = focused ? "chatbubble" : "chatbubble-outline";
               //label= "Chat";
               break;
@@ -67,7 +67,7 @@ export default function _Layout() {
                 )
                }
 
-               const extraMargin = route.name ==="chat"? "ml-12":
+               const extraMargin = route.name ==="chatScreen"? "ml-12":
                                    route.name === "community" ? "ml-10":
                                    route.name === "profile"? "ml-8":"";
                return (
@@ -93,7 +93,7 @@ export default function _Layout() {
         
         />
         <Tabs.Screen
-         name = "chat"
+         name = "chatScreen"
           options ={{
             title: "Chat",
             
@@ -135,7 +135,15 @@ export default function _Layout() {
           options={{
             href:null
           }} />
+
+           <Tabs.Screen 
+          name= "chat"
+
+          options={{
+            href:null
+          }} />
        
       </Tabs>
+      
   );
 }

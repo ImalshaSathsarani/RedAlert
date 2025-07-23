@@ -210,7 +210,7 @@ export default function EligibilityFour() {
       onPress={() => onSelect(value)}
       className="flex-row items-center my-1"
     >
-      <View className="w-5 h-5 border border-secondary rounded mr-2 justify-center items-center ml-5">
+      <View className="w-5 h-5 border border-tertiary rounded mr-2 justify-center items-center ml-5">
         {selected === value && <Entypo name="check" size={16} color="#E72929" />}
       </View>
       <Text className="text-md font-poppins text-accent">{label}</Text>
@@ -221,7 +221,7 @@ export default function EligibilityFour() {
     <GetStartedBackground>
       <ScrollView className="px-6 mt-20 w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
-        <Text className="text-lg text-[#FFBFBF]">
+        <Text className="text-lg text-tertiary">
           This quick health check helps us determine if you are currently eligible
           to donate blood safely. This is a quick check and when donating blood
           you will again be checked.
@@ -243,15 +243,15 @@ export default function EligibilityFour() {
         </View>
 
         <View
-          className="border border-secondary bg-white mt-6 ml-2 rounded-md items-center"
+          className="border border-tertiary bg-white mt-6 ml-2 rounded-md items-center"
           style={{ height: height / 1.55, width: width / 1.2 }}
         >
-          <Text className="text-2xl text-secondary text-center mt-5">
+          <Text className="text-2xl text-tertiary text-center mt-5">
             Health Status
           </Text>
 
           <View className="w-full px-5 mt-3">
-            <Text className="text-lg text-secondary mb-2">
+            <Text className="text-lg text-tertiary mb-2">
               Have you received any vaccination in the last 4 weeks?
             </Text>
             <View className="flex-row space-x-8">
@@ -290,8 +290,8 @@ export default function EligibilityFour() {
 
           {Vaccinated4Weeks === "Yes" && (
             <View className="w-full px-5 mt-6 z-40">
-              <Text className="text-lg text-secondary mb-2">
-                If yes, select vaccine(s). 
+              <Text className="text-lg text-tertiary mb-2">
+                If yes, select vaccine(s) 
               </Text>
               <MultiSelect
                 items={vaccineItems}

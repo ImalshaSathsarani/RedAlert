@@ -1,5 +1,5 @@
 import { Link, useRouter } from "expo-router";
-import { Dimensions, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Dimensions, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import GetStartedBackground from "../getStartedBackground";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from "react";
@@ -30,9 +30,14 @@ export default function EligibilityOne() {
        const formattedDate = new Date(formData.LastDonationDate || date).toLocaleDateString('en-GB');
   return (
    <GetStartedBackground>
-     <ScrollView className="px-6 mt-20  w-full">
+     <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // tweak if header overlaps
+      >
+     <ScrollView className="px-6 mt-20  w-full" keyboardShouldPersistTaps="handled">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
-        <Text className="text-lg  text-[#FFBFBF]">This quick health check helps us determine if you
+        <Text className="text-lg  text-tertiary">This quick health check helps us determine if you
                        are currently eligible to donate blood safely. This is a quick check and when donating blood you will again be checked.</Text>
 
 
@@ -47,24 +52,25 @@ export default function EligibilityOne() {
   <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySeven' as any)} className="bg-[#FFBFBF] h-[2px] ml-2 " style={{ width:width/10}}/>
 </View>
 
-<View className="border border-secondary bg-white mt-8 ml-2 rounded-md items-center" style={{
+<View className="border border-tertiary bg-white mt-8 ml-2 rounded-md items-center" style={{
   height:height/1.55,
   width:width/1.2
 }} >
-<Text className="text-2xl text-secondary text-center mt-5">Personal Info</Text>
+<Text className="text-2xl text-tertiary text-center mt-5">Personal Info</Text>
 
- <View className="border border-secondary rounded-xl px-4 py-2 w-[250px] h-[75px] mt-7"> 
-            <Text className="text-sm font-poppins text-secondary">Weight</Text>
+ <View className="border border-tertiary rounded-xl px-4 py-2 w-[250px] h-[75px] mt-7"> 
+            <Text className="text-sm font-poppins text-tertiary">Weight</Text>
                <TextInput
                 placeholder="50Kg"
                 className= "text-accent"
                 onChangeText={(text)=> updateFormData("Weight", text.trim())}
                 value={formData.Weight || ""}
+                
                />
         </View>
 
-  <View className="border border-secondary rounded-xl px-4 py-2 w-[250px] h-[75px] mt-3"> 
-            <Text className="text-sm font-poppins text-secondary">Age</Text>
+  <View className="border border-tertiary rounded-xl px-4 py-2 w-[250px] h-[75px] mt-3"> 
+            <Text className="text-sm font-poppins text-tertiary">Age</Text>
                <TextInput
                 placeholder="22 Years"
                 className= "text-accent"
@@ -75,8 +81,8 @@ export default function EligibilityOne() {
                />
         </View>
 
-  <View className="border border-secondary rounded-xl px-4 py-2 w-[250px] h-[75px] mt-3"> 
-            <Text className="text-sm font-poppins text-secondary">Gender</Text>
+  <View className="border border-tertiary rounded-xl px-4 py-2 w-[250px] h-[75px] mt-3"> 
+            <Text className="text-sm font-poppins text-tertiary">Gender</Text>
                <TextInput
                 placeholder="Female"
                 className= "text-accent"
@@ -85,8 +91,8 @@ export default function EligibilityOne() {
                />
         </View>
 
-        <View className="border border-secondary rounded-xl px-4 py-2 w-[250px] h-[75px] mt-3"> 
-            <Text className="text-sm font-poppins text-secondary ">Last Donation Date</Text>
+        <View className="border border-tertiary rounded-xl px-4 py-2 w-[250px] h-[75px] mt-3"> 
+            <Text className="text-sm font-poppins text-tertiary ">Last Donation Date</Text>
             <TouchableOpacity onPress={() => setShowPicker(true)}>
                 <View className ="flex-row items-center justify-between mt-2">
                     <Text className="text-accent">{formattedDate}</Text>
@@ -116,6 +122,7 @@ export default function EligibilityOne() {
 
 
       </ScrollView>
+      </KeyboardAvoidingView>
    </GetStartedBackground>
   );
 }

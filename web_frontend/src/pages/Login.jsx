@@ -29,6 +29,8 @@ const Login = () => {
 
       // Save the token if needed
       localStorage.setItem("token", response.data.token);
+      //  Save the hospital ID
+      localStorage.setItem("hospitalId", response.data.hospital.id);
 
       // Redirect to dashboard
       navigate("/dashboard");

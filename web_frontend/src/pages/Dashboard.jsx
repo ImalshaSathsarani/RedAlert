@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MainHeader from "./Headers/MainHeader";
+import SubFooter from "./Footers/SubFooter";
 
 import {
   LineChart,
@@ -124,7 +125,7 @@ const Dashboard = () => {
       <MainHeader />
 
       <div
-        style={{ fontFamily: "sans-serif", marginLeft: 30, marginRight: 30 }}
+        style={{ fontFamily: "poppins" }}
       >
         <div
           style={{
@@ -648,6 +649,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+       <div style = {{marginTop:'40px'}}><SubFooter/></div>
     </>
   );
 };
@@ -683,6 +685,7 @@ const DashboardBox = ({ title, value }) => (
     >
       {value !== undefined ? value : "-"}
     </div>
+   
   </div>
 );
 

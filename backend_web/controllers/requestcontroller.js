@@ -4,6 +4,8 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const CommunityPost = require("../models/communitypost");
 const Hospital = require("../models/hospital");
+const Eligibility = require("../models/Eligibility")
+const User = require('../models/user');
 
 /*exports.createBloodRequest = async (req, res) => {
   try {
@@ -139,3 +141,75 @@ exports.getHospitalRequests = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+exports.getPendingBloodRequests = async(req, res)=>{
+   const { hospitalId } = req.query;
+   console.log("Looking for pending requests for hospitalId:", hospitalId);
+
+   if (!hospitalId) {
+    return res.status(400).json({ error: 'Hospital ID is required' });
+    
+  }
+  try {
+    const requests = await BloodRequest.find({ 
+      status: 'pending', 
+      hospitalId: new mongoose.Types.ObjectId(hospitalId), });
+    res.json(requests);
+    console.log("Going requests:",requests)
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+    console.log("Error",err);
+  }
+}
+
+exports.getBloodRequestDetails = async(req,res)=>{
+  try {
+    const request = await BloodRequest.findById(req.params.id);
+    if (!request) return res.status(404).json({ error: 'Request not found' });
+    res.json(request);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+exports.findMatchingDonors = async(req,res)=>{
+
+  const compatibleBloodTypes = {
+  'A+': ['A+', 'A-', 'O+', 'O-'],
+  'A-': ['A-', 'O-'],
+  'B+': ['B+', 'B-', 'O+', 'O-'],
+  'B-': ['B-', 'O-'],
+  'O+': ['O+', 'O-'],
+  'O-': ['O-']
+};
+
+ try {
+    const request = await BloodRequest.findById(req.params.requestId);
+    if (!request) return res.status(404).json({ error: 'Request not found' });
+
+    const compatibleTypes = compatibleBloodTypes[request.bloodType] || [];
+
+    // Get all eligible donor userIds
+    const eligibleDonorIds = await Eligibility.find({ isEligible: true }).distinct('userId');
+
+    // Filter users who are donors and match:
+    // - Compatible blood type
+    // - Verified and available
+    // - Same or nearby district (basic proximity matching)
+    const donors = await User.find({
+      _id: { $in: eligibleDonorIds },
+      role: 'donor',
+      bloodType: { $in: compatibleTypes },
+      isAvailable: true,
+      // verified: true,
+      // location: { $regex: new RegExp(request.district, 'i') } // basic location match
+    }).select('name email mobileNo bloodType location lastDonationDate');
+
+    res.json(donors);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+
+}

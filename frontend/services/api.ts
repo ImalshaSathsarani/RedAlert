@@ -2,7 +2,9 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-const API_BASE_URL = Platform.OS === 'android' ? 'http://192.168.8.198:5000' : 'http://localhost:5000';
+
+const API_BASE_URL = Platform.OS === 'android' ? 'http://192.168.154.203:5000' : 'http://localhost:5000';
+
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -193,8 +195,18 @@ export const commentApi = {
 export const chatApi = {
   sendMessage: async (message: string) => {
     try {
+
+      const token = await AsyncStorage.getItem("token");
       console.log("Sending message to chatbot:", message);
-      const response = await api.post('/api/chatbot/chat', { message });
+
+      const response = await api.post('/api/chatbot/chat',
+         { message },
+          {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        );
       console.log("Chatbot response:", response.data);
       return response.data.reply;  // assuming backend returns { reply: "some text" }
     } catch (error: any) {

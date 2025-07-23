@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     enum: ['A+', 'A-', 'B+', 'O+', 'O-'] 
   },
+  profilePicture: { type: String },
   lastDonationDate: { type: Date },
   location: { type: String },
   isAvailable: { type: Boolean, default: true },
@@ -25,6 +26,9 @@ const userSchema = new mongoose.Schema({
   
   resetToken: { type: String },
   resetTokenExpire: { type: Date },
+  expoPushToken: {
+  type: String
+},
 
   medicalHistory: {
     illness: { type: String, required: false, enum: ['None', 'Diabetes', 'Hypertension', 'Asthma', 'Other'] },

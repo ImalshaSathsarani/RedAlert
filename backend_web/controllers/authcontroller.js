@@ -144,6 +144,7 @@ exports.signup = async (req, res) => {
       success: true,
       message: "Hospital registered successfully",
       result,
+      hospitalId: result._id,
     });
   } catch (error) {
     console.log(error);

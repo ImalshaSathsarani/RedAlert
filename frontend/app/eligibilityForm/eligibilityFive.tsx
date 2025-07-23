@@ -31,7 +31,7 @@ export default function EligibilityFive() {
     <TouchableOpacity
       onPress={()=>onSelect(value)}
       className="flex-row items-center my-1">
-        <View className="w-5 h-5 border border-secondary rounded mr-2 justify-center items-center ml-5">
+        <View className="w-5 h-5 border border-tertiary rounded mr-2 justify-center items-center ml-5">
             {selected === value && <Entypo name="check" size={16}  color="#E72929"/>}
         </View>
         <Text className="text-md font-poppins text-accent">{label}</Text>
@@ -44,7 +44,7 @@ export default function EligibilityFive() {
    <GetStartedBackground>
      <ScrollView className="px-6 mt-20  w-full">
         <Text className="text-3xl mb-4">Are you Eligible for Donate?</Text>
-        <Text className="text-lg  text-[#FFBFBF]">This quick health check helps us determine if you
+        <Text className="text-lg  text-tertiary">This quick health check helps us determine if you
                        are currently eligible to donate blood safely. This is a quick check and when donating blood you will again be checked.</Text>
 
 
@@ -58,16 +58,16 @@ export default function EligibilityFive() {
   <TouchableOpacity onPress={()=>router.push('/eligibilityForm/eligibilitySeven' as any)} className="bg-[#FFBFBF] h-[2px] ml-2 " style={{ width:width/10}}/>
 </View>
 
-<View className="border border-secondary bg-white mt-6 ml-2 rounded-md items-center" style={{
+<View className="border border-tertiary bg-white mt-6 ml-2 rounded-md items-center" style={{
   height:height/1.55,
   width:width/1.2
 }} >
-<Text className="text-2xl text-secondary text-center mt-5">Life Style Habits</Text>
+<Text className="text-2xl text-tertiary text-center mt-5">Life Style Habits</Text>
 
 
 
 <View className="w-full px-5 mt-3">
-    <Text className="text-lg text-secondary mb-2  ">Do you smoke?</Text>
+    <Text className="text-lg text-tertiary mb-2  ">Do you smoke?</Text>
 <View className="flex-column  space-y-8">
     <CheckBox label="Yes, Regularly" value="Yes" selected={SmokingHabits} onSelect={(val)=>updateFormData('SmokingHabits',val)} />
     <CheckBox label="Occasionally" value="Occasionally" selected={SmokingHabits} onSelect={(val)=>updateFormData('SmokingHabits',val)}/>
@@ -78,7 +78,7 @@ export default function EligibilityFive() {
 
 
 <View className="w-full px-5 mt-8">
-    <Text className="text-lg text-secondary mb-2  ">Do you  consume alcohol?</Text>
+    <Text className="text-lg text-tertiary mb-2  ">Do you  consume alcohol?</Text>
 <View className="flex-column  space-y-8">
     <CheckBox label="Yes, Regularly" value="Yes" selected={AlcoholDrinking} onSelect={(val)=>updateFormData('AlcoholDrinking',val)} />
     <CheckBox label="Occasionally" value="Occasionally" selected={AlcoholDrinking} onSelect={(val)=>updateFormData('AlcoholDrinking',val)}/>
