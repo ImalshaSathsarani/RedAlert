@@ -2,21 +2,23 @@ import {
   Text,
   TextInput,
   View,
-  Image,
+  
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import bloodbanner from "../../assets/images/bloodbanner.png";
 import image1 from "../../assets/images/image1.png";
 import homeBanner from "../../assets/images/HomeBanner.png" 
-import { donationPostApi } from "../../services/api";
+import api, { donationPostApi } from "../../services/api";
 
 import { Link } from "expo-router";
 import { logout } from "@/utils/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Feather } from "@expo/vector-icons";
 
 
 
@@ -64,7 +66,10 @@ export default function Home() {
 
       if (!userId) return;
 
-      const res = await fetch(`http://192.168.238.203:8000/api/notifications/unread-count/${userId}`);
+      const res = await fetch(`http://192.168.154.203:8000/api/notifications/unread-count/${userId}`);
+      const text = await res.text();  // fetch as text first
+console.log("RAW RESPONSE:", text);
+
       const data = await res.json();
       setUnreadCount(data.unreadCount);
     } catch (err) {
@@ -125,7 +130,7 @@ export default function Home() {
   );
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#fff", paddingBottom:500 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: "#fff", paddingBottom:200 }}>
       {/* Top Red Section */}
       <View
         style={{
@@ -254,7 +259,7 @@ export default function Home() {
             
           }}
         >
-          <Icon name="plus" size={20} color="#000000" />
+          <Feather name="log-out" size={20} color="#000000" />
         </View>
         </TouchableOpacity>
 
@@ -311,7 +316,7 @@ export default function Home() {
       </View>
 
       {/* Emergency Blood Section */}
-      <ScrollView style={{ marginTop: 20, paddingHorizontal: 20 }}>
+      <View style={{ marginTop: 20, paddingHorizontal: 20, paddingBottom:120 }}>
         <View
           style={{
             flexDirection: "row",
@@ -373,7 +378,7 @@ export default function Home() {
                     marginBottom: 10,
                   }}
                 >
-                  <Image
+                  {/* <Image
                     source={
                       hospital?.profilePicture
                         ? { uri: getFullProfilePicture(hospital.profilePicture) }
@@ -387,7 +392,38 @@ export default function Home() {
                       borderWidth: 1,
                       borderColor: "#E72929",
                     }}
-                  />
+                  /> */}
+
+                  {hospital?.profilePicture ? (
+  <Image
+    source={{ uri: getFullProfilePicture(hospital.profilePicture) as string }}
+    style={{
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      marginRight: 12,
+      borderWidth: 1,
+      borderColor: "#E72929",
+    }}
+  />
+) : (
+  <View
+    style={{
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      marginRight: 12,
+      borderWidth: 1,
+      borderColor: "#E72929",
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#fff',
+    }}
+  >
+    <Feather name="user" size={24} color="#E72929" />
+  </View>
+)}
+
                   <View style={{ flex: 1 }}>
                     <Text
                       style={{ fontWeight: "700", fontSize: 16, color: "#222" }}
@@ -433,7 +469,7 @@ export default function Home() {
             );
           })
         )}
-      </ScrollView>
+      </View>
     </ScrollView>
   );
 }

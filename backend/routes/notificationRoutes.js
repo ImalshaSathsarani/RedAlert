@@ -4,5 +4,5 @@ const router = express.Router();
 router.get("/user/:userId", getNotifications);
 router.post("/respond/:id",acceptOrDeclineRequests);
 router.post('/save-push-token',savePushToken);
-router.get("//unread-count/:userId", getUnreadNotificaions)
+router.get("/unread-count/:userId", getUnreadNotificaions)
 module.exports = router;

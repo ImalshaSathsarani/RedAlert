@@ -167,7 +167,7 @@ const handleLogoutCancel = () => {
             <li style ={{width:'100%'}}><Link to="/community" onClick={toggleSidebar} style={location.pathname ==='/community' ? activeSidebarLinkStyle : sidebarLinkStyle}>Community</Link></li>
             <li style ={{width:'100%'}}><Link to="/profileDetails" onClick={toggleSidebar} style={location.pathname ==='/profileDetails' || location.pathname ==='/editProfile' || location.pathname ==='/changePassword' || location.pathname ==='/requestHistory' ? activeSidebarLinkStyle : sidebarLinkStyle}>Profile</Link></li>
             <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={sidebarLinkStyle}>Blood Inventory</Link></li>
-            <li style ={{width:'100%'}}><Link to="/notification" onClick={toggleSidebar} style={sidebarLinkStyle}>Notification</Link></li>
+            <li style ={{width:'100%'}}><Link to="/notification" onClick={toggleSidebar} style={sidebarLinkStyle}>Notifications</Link></li>
             <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={sidebarLinkStyle}>Help</Link></li>  
             <li style={{ width: '100%' }}>
   <span onClick={handleLogoutClick} style={{ ...sidebarLinkStyle, cursor: 'pointer' }}>Logout</span>

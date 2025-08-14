@@ -122,7 +122,7 @@ export default function Community() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView keyboardShouldPersistTaps="handled">
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:100}}>
         {/* Header Section */}
         <View
           style={{

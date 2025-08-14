@@ -59,9 +59,9 @@ export default function Profile() {
 
   const getApiUrl = () => {
     if (__DEV__) {
-      return 'http://192.168.8.198:5000';
+      return 'http://192.168.154.203:5000';
     }
-    return 'http://192.168.8.198:5000'; // Replace with your production URL
+    return 'http://192.168.154.203:5000'; // Replace with your production URL
   };
 
   if (!user) {
@@ -208,41 +208,69 @@ const SettingRow = ({ icon, label, rightElement, onPress }: SettingRowProps  & {
       >
 
       </View>
-          <Image 
+          {/* <Image 
       source = {require('../../assets/images/ProfileImg.jpg')}
       style = {{
          width:width*0.3,
           height:width*0.3,
       }}
-      className = "rounded-full -top-[115] -right-[10]"/>
+      className = "rounded-full -top-[115] -right-[10]"/> */}
 
+     
+     <View style={{
+      position:'relative'
+     }}>
+     
+     
       {profileImage ? (
         <Image 
           source={{ uri: profileImage }}
           style={{
-            width: width * 0.07,
-            height: width * 0.07,
-            position: "relative",
-            bottom: 150,
-            left: 100,
-            borderRadius: 100, // Make it circular
+            width: width * 0.3,
+            height: width * 0.3,
+            // position: "relative",
+            // bottom: 150,
+            // left: 100,
+            // borderRadius: 100, // Make it circular
           }}
+          className = "rounded-full -top-[115] -right-[10] border border-1px solid red"
         />
       ) : (
-        <Image source = {require('../../assets/images/check.png')}
+       <View
+    style={{
+      width: width * 0.3,
+      height: width * 0.3,
+      // position: "relative",
+      // bottom: 150,
+      // left: 100,
+      // borderRadius: 100,
+      backgroundColor: "white",
+      justifyContent: "center",
+      alignItems: "center",
+      borderColor:"red"
+    }}
+    className = "rounded-full -top-[115] -right-[10] border border-1px solid "
+  >
+    <Feather name="user" size={32} color="red" />
+  </View>
+      )}
+
+<Image source ={
+  require('../../assets/images/check.png')
+}
           style={{
             width: width * 0.07,
             height: width * 0.07,
             position: "relative",
             bottom: 150,
             left: 100,
+            zIndex:1000
           }}
-        />
-      )}
-
+        /> 
      </View>
      
           
+        </View>
 
       </View>
      

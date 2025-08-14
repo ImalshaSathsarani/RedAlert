@@ -300,7 +300,7 @@ export default function Details() {
   useEffect(() => {
     const fetchRequestDetails = async () => {
       try {
-        const res = await axios.get(`http://192.168.238.203:5000/api/requests/${id}`);
+        const res = await axios.get(`http://192.168.154.203:5000/api/requests/${id}`);
         setRequestDetails(res.data);
       } catch (err) {
         console.error("Error fetching request details:", err);
