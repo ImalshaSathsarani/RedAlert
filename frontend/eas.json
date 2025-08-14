@@ -1,0 +1,17 @@
+{
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "simulator": false
+      }
+    },
+    "simulator": {
+      "ios": {
+        "simulator": true
+      }
+    }
+  }
+}
