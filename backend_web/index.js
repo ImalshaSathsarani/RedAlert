@@ -66,7 +66,7 @@ const mongoose = require("mongoose");
 const http = require("http");
 const socketIO = require("socket.io");
 
-require("dotenv").config();
+//require("dotenv").config();
 
 
 
