@@ -95,7 +95,7 @@ export default function RequestDetailsPage() {
    const hospitalId = localStorage.getItem("hospitalId");
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/api/request/blood-requests/${id}`)
+      .get(`http://redalert-production.up.railway.app/api/request/blood-requests/${id}`)
       .then((res) => setRequest(res.data))
       .catch((err) => console.error(err));
   }, [id]);
@@ -103,14 +103,14 @@ export default function RequestDetailsPage() {
   const findDonors = () => {
     setSearchClicked(true);
     axios
-      .get(`http://localhost:8000/api/request/donors/find/${id}`)
+      .get(`http://redalert-production.up.railway.app/api/request/donors/find/${id}`)
       .then((res) => setDonors(res.data))
       .catch((err) => console.error(err));
   };
 
   const sendNotification = (donorId) => {
     axios
-      .post("http://localhost:8000/api/notifications/send", {
+      .post("http://redalert-production.up.railway.app/api/notifications/send", {
         userId: donorId,
         hospitalId,
         title: "Urgent Blood Request",

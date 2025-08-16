@@ -11,7 +11,7 @@ export default function FindDonorsPage() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/api/request/blood-request/pending?hospitalId=${hospitalId}`)
+      .get(`http://redalert-production.up.railway.app/api/request/blood-request/pending?hospitalId=${hospitalId}`)
       .then((res) => setRequests(res.data))
       .catch((err) => console.error(err));
   }, []);

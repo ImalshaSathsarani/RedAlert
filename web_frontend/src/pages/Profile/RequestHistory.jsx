@@ -69,7 +69,7 @@ const RequestHistory = () => {
       try {
         const token = localStorage.getItem("token"); // JWT token from localStorage or cookies
         const response = await axios.get(
-          "http://localhost:8000/api/request/hospital-requests",
+          "http://redalert-production.up.railway.app/api/request/hospital-requests",
           {
             headers: {
               Authorization: `Bearer ${token}`,

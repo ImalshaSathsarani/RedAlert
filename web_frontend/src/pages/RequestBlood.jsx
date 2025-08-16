@@ -58,7 +58,7 @@ const RequestBlood = () => {
       console.log("Sending request to backend...");
 
       const response = await axios.post(
-        "http://localhost:8000/api/request/request-blood",
+        "http://redalert-production.up.railway.app/api/request/request-blood",
         submitData,
         {
           withCredentials: true, // needed for cookies

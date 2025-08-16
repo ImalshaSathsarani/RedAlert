@@ -34,7 +34,7 @@ const EditProfile = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:8000/api/hospital/profile",
+          "http://redalert-production.up.railway.app/api/hospital/profile",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ const EditProfile = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        "http://localhost:8000/api/hospital/update-profile",
+        "http://redalert-production.up.railway.app/api/hospital/update-profile",
         formData,
         {
           headers: {

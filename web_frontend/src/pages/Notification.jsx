@@ -689,7 +689,7 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/notifications/hospital/${hospitalId}`
+          `http://redalert-production.up.railway.app/api/notifications/hospital/${hospitalId}`
         );
         setNotifications(res.data);
       } catch (err) {
@@ -704,7 +704,7 @@ const Notification = () => {
     const fetchSentNotifications = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/notifications/hospital/sentbox/${hospitalId}`
+          `http://redalert-production.up.railway.app/api/notifications/hospital/sentbox/${hospitalId}`
         );
         setSentNotifications(res.data);
       } catch (err) {
@@ -833,7 +833,7 @@ console.log("Sentbox notifications", sentBoxNotifications);
                 {
   notification.userId?.profilePicture ? (
     <img
-      src={`http://localhost:8000${notification.userId.profilePicture}`}
+      src={`http://redalert-production.up.railway.app${notification.userId.profilePicture}`}
       alt="Donor Profile"
       style={{
         width: 60,

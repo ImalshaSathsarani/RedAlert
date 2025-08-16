@@ -32,7 +32,7 @@ const Community = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8000/api/community");
+      const res = await axios.get("http://redalert-production.up.railway.app/api/community");
       setPosts(res.data.data);
       setLoading(false);
     } catch (error) {
@@ -47,7 +47,7 @@ const Community = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://localhost:8000/api/community/create",
+        "http://redalert-production.up.railway.app/api/community/create",
         { message: newPostMessage },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -66,7 +66,7 @@ const Community = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://localhost:8000/api/community/${postId}`, {
+      await axios.delete(`http://redalert-production.up.railway.app/api/community/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

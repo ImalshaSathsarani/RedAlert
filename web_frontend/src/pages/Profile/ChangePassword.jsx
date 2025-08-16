@@ -24,7 +24,7 @@ const ChangePassword = () => {
       const token = localStorage.getItem("token"); // Get JWT token from localStorage
 
       const response = await axios.patch(
-        "http://localhost:8000/api/auth/change-password",
+        "http://redalert-production.up.railway.app/api/auth/change-password",
         {
           oldPassword: currentPassword,
           newPassword: newPassword,
