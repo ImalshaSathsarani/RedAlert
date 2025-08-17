@@ -17,7 +17,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://redalert-production.up.railway.app/api/auth/signin",
+        "https://redalert-production.up.railway.app/api/auth/signin",
         {
           email,
           password,

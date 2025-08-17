@@ -80,16 +80,16 @@ const Dashboard = () => {
           recentReqRes,
           matchedDonorRes,
         ] = await Promise.all([
-          axios.get("http://redalert-production.up.railway.app/api/dashboard/trends", config),
-          axios.get("http://redalert-production.up.railway.app/api/dashboard/blood-groups", config),
-          axios.get("http://redalert-production.up.railway.app/api/dashboard/summary", config),
+          axios.get("https://redalert-production.up.railway.app/api/dashboard/trends", config),
+          axios.get("https://redalert-production.up.railway.app/api/dashboard/blood-groups", config),
+          axios.get("https://redalert-production.up.railway.app/api/dashboard/summary", config),
           axios.get(
-            "http://redalert-production.up.railway.app/api/dashboard/matched-donors-count",
+            "https://redalert-production.up.railway.app/api/dashboard/matched-donors-count",
             config
           ),
-          axios.get("http://redalert-production.up.railway.app/api/dashboard/recent", config),
+          axios.get("https://redalert-production.up.railway.app/api/dashboard/recent", config),
           axios.get(
-            "http://redalert-production.up.railway.app/api/dashboard/matched-donors",
+            "https://redalert-production.up.railway.app/api/dashboard/matched-donors",
             config
           ),
         ]);

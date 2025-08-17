@@ -73,7 +73,7 @@ const WebPortal = () => {
       if (letterFile) formData.append("officeLetter", letterFile);
 
       const response = await axios.post(
-        "http://redalert-production.up.railway.app/api/auth/signup",
+        "https://redalert-production.up.railway.app/api/auth/signup",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

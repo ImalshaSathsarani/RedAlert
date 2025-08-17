@@ -73,7 +73,7 @@ export default function EligibilitySix() {
         isEligible
       }
 
-     const res =  await fetch("https://compassionate-perception.up.railway.app/api/eligibility/submit", {
+     const res =  await fetch("https://ravishing-forgiveness-production.up.railway.app", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(eligibilityData)
