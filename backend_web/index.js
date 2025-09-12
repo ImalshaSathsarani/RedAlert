@@ -66,7 +66,7 @@ const mongoose = require("mongoose");
 const http = require("http");
 const socketIO = require("socket.io");
 
-//require("dotenv").config();
+require("dotenv").config();
 
 
 
@@ -144,6 +144,7 @@ app.use("/api/hospital", hospitalRoutes);
 app.use("/api/community", communityroutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/donors", require("./routers/donorRoutes"))
 
 // Test route
 app.get("/", (req, res) => {

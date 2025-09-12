@@ -4,6 +4,7 @@ import axios from "axios";
 import MainHeader from "../pages/Headers/MainHeader";
 import SubFooter from "../pages/Footers/SubFooter";
 import { useEffect, useState } from "react";
+import { API_ROUTES } from "../config/config";
 
 export default function FindDonorsPage() {
   const [requests, setRequests] = useState([]);
@@ -11,10 +12,10 @@ export default function FindDonorsPage() {
 
   useEffect(() => {
     axios
-      .get(`http://redalert-production.up.railway.app/api/request/blood-request/pending?hospitalId=${hospitalId}`)
+      .get(API_ROUTES.PENDING_REQUESTS(hospitalId))
       .then((res) => setRequests(res.data))
       .catch((err) => console.error(err));
-  }, []);
+  }, [hospitalId]);
 
   return (
     <>

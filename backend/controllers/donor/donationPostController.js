@@ -1,5 +1,6 @@
 const DonationPost = require('../../models/DonationPost');
 const Hospital = require('../../models/hospital')
+const BloodRequest = require("../../models/BloodRequest");
 
 // Create a new donation availability post
 exports.createDonationPost = async (req, res) => {
@@ -117,6 +118,36 @@ exports.getAllDonationPosts = async (req, res) => {
   }
 };
 
+
+exports.getPendingBloodRequests = async(req,res)=>{
+ try{
+  const requests = await BloodRequest.find({status:'pending'}).populate("hospitalId",'hospitalName district email profilePicture').
+  sort({createdAt:-1}).lean();
+
+  res.json({success:true,message:'Pending blood requests fetched', requests,})
+  console.log("Get pending blood requests:", requests);
+
+ }catch(e){
+  console.error("Get pending blood requests error:", e.message);
+  res.status(500).json({success:false,message:"Server Error"})
+ }
+
+}
+exports.getEmergencyBloodRequests = async (req, res) => {
+  try{
+    const requests = await BloodRequest.find({
+      status:'pending',
+      urgencyLevel: { $in: ['high', 'critical'] }
+    }).populate('hospitalId','hospitalName district email profilePicture')
+    .sort({createdAt:-1});
+    res.status(200).json({success:true, requests})
+    console.log("Get emergency blood requests:", requests);
+
+  }catch(e){
+    console.error("Get emergency blood requests error:", e.message);
+    res.status(500).json({success:false,message:"Server Error"})
+  }
+}
 
 
 // Get donation posts by blood type

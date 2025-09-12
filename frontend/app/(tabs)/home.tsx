@@ -40,6 +40,24 @@ type DonationPost = {
   };
 };
 
+type EmergencyRequest = {
+  _id: string;
+  bloodType: string;
+  quantity: string;
+  urgencyLevel: string;
+  createdAt: string;
+  contactPerson?: string;
+  emergencyPhone?: string;
+  hospitalId?: {
+    hospitalName: string;
+    district: string;
+    email?: string;
+    profilePicture?: string;
+  };
+  additionalInfo?: string;
+  email?:string;
+};
+
 const getFullProfilePicture = (pic?: string) => {
   if (!pic) return null;
   if (pic.startsWith("http")) return pic;
@@ -55,7 +73,7 @@ export default function Home() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   const [userName, setUserName] = useState("");
-
+  const [emergencyRequests, setEmergencyRequests] = useState<EmergencyRequest[]>([]);
 
   
   useEffect(() => {
@@ -110,19 +128,33 @@ console.log("RAW RESPONSE:", text);
 
     fetchUserProfile();
     
-    const fetchPosts = async () => {
-      try {
-        const data = await donationPostApi.getAllPosts();
-        setPosts(data);
-      } catch (error) {
-        console.error("Failed to load posts:", error);
-      } finally {
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const data = await donationPostApi.getAllPosts();
+  //       setPosts(data);
+  //     } catch (error) {
+  //       console.error("Failed to load posts:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchPosts();
+   }, []);
+
+  useEffect(()=>{
+    const fetchRequests = async () =>{
+      try{
+        const data = await donationPostApi.getEmergencyPosts();
+        setEmergencyRequests(data);
         setLoading(false);
+        console.log("Fetched urgent requests:",data);
+      }catch(e){
+        console.error("Failed to load urgent requests:",e);
       }
     };
-
-    fetchPosts();
-  }, []);
+    fetchRequests();
+  },[]);
 
   // Filter posts based on search input (case insensitive)
   const filteredPosts = posts.filter((post) =>
@@ -346,16 +378,16 @@ console.log("RAW RESPONSE:", text);
 
         {loading ? (
           <ActivityIndicator size="large" color="#E72929" />
-        ) : filteredPosts.length === 0 ? (
+        ) : emergencyRequests.length === 0 ? (
           <Text style={{ textAlign: "center", color: "#999", fontSize: 16 }}>
-            No donation posts found.
+            No emergency blood requests right now.
           </Text>
         ) : (
-          filteredPosts.map((post, index) => {
-            const hospital = post.createdBy.id;
+          emergencyRequests.map((req, index) => {
+           // const hospital = post.createdBy.id;
             return (
               <View
-                key={index}
+                key={req._id || index}
                 style={{
                   backgroundColor: "#fff",
                   borderRadius: 15,
@@ -394,9 +426,9 @@ console.log("RAW RESPONSE:", text);
                     }}
                   /> */}
 
-                  {hospital?.profilePicture ? (
+                  {req.hospitalId?.profilePicture ? (
   <Image
-    source={{ uri: getFullProfilePicture(hospital.profilePicture) as string }}
+    source={{ uri: getFullProfilePicture(req.hospitalId.profilePicture) as string }}
     style={{
       width: 48,
       height: 48,
@@ -428,10 +460,10 @@ console.log("RAW RESPONSE:", text);
                     <Text
                       style={{ fontWeight: "700", fontSize: 16, color: "#222" }}
                     >
-                      {hospital?.hospitalName || hospital?.name || "Unknown Hospital"}
+                      {req.hospitalId?.hospitalName  || "Unknown Hospital"}
                     </Text>
                     <Text style={{ fontSize: 12, color: "#666", marginTop: 2 }}>
-                      {new Date(post.createdAt).toLocaleString()}
+                      {new Date(req.createdAt).toLocaleString()}
                     </Text>
                   </View>
                 </View>
@@ -445,7 +477,7 @@ console.log("RAW RESPONSE:", text);
                     marginBottom: 12,
                   }}
                 >
-                  {post.message}
+                  {req.additionalInfo}
                 </Text>
 
                 {/* Contact info row */}
@@ -459,10 +491,10 @@ console.log("RAW RESPONSE:", text);
                   }}
                 >
                   <Text style={{ fontSize: 14, color: "#555" }}>
-                    📞 {post.contactInfo}
+                    📞 {req.emergencyPhone}
                   </Text>
                   <Text style={{ fontSize: 14, color: "#555" }}>
-                    📧 {hospital?.email || "N/A"}
+                    📧 {req.hospitalId?.email || "N/A"}
                   </Text>
                 </View>
               </View>

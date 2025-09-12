@@ -35,12 +35,34 @@ type DonationPost = {
   };
 };
 
+type BloodRequest = {
+  _id: string;
+  bloodType: string;
+  quantity: string;
+  urgencyLevel: string;
+  status: string;
+  createdAt: string;
+  hospitalId: {
+    hospitalName?: string;
+    name?: string;
+    profilePicture?: string;
+    phone?: string;
+    email?: string;
+    district?: string;
+    emergnencyPhone?: string;
+  };
+  additionalInfo?: string; // <-- Added this property
+};
+
 export default function Community() {
   const [posts, setPosts] = useState<DonationPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [loadingHospitals, setLoadingHospitals] = useState(true);
+  const [requests, setRequests] = useState<BloodRequest[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState(true);
+
 
   // New states for likes and comments:
   const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
@@ -74,6 +96,22 @@ export default function Community() {
 
     fetchHospitals();
     fetchPosts();
+  }, []);
+
+  useEffect(()=>{
+    const fetchRequests = async () =>{
+      try{
+        const data = await donationPostApi.getPendingRequests();
+        setRequests(data);
+        console.log("Fetched requests:",data);
+
+      }catch(e){
+        console.error("Failed to load requests:",e);
+      }finally{
+        setLoadingRequests(false);
+      }
+    };
+    fetchRequests();
   }, []);
 
   // Helper to get full image URI (adjust YOUR_BACKEND_URL accordingly)
@@ -242,7 +280,7 @@ export default function Community() {
         </View>
 
         {/* Loading Indicator for posts */}
-        {loadingPosts && (
+        {loadingRequests && (
           <ActivityIndicator
             size="large"
             color="#E72929"
@@ -251,22 +289,22 @@ export default function Community() {
         )}
 
         {/* No Posts Message */}
-        {!loadingPosts && posts.length === 0 && (
+        {!loadingRequests &&  (
           <Text style={{ textAlign: "center", marginTop: 20 }}>
             No donation posts available.
           </Text>
         )}
 
         {/* Posts List */}
-        {!loadingPosts &&
-          posts.map((post, index) => {
-            const hospital = post.createdBy.id;
+        {!loadingRequests &&
+          requests.map((req, index) => {
+           // const hospital = post.createdBy.id;
             const liked = likedPosts[index] || false;
             const commentBoxOpen = commentOpenPosts[index] || false;
 
             return (
               <View
-                key={index}
+                key={req._id}
                 style={{
                   borderWidth: 1,
                   borderColor: "#ccc",
@@ -287,9 +325,9 @@ export default function Community() {
                 >
                   <Image
                     source={
-                      hospital?.profilePicture
+                      req.hospitalId?.profilePicture
                         ? {
-                            uri: getFullProfilePicture(hospital.profilePicture),
+                            uri: getFullProfilePicture(req.hospitalId.profilePicture),
                           }
                         : require("../../assets/images/image1.png")
                     }
@@ -308,12 +346,12 @@ export default function Community() {
                         fontSize: 14,
                       }}
                     >
-                      {hospital?.hospitalName ||
-                        hospital?.name ||
+                      {req.hospitalId?.hospitalName ||
+                        req.hospitalId?.name ||
                         "Unknown Hospital"}
                     </Text>
                     <Text style={{ color: "#555", fontSize: 12, marginTop: 2 }}>
-                      {new Date(post.createdAt).toLocaleString()}
+                      {new Date(req.createdAt).toLocaleString()}
                     </Text>
                   </View>
                 </View>
@@ -327,7 +365,7 @@ export default function Community() {
                     marginRight: 10,
                   }}
                 >
-                  {post.message}
+                  {req.additionalInfo || "No additional information provided."}
                 </Text>
 
                 {/* Contact Details */}
@@ -340,8 +378,8 @@ export default function Community() {
                     marginTop: 5,
                   }}
                 >
-                  Contact: {post.contactInfo} {"\n"}
-                  Contact Email: {hospital?.email || "N/A"}
+                  Contact: {req.hospitalId.emergnencyPhone} {"\n"}
+                  Contact Email: {req.hospitalId?.email || "N/A"}
                 </Text>
 
                 <View
@@ -374,7 +412,7 @@ export default function Community() {
                     <Text
                       style={{ marginLeft: 5, color: "#000", fontSize: 12 }}
                     >
-                      {post.views + (liked ? 1 : 0)}
+                      {liked ? 1 : 0}
                     </Text>
                   </TouchableOpacity>
 

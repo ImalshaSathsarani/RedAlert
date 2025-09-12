@@ -124,18 +124,18 @@ exports.getHospitalRequests = async (req, res) => {
   try {
     const hospitalId = req.user.id;
 
-    const requests = await BloodRequest.find({ hospitalId })
-      .select("patientName createdAt status") // only these fields
-      .sort({ createdAt: -1 });
+    const requests = await BloodRequest.find({ hospitalId }).sort({ createdAt: -1 });
 
-    const formattedRequests = requests.map((req) => ({
-      name: req.patientName,
-      date: req.createdAt,
-      status: req.status,
-      bloodType: req.bloodType,
-    }));
+    // const formattedRequests = requests.map((req) => ({
+    //   name: req.patientName,
+    //   date: req.createdAt,
+    //   status: req.status,
+    //   bloodType: req.bloodType,
+    //   hospitalName: req.hospitalName,
+    // }));
 
-    res.status(200).json({ success: true, data: formattedRequests });
+    res.status(200).json({ success: true, data: requests });
+    console.log("Backend sending data:", requests);
   } catch (error) {
     console.error("Get Request History Error:", error.message);
     res.status(500).json({ success: false, message: "Server error" });
@@ -212,4 +212,64 @@ exports.findMatchingDonors = async(req,res)=>{
     res.status(500).json({ error: 'Server error' });
   }
 
+}
+
+exports.completeRequest = async (req,res) =>{
+  try{
+    const { requestId} = req.params;
+    const { donorId } = req.body;
+
+    //find blood request
+    const bloodRequest = await BloodRequest.findById(requestId);
+    if(!bloodRequest){
+      return res.status(404).json({success:false, message:"Blood request not found"});
+    }
+
+    //find blood donor accurately
+    const donor = await User.findById(donorId);
+    if(!donor){
+      return res.status(404).json({success:false,message:"Donor not found"})
+    }
+
+    //Mark request as completed and attach donor details
+    bloodRequest.status = "completed";
+    bloodRequest.donationDate = new Date();
+    bloodRequest.donorId = donor._id;
+    bloodRequest.donorName = donor.name;
+    bloodRequest.donorPhone = donor.phone;
+    bloodRequest.donorEmail = donor.email;
+
+    await bloodRequest.save();
+
+    res.status(200).json({
+      success:true,
+      message:'Blood request marked as completed with donor details',
+      data:bloodRequest,
+    });
+
+  } catch (error) {
+    console.error("Error completing request:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+exports.cancelRequest = async (req,res) =>{
+  try{
+    const requestId = req.params.id;
+    const request = await BloodRequest.findById(requestId);
+    if(!request) {
+      return res.status(404).json({message:'Request not found'});
+    }
+
+    if(request.status.toLowerCase() !== 'pending'){
+      return res.status(400).json({message:"Only Pending requests can be cancelled"});
+    }
+
+    request.status = "cancelled";
+    await request.save();
+    res.status(200).json({message:"Request cancelled successfully", data:request});
+  }catch(e){
+    console.error("Error cancelling request:", e);
+    res.status(500).json({message:'Server error'})
+  }
 }

@@ -1,6 +1,7 @@
+import { donorHistoryApi } from "@/services/api";
 import { Feather } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions, Image, Modal, ScrollView, Switch, Text,  TouchableOpacity, View } from "react-native";
 
 const { width,height } = Dimensions.get("window");
@@ -8,8 +9,38 @@ export default function DonationHistory() {
 
   
   const [modalVisible, setModalVisible] = useState(false);
+  type Donation = {
+    bloodType: string;
+    patientName?: string;
+    hospitalName?: string;
+    emergencyPhone?: string;
+    district?: string;
+    createdAt: Date;
+    // add other fields as needed
+  };
+
+  const [donorHistory, setDonorHistory] = useState<Donation[]>([]);
+  const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
   const router = useRouter();
   {/* Reusable Row Style */}
+
+  useEffect(()=>{
+    const fetchHistory = async() =>{
+      try{
+        const history = await donorHistoryApi.getDonorHistory();
+        setDonorHistory(history);
+        console.log("Donor history:", history);
+
+      }catch(e){
+        if (e instanceof Error) {
+          console.error("Error fetch donor history:", e.message);
+        } else {
+          console.error("Error fetch donor history:", e);
+        }
+      }
+    };
+    fetchHistory();
+  },[]);
 
 
 
@@ -30,42 +61,47 @@ export default function DonationHistory() {
              <Text className = "text-2xl font-bold text-primary">Details</Text>
             <View className = "w-6"/>
             </View>
-
-          <Text className="text-xl text-black mt-5">
-            <Text style={{fontWeight:"bold"}}>Recipient Name:</Text> Anne Jone</Text> 
+       {selectedDonation && (
+        <>
+         <Text className="text-xl text-black mt-5">
+            <Text style={{fontWeight:"bold"}}>Recipient Name:</Text> {selectedDonation.patientName || "N/A"}</Text> 
 
            <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
 
             <Text className="text-xl text-black mt-3">
                 
-                <Text style={{fontWeight:"bold"}}>Blood Group:</Text> A+</Text> 
+                <Text style={{fontWeight:"bold"}}>Blood Group:</Text> {selectedDonation.bloodType}</Text> 
 
            <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
 
             <Text className="text-xl text-black mt-3">
-                <Text style={{fontWeight:"bold"}}>Donated Date: </Text>01/01/2000</Text> 
+                <Text style={{fontWeight:"bold"}}>Donated Date: </Text> {new Date(selectedDonation.createdAt).toLocaleDateString()}</Text> 
 
            <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
 
-            <Text className="text-xl text-black mt-3">Donated Time: 10:00</Text> 
+            <Text className="text-xl text-black mt-3">Donated Time: {new Date(selectedDonation.createdAt).toLocaleTimeString()}</Text> 
 
            <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
 
-            <Text className="text-xl text-black mt-3">Hospital  Name: XYZ Hospital</Text> 
+            <Text className="text-xl text-black mt-3">Hospital  Name: {selectedDonation.hospitalName || "N/A"}</Text> 
 
            <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
 
-            <Text className="text-xl text-black mt-3">Recipient Phone No:0123456789</Text> 
+            <Text className="text-xl text-black mt-3">Hospital Phone No: {selectedDonation.emergencyPhone || "N/A"}</Text> 
 
            <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
 
-            <Text className="text-xl text-black mt-3">Recipient Address: Anne Jone ,ashuer, asehn</Text> 
+            {/* <Text className="text-xl text-black mt-3">Recipient Address: {selectedDonation.patientAddress || "N/A"}</Text>  */}
 
-           <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
+           {/* <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/>  */}
 
-            <Text className="text-xl text-black mt-3">Hospital Address:aasshruh, dsrueh, ijefn</Text> 
+            <Text className="text-xl text-black mt-3">Hospital District: {selectedDonation.district || "N/A"}</Text> 
+             <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
+        </>
+       )}
+         
 
-           <View className = "w-[250px] mt-3  bg-secondary h-[1px]"/> 
+          
            
         </View>
         </View>
@@ -159,17 +195,25 @@ export default function DonationHistory() {
 
        <Text className="text-2xl text-black font-poppins font-bold mt-12">John Doe</Text>
      <Text className="text-sm text-secondary font-poppins">johndoe@example.com</Text>
-<TouchableOpacity onPress={()=>setModalVisible(true)}>
+
+     {donorHistory.length > 0 ? (
+      donorHistory.map((donation,index)=>(
+        <TouchableOpacity 
+        key = {index}
+        onPress={()=>{
+          setSelectedDonation(donation);
+          setModalVisible(true);
+        }}>
 <View className="border border-secondary w-[300px] h-[100px] px-3 py-3 rounded-md mt-3">
     <View className='flex-row items-center'>
         <View className="border border-secondary h-[70px] w-[70px] px-3  rounded-md items-center">
-            <Text className="text-4xl text-black mt-5">A+</Text>
+            <Text className="text-4xl text-black mt-5">{donation.bloodType}</Text>
 
         </View>
         <View className=" flex-column items-start ml-7">
             <Text className="text-md text-black ">Female, 21 Year</Text>
-            <Text className="text-sm text-secondary ">Anne Jone</Text>
-            <Text className="text-md text-secondary ">XYZ Hospital</Text>
+            <Text className="text-sm text-secondary ">{donation.patientName || "Unknown"}</Text>
+            <Text className="text-md text-secondary ">{donation.hospitalName || "Unknown"}</Text>
         </View>
         
 
@@ -179,6 +223,14 @@ export default function DonationHistory() {
 </View>
 </TouchableOpacity>
 
+      ))
+     ) :(
+      <Text className="text-lg text-gray-500 mt-10">No donation history available.</Text>
+     )}
+
+
+
+{/* 
 <TouchableOpacity>
 <View className="border border-secondary w-[300px] h-[100px] px-3 py-3 rounded-md mt-3">
     <View className='flex-row items-center'>
@@ -197,27 +249,7 @@ export default function DonationHistory() {
 
 
 </View>
-</TouchableOpacity>
-
-<TouchableOpacity>
-<View className="border border-secondary w-[300px] h-[100px] px-3 py-3 rounded-md mt-3">
-    <View className='flex-row items-center'>
-        <View className="border border-secondary h-[70px] w-[70px] px-3  rounded-md items-center">
-            <Text className="text-4xl text-black mt-5">A+</Text>
-
-        </View>
-        <View className=" flex-column items-start ml-7">
-            <Text className="text-md text-black ">Female, 21 Year</Text>
-            <Text className="text-sm text-secondary ">Anne Jone</Text>
-            <Text className="text-md text-secondary ">XYZ Hospital</Text>
-        </View>
-        
-
-    </View>
-
-
-</View>
-</TouchableOpacity>
+</TouchableOpacity> */}
 {/* <TouchableOpacity>
 <View className="border border-secondary w-[300px] h-[100px] px-3 py-3 rounded-md mt-3">
     <View className='flex-row items-center'>

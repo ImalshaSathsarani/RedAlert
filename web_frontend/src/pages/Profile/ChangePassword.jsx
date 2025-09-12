@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Profile from "./Profile";
 import SubFooter from "../Footers/SubFooter";
+import { API_ROUTES } from "../../config/config";
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -24,7 +25,7 @@ const ChangePassword = () => {
       const token = localStorage.getItem("token"); // Get JWT token from localStorage
 
       const response = await axios.patch(
-        "http://redalert-production.up.railway.app/api/auth/change-password",
+        API_ROUTES.CHANGE_PASSWORD,
         {
           oldPassword: currentPassword,
           newPassword: newPassword,
