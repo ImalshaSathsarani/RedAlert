@@ -12,6 +12,7 @@ import {
 import story from "../assets/story1.png";
 import profile from "../assets/image1.png";
 import MainHeader from "./Headers/MainHeader";
+import { API_ROUTES } from "../config/config";
 
 const stories = [
   { id: 1, name: "Abc", img: story },
@@ -32,7 +33,7 @@ const Community = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://redalert-production.up.railway.app/api/community");
+      const res = await axios.get(API_ROUTES.GET_POSTS);
       setPosts(res.data.data);
       setLoading(false);
     } catch (error) {
@@ -47,7 +48,7 @@ const Community = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://redalert-production.up.railway.app/api/community/create",
+        API_ROUTES.CREATE_POST,
         { message: newPostMessage },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -66,7 +67,7 @@ const Community = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://redalert-production.up.railway.app/api/community/${postId}`, {
+      await axios.delete(API_ROUTES.DELETE_POST(postId), {
         headers: { Authorization: `Bearer ${token}` },
       });
 

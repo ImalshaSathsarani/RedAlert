@@ -179,7 +179,7 @@ export default function RootLayout() {
 
       if (userId) {
         // Send token to backend
-        fetch('http://192.168.154.203/api/notifications/save-push-token', {
+        fetch('http://192.168.151.203:5000/api/notifications/save-push-token', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import MainHeader from "../Headers/MainHeader";
 import { FaCamera, FaEdit, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SubFooter from "../Footers/SubFooter";
+import { API_ROUTES } from "../../config/config";
 
 const EditProfile = () => {
   const location = useLocation();
@@ -34,7 +35,7 @@ const EditProfile = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://redalert-production.up.railway.app/api/hospital/profile",
+         API_ROUTES.HOSPITAL_PROFILE,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -85,7 +86,7 @@ const EditProfile = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        "http://redalert-production.up.railway.app/api/hospital/update-profile",
+        API_ROUTES.UPDATE_PROFILE,
         formData,
         {
           headers: {

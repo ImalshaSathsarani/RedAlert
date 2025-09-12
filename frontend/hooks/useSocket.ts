@@ -19,7 +19,7 @@ export const useSocket = () => {
         return;
       }
 
-      socketRef.current = io("http://192.168.154.203:8000", {
+      socketRef.current = io("http://192.168.151.203:8000", {
         transports: ["websocket"],
         reconnection: true,
       });
