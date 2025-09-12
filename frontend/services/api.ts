@@ -3,8 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 
-// const API_BASE_URL = Platform.OS === 'android' ? 'http://192.168.154.203:5000' : 'http://localhost:5000';
-const API_BASE_URL = 'https://compassionate-perception.up.railway.app';
+const API_BASE_URL = Platform.OS === 'android' ? 'http://192.168.151.203:5000' : 'http://localhost:5000';
+//const API_BASE_URL = 'https://compassionate-perception.up.railway.app';
 
 
 
@@ -124,7 +124,7 @@ export const donorAuthApi = {
 export const donorProfileApi = {
   updateProfile: async (data: any) => {
     try {
-      const response = await api.put('/donor/profile', data);
+      const response = await api.put('/api/donor/profile', data);
       return response.data;
     } catch (error: any) {
       throw error.response?.data?.message || 'Profile update failed';
@@ -133,7 +133,7 @@ export const donorProfileApi = {
 
   getProfile: async () => {
     try {
-      const response = await api.get('/donor/profile');
+      const response = await api.get('/api/donor/profile/me');
       return response.data;
     } catch (error: any) {
       throw error.response?.data?.message || 'Failed to fetch profile';
@@ -153,6 +153,24 @@ export const donationPostApi = {
       throw error.response?.data?.message || 'Failed to fetch donation posts';
     }
   },
+
+  getEmergencyPosts: async () => {
+    try{
+      console.log("Fetching emergency posts from:", API_BASE_URL + '/api/donor/posts/emergency');
+      const response = await api.get('/api/donor/posts/emergency');
+      console.log("Emergency posts fetched:", response.data.requests);
+      return response.data.requests;
+    } catch (error: any) {
+      console.error("Error fetching emergency posts:", error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to fetch emergency posts';
+    }
+  },
+
+  getPendingRequests: async () =>{
+    const response = await fetch(`${API_BASE_URL}/api/donor/posts/pending/blood-requests`);
+    const data = await response.json();
+    return data.requests;
+  }
 };
 
 export const hospitalApi = {
@@ -167,6 +185,19 @@ export const hospitalApi = {
     }
   }
 };
+
+export const donorHistoryApi = {
+  getDonorHistory: async () => {
+    try {
+      const response = await api.get(`/api/donor/profile/history`);
+      console.log("Fetched donor history:", response.data.history);
+      return response.data.history;
+    } catch (error: any) {
+      console.error("Error fetching donor history:", error.response?.data || error.message);
+      throw error.response?.data?.message || 'Failed to fetch donor history';
+    }
+  }
+}
 
 export const commentApi = {
   addComment: async (postId: string, commentText: string) => {

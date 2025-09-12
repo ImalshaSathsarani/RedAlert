@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import logo2 from "../assets/logo2.png";
 import { useNavigate } from "react-router-dom";
+import { API_ROUTES } from "../config/config";
 
 const WebPortal = () => {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ const WebPortal = () => {
       if (letterFile) formData.append("officeLetter", letterFile);
 
       const response = await axios.post(
-        "https://redalert-production.up.railway.app/api/auth/signup",
+        API_ROUTES.REGISTER,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

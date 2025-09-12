@@ -85,6 +85,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import MainHeader from "./Headers/MainHeader";
 import SubFooter from "./Footers/SubFooter";
+import { API_ROUTES } from "../config/config";
 
 export default function RequestDetailsPage() {
   const { id } = useParams();
@@ -95,7 +96,7 @@ export default function RequestDetailsPage() {
    const hospitalId = localStorage.getItem("hospitalId");
   useEffect(() => {
     axios
-      .get(`http://redalert-production.up.railway.app/api/request/blood-requests/${id}`)
+      .get(API_ROUTES.BLOOD_REQUEST_DETAILS(id))
       .then((res) => setRequest(res.data))
       .catch((err) => console.error(err));
   }, [id]);
@@ -103,14 +104,14 @@ export default function RequestDetailsPage() {
   const findDonors = () => {
     setSearchClicked(true);
     axios
-      .get(`http://redalert-production.up.railway.app/api/request/donors/find/${id}`)
+      .get(API_ROUTES.FIND_DONORS(id))
       .then((res) => setDonors(res.data))
       .catch((err) => console.error(err));
   };
 
   const sendNotification = (donorId) => {
     axios
-      .post("http://redalert-production.up.railway.app/api/notifications/send", {
+      .post(API_ROUTES.SEND_NOTIFICATION, {
         userId: donorId,
         hospitalId,
         title: "Urgent Blood Request",

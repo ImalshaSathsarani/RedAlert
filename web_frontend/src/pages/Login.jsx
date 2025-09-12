@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import { API_ROUTES } from "../config/config";
 
 const Login = () => {
   // Form state
@@ -17,7 +18,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "https://redalert-production.up.railway.app/api/auth/signin",
+        API_ROUTES.LOGIN,
         {
           email,
           password,

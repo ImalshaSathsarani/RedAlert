@@ -10,6 +10,7 @@ exports.createPost = async (req, res) => {
         .json({ success: false, message: "Message is required" });
     }
 
+     const { id, hospitalName, email, emergencyPhone } = req.user;
     const newPost = new CommunityPost({
       hospitalId: req.user.id,
       hospitalName: req.user.hospitalName, // Add hospitalName in authMiddleware or fetch it here

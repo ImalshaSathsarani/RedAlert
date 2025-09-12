@@ -29,4 +29,11 @@ router.get("/blood-request/pending", requestController.getPendingBloodRequests)
 router.get("/blood-requests/:id", requestController.getBloodRequestDetails)
 
 router.get("/donors/find/:requestId",requestController.findMatchingDonors)
+
+
+router.put("/complete/:requestId",authMiddleware, requestController.completeRequest);
+
+
+router.put("/cancel/:requestId",authMiddleware, requestController.cancelRequest);
+
 module.exports = router;

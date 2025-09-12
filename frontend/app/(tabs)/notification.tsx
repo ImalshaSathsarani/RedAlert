@@ -198,7 +198,7 @@ const fetchNotifications = async () => {
         return;
       }
 
-      const res = await axios.get(`https://compassionate-perception.up.railway.app/api/notifications/user/${storedUserId}`);
+      const res = await axios.get(`http://192.168.151.203:5000/api/notifications/user/${storedUserId}`);
       setNotifications(res.data);
       console.log("Incoming Notifications:",res.data)
     } catch (err) {
@@ -215,7 +215,7 @@ const fetchNotifications = async () => {
 const handleResponse = async (notificationId: string, status: 'accepted' | 'declined') => {
   try {
     const userId = await AsyncStorage.getItem("userId");
-    await axios.post(`https://compassionate-perception.up.railway.app/api/notifications/respond/${notificationId}`, {
+    await axios.post(`http://192.168.151.203:5000/api/notifications/respond/${notificationId}`, {
       status,
       donorId: userId,
     });
@@ -279,7 +279,7 @@ const handleResponse = async (notificationId: string, status: 'accepted' | 'decl
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {item?.requestId?.hospitalId?.profilePicture ? (
   <Image
-    source={{ uri: `https://compassionate-perception.up.railway.app${item.requestId.hospitalId.profilePicture}` }}
+    source={{ uri: `http://192.168.151.203:5000${item.requestId.hospitalId.profilePicture}` }}
     style={{ width: 42, height: 42, borderRadius: 21, margin: 10 }}
   />
 ) : (

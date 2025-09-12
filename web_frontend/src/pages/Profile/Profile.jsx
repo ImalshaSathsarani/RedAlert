@@ -4,6 +4,7 @@ import { FaEdit, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
+import { API_ROUTES } from "../../config/config";
 
 const Profile = () => {
   const location = useLocation();
@@ -23,7 +24,7 @@ const Profile = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://redalert-production.up.railway.app/api/hospital/profile",
+         API_ROUTES.HOSPITAL_PROFILE,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

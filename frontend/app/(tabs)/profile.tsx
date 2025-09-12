@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Dimensions, Image, Modal, Switch, Text,  TouchableOpacity, View } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { donorProfileApi } from "@/services/api";
 
 const { width,height } = Dimensions.get("window");
 export default function Profile() {
@@ -38,17 +39,20 @@ export default function Profile() {
           return;
         }
 
-        const apiUrl = getApiUrl();
-        const response = await axios.get(
-          `${apiUrl}/api/donor/profile/me`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-        setUser(response.data);
+       // const apiUrl = getApiUrl();
+        // const response = await axios.get(
+        //   `${apiUrl}/api/donor/profile/me`,
+        //   {
+        //     headers: {
+        //       'Authorization': `Bearer ${token}`,
+        //       'Content-Type': 'application/json'
+        //     }
+        //   }
+        // );
+        // setUser(response.data);
+        const response = await donorProfileApi.getProfile();
+        setUser(response);
+        console.log("User profile data:", response);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -57,12 +61,12 @@ export default function Profile() {
     fetchUserData();
   }, []);
 
-  const getApiUrl = () => {
-    if (__DEV__) {
-      return 'http://192.168.154.203:5000';
-    }
-    return 'http://192.168.154.203:5000'; // Replace with your production URL
-  };
+  // const getApiUrl = () => {
+  //   if (__DEV__) {
+  //     return 'http://192.168.154.203:5000';
+  //   }
+  //   return 'http://192.168.154.203:5000'; // Replace with your production URL
+  // };
 
   if (!user) {
     return (
