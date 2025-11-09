@@ -3,6 +3,7 @@ const MedicalHistory = require('../../models/MedicalHistory');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs');
+const BloodRequest = require("../../models/BloodRequest")
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '../../uploads');
@@ -208,3 +209,18 @@ exports.uploadProfileImage = async (req, res) => {
     });
   }
 };
+
+exports.getDonorHistory = async  (req,res)=>{
+  try{
+    const donorId = req.user._id;
+    const history = await BloodRequest.find({
+      donorId,
+      status: "completed"
+    }).sort({createdAt:-1});
+    res.status(200).json({success:true, history})
+
+  }catch(e){
+    console.error("Get donor history error:", e.message);
+    res.status(500).json({success:false,message: "Server Error"});
+  }
+}

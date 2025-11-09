@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import MainHeader from "./Headers/MainHeader";
+import { API_ROUTES } from "../config/config";
 
 const RequestBlood = () => {
   const [formData, setFormData] = useState({
@@ -58,7 +59,7 @@ const RequestBlood = () => {
       console.log("Sending request to backend...");
 
       const response = await axios.post(
-        "http://redalert-production.up.railway.app/api/request/request-blood",
+        API_ROUTES.CREATE_BLOOD_REQUEST,
         submitData,
         {
           withCredentials: true, // needed for cookies
