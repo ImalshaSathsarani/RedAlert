@@ -3,7 +3,7 @@ import AdminSideBar from './AdminSideBar';
 
 const RegisteredUsers = () => {
   return (
-    <div style={{ display: 'flex', fontFamily: 'sans-serif' }}>
+    <div style={{ display: 'flex', fontFamily: 'poppins' }}>
       
       <AdminSideBar />
       
@@ -17,33 +17,107 @@ const RegisteredUsers = () => {
           <table style={{
             width: '80%',
             borderCollapse: 'collapse',
-            fontFamily: 'sans-serif',
+            fontFamily: 'poppins',
             marginTop: 40
           }}>
             <thead>
               <tr style={{ backgroundColor: '#f9f9f9', textAlign: 'left' }}>
-                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}></th>
-                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>Name</th>
-                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>Admin</th>
-                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold', textAlign: 'center' }}>Members</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>Hospital Registration Number</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>Hospital Name</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>User Name</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold', textAlign: 'center' }}>User Phone Number</th>
                 <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>Status</th>
-                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>Run time</th>
-                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold', textAlign: 'center' }}>Finish date</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>Registration Document</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>Office Letter</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold' }}>History</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold', textAlign: 'center' }}>Registered date</th>
+                <th style={{ padding: '12px 8px', fontSize: '16px', fontWeight: 'bold', textAlign: 'center' }}>Delete Hospital</th>
               </tr>
             </thead>
             
               <tbody>
                 <tr style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '10px 8px', fontSize: '14px' }}><input type="checkbox" /></td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>A12345678</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>ClientOnboarding - Circle</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>Samanta J.</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>3</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>0123456789</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>In progress</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>6 hours</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>6 Mon</td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>10/05/2025</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
+                    <button style={{ backgroundColor: '#8a0f15ff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Delete</button>
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>A12345678</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>ClientOnboarding - Circle</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>Samanta J.</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>0123456789</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>In progress</td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>10/05/2025</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
+                    <button style={{ backgroundColor: '#8a0f15ff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Delete</button>
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>A12345678</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>ClientOnboarding - Circle</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>Samanta J.</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>0123456789</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>In progress</td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>10/05/2025</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
+                    <button style={{ backgroundColor: '#8a0f15ff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Delete</button>
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>A12345678</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>ClientOnboarding - Circle</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>Samanta J.</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>0123456789</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>In progress</td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>10/05/2025</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
+                    <button style={{ backgroundColor: '#8a0f15ff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Delete</button>
+                  </td>
                 </tr>
 
-                <tr style={{ borderBottom: '1px solid #eee' }}>
+                {/* <tr style={{ borderBottom: '1px solid #eee' }}>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}><input type="checkbox" /></td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>ClientOnboarding - Circle</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>Samanta J.</td>
@@ -81,7 +155,7 @@ const RegisteredUsers = () => {
                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>In progress</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>6 hours</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>6 Mon</td>
-                </tr>
+                </tr> */}
                 
               </tbody>
           </table>

@@ -24,5 +24,6 @@ export const API_ROUTES = {
   SEARCH_DONORS: `${API_BASE_URL}/donors`,
   COMPLETE_REQUEST: (requestId) => `${API_BASE_URL}/request/complete/${requestId}`,
   CANCEL_REQUEST: (requestId) => `${API_BASE_URL}/request/cancel/${requestId}`,
+  GET_HOSPITAL_REQUESTS:`${API_BASE_URL}/admin/hospital-requests`,
 
 };

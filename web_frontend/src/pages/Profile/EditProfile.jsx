@@ -81,7 +81,7 @@ const EditProfile = () => {
     }
   };
 
-  // ✅ Submit updated profile including profilePicture base64
+  //  Submit updated profile including profilePicture base64
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");

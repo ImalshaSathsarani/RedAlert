@@ -44,6 +44,14 @@ const AdminSideBar = () => {
               Dashboard
             </Link>
           </li>
+           <li style={{ marginBottom: '30px' }}>
+            <Link
+              to="/registrationRequests"
+              style={location.pathname === '/registrationRequests' ? activeLinkStyle : linkStyle}
+            >
+              Registration Requests
+            </Link>
+          </li>
           <li style={{ marginBottom: '30px' }}>
             <Link
               to="/adminRegisteredUsers"

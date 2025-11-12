@@ -1,4 +1,5 @@
 const HospitalRequest = require('../../models/hospitalRequest');
+const Hospital = require("../../models/hospital");
 
 exports.getAllRequests = async (req, res) => {
   try {
@@ -50,3 +51,20 @@ exports.rejectRequest = async (req, res) => {
     res.status(500).json({ message: 'Error rejecting request' });
   }
 };
+
+exports.getPendingRequests = async(req, res) =>{
+  try{
+    const pendingHospitals = await Hospital.find({isApproved: false}).sort({createdAt: -1});
+    console.log("Pending Hospitals:", pendingHospitals);
+    res.status(200).json(
+      {
+        success:true,
+        data: pendingHospitals,
+      });
+    
+
+  }catch(error){
+    console.error("Error fetching pending requests:", error.message);
+    res.status(500).json({ message: 'Error fetching pending requests' });
+  }
+}

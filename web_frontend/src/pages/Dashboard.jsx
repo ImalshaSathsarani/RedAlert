@@ -60,6 +60,7 @@ const Dashboard = () => {
   const [matchedDonorsCount, setMatchedDonorsCount] = useState(0);
   const [recentRequests, setRecentRequests] = useState([]);
   const [matchedDonors, setMatchedDonors] = useState([]);
+  const [hospitalData, setHospitalData] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -79,6 +80,7 @@ const Dashboard = () => {
           matchedCountRes,
           recentReqRes,
           matchedDonorRes,
+          hospitalDataRes
         ] = await Promise.all([
           axios.get("http://localhost:8000/api/dashboard/trends", config),
           axios.get("http://localhost:8000/api/dashboard/blood-groups", config),
@@ -90,6 +92,10 @@ const Dashboard = () => {
           axios.get("http://localhost:8000/api/dashboard/recent", config),
           axios.get(
             "http://localhost:8000/api/dashboard/matched-donors",
+            config
+          ),
+          axios.get(
+            "http://localhost:8000/api/hospital/profile",
             config
           ),
         ]);
@@ -106,12 +112,15 @@ const Dashboard = () => {
           value: entry.count,
         }));
 
+        console.log("Hospital Data:", hospitalDataRes.data.data);
         setRequestData(formattedTrends);
         setBloodGroupData(formattedGroups);
         setSummary(summaryRes.data.data);
         setMatchedDonorsCount(matchedCountRes.data.count);
         setRecentRequests(recentReqRes.data.data);
         setMatchedDonors(matchedDonorRes.data.data);
+        setHospitalData(hospitalDataRes.data.data);
+
       } catch (error) {
         console.error("Dashboard fetch error:", error);
       }
@@ -135,7 +144,7 @@ const Dashboard = () => {
             fontWeight: "bold",
           }}
         >
-          Welcome Colombo General Hospital!
+          Welcome {hospitalData.name} !
         </div>
 
         <div
@@ -155,7 +164,7 @@ const Dashboard = () => {
               fontSize: 18,
             }}
           >
-            <span>Verified</span>
+            <span>{hospitalData.isApproved ? "Verified" : "Not Verified"}</span>
             <span
               style={{
                 marginLeft: 8,

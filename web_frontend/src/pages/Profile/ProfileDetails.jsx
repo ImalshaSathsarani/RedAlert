@@ -3,6 +3,7 @@ import axios from "axios";
 import Profile from "./Profile";
 import logo2 from "../../assets/logo2.png";
 import SubFooter from "../Footers/SubFooter";
+import { API_ROUTES } from "../../config/config";
 
 const ProfileDetails = () => {
   const [profileData, setProfileData] = useState({
@@ -20,7 +21,7 @@ const ProfileDetails = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:8000/api/hospital/profile",
+          API_ROUTES.HOSPITAL_PROFILE,
           {
             headers: {
               Authorization: `Bearer ${token}`,

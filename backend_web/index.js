@@ -129,13 +129,13 @@ mongoose
   .catch((err) => console.error(err));
 
 // Routes
-const authRouter = require("./routers/authroutes");
-const adminRouter = require("./routers/admin");
-const bloodRequestRoutes = require("./routers/requestroutes");
-const hospitalRoutes = require("./routers/hospitalroutes");
-const communityroutes = require("./routers/communityroutes");
-const dashboardRoutes = require("./routers/dashboardRoutes");
-const notificationRoutes = require("./routers/notificationroutes");
+const authRouter = require("./routes/authroutes");
+const adminRouter = require("./routes/admin");
+const bloodRequestRoutes = require("./routes/requestroutes");
+const hospitalRoutes = require("./routes/hospitalroutes");
+const communityroutes = require("./routes/communityroutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const notificationRoutes = require("./routes/notificationroutes");
 
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
@@ -144,7 +144,7 @@ app.use("/api/hospital", hospitalRoutes);
 app.use("/api/community", communityroutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
-app.use("/api/donors", require("./routers/donorRoutes"))
+app.use("/api/donors", require("./routes/donorRoutes"))
 
 // Test route
 app.get("/", (req, res) => {
