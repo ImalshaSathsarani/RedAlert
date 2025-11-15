@@ -1,6 +1,7 @@
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000/api";
 
 export const API_ROUTES = {
+  BASE_URL  :`http://localhost:8000/`,
   LOGIN: `${API_BASE_URL}/auth/signin`,
   REGISTER: `${API_BASE_URL}/auth/signup`,
   CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
@@ -25,5 +26,12 @@ export const API_ROUTES = {
   COMPLETE_REQUEST: (requestId) => `${API_BASE_URL}/request/complete/${requestId}`,
   CANCEL_REQUEST: (requestId) => `${API_BASE_URL}/request/cancel/${requestId}`,
   GET_HOSPITAL_REQUESTS:`${API_BASE_URL}/admin/hospital-requests`,
+  APPROVE_HOSPITAL_REQUEST: (requestId) => `${API_BASE_URL}/admin/hospital-requests/${requestId}/approve`,
+  REJECT_HOSPITAL_REQUEST: (requestId) => `${API_BASE_URL}/admin/hospital-requests/${requestId}/reject`,
+  GET_BLOOD_DONORS:`${API_BASE_URL}/admin/blood-donors`,
+  GET_REGISTERED_HOSPITALS:`${API_BASE_URL}/admin/hospitals-registered`,
+  DOWNLOAD_DONOR_REPORT:`${API_BASE_URL}/admin/donor-report`,
+  DELETE_DONOR: (donorId) => `${API_BASE_URL}/admin/delete-donor/${donorId}`,
+
 
 };

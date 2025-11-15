@@ -2,10 +2,59 @@ import React, { useEffect, useState } from 'react';
 import AdminSideBar from './AdminSideBar';
 import axios from 'axios';
 import { API_ROUTES } from '../../config/config';
+import { useParams } from 'react-router-dom';
 
 const RegistrationRequests = () => {
 
   const[requests, setRequests] = useState([]);
+  const { id } = useParams();
+  const handleDownloadReport = (id)=>{
+    window.open(`${API_ROUTES.BASE_URL}api/admin/hospital-report/${id}`, "_blank");
+  }
+
+  const handleApprove = async(requestId) =>{
+    try{
+      const token = localStorage.getItem('token');
+      await axios.put(
+        API_ROUTES.APPROVE_HOSPITAL_REQUEST(requestId),{},{
+          headers:{
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      )
+
+      alert("Request approved successfully");
+       // Update the requests list locally — remove the approved one
+      setRequests((prevRequests) =>
+        prevRequests.filter((req) => req._id !== requestId)
+      );
+
+    }catch(e){
+      console.error("Error approving request:", e.message);
+    }
+  }
+  const handleReject = async(requestId) =>{
+    try{
+      if(!window.confirm("Are you sure you want to reject this request?")) return;
+      const token = localStorage.getItem('token');
+      await axios.put(
+        API_ROUTES.REJECT_HOSPITAL_REQUEST(requestId),{},{
+          headers:{
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      )
+
+      alert("Request  rejected");
+       // Update the requests list locally — remove the approved one
+      setRequests((prevRequests) =>
+        prevRequests.filter((req) => req._id !== requestId)
+      );
+
+    }catch(e){
+      console.error("Error approving request:", e.message);
+    }
+  }
 
   useEffect(()=>{
     const fetchRequests = async () =>{
@@ -75,7 +124,7 @@ const RegistrationRequests = () => {
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>{req.email}</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>
                      <a 
-                     href={req.registrationDocument}
+                     href={`${API_ROUTES.BASE_URL}${req.registrationDocument}`}
                      target="_blank"
                      rel="noopener noreferrer"
                      style={{ 
@@ -91,7 +140,7 @@ const RegistrationRequests = () => {
                   </td>
                   <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
                     <a
-                    href={req.officeLetter}
+                    href={`${API_ROUTES.BASE_URL}${req.officeLetter}`}
                     target="_blank"
                     rel="noopener noreferrer" 
                     style={{ 
@@ -106,16 +155,78 @@ const RegistrationRequests = () => {
                         Download</a>
                   </td>
                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
-                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                    <button 
+                     onClick={() => handleDownloadReport(req._id)}
+                    style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
                   </td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>{new Date(req.createdAt).toLocaleDateString()}</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
+                  {/* <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                      <button style={{ backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Approve</button>
-                    <button style={{ backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Reject</button>
+
+                      <button 
+                      onClick={() => handleApprove(req._id)}
+                      style={{ backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Approve</button>
+                    <button 
+                     onClick={()=>handleReject(req._id)}
+                    style={{ backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Reject</button>
                     </div>
                     
-                  </td>
+                  </td> */}
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
+  <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+    {req.status === 'rejected' ? (
+      // Show only the rejected button
+      <button
+        disabled
+        style={{
+          backgroundColor: '#dc3545',
+          color: 'white',
+          border: 'none',
+          borderRadius: '20px',
+          padding: '12px 12px',
+          fontFamily: 'poppins',
+          opacity: 0.7,
+          cursor: 'not-allowed'
+        }}
+      >
+        Rejected
+      </button>
+    ) : (
+      // Otherwise show both Approve & Reject
+      <>
+        <button
+          onClick={() => handleApprove(req._id)}
+          style={{
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '20px',
+            padding: '12px 12px',
+            cursor: 'pointer',
+            fontFamily: 'poppins'
+          }}
+        >
+          Approve
+        </button>
+        <button
+          onClick={() => handleReject(req._id)}
+          style={{
+            backgroundColor: '#dc3545',
+            color: 'white',
+            border: 'none',
+            borderRadius: '20px',
+            padding: '12px 12px',
+            cursor: 'pointer',
+            fontFamily: 'poppins'
+          }}
+        >
+          Reject
+        </button>
+      </>
+    )}
+  </div>
+</td>
+
                 </tr>
 
                   ))

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js", 
-    "dev": "node --watch --trace-warnings index.js"
+    "start": "node init && node index.js",
+    "dev": "node init && node --watch --trace-warnings index.js"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +22,7 @@
     "mongoose": "^8.16.4",
     "multer": "^2.0.1",
     "nodemailer": "^7.0.3",
+    "pdfkit": "^0.17.2",
     "socket.io": "^4.8.1"
   }
 }
