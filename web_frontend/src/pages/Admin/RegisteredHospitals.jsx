@@ -1,7 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminSideBar from './AdminSideBar';
+import axios from 'axios';
+import { API_ROUTES } from '../../config/config';
 
 const RegisteredUsers = () => {
+  const [hospitals, setHospitals] = useState([]);
+
+  useEffect(()=>{
+    const fetchHospitals = async()=>{
+      try{
+        const token = localStorage.getItem('token');
+        const res = await axios.get(
+          API_ROUTES.GET_REGISTERED_HOSPITALS,{
+            headers:{
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        )
+        if(res.data.success){
+          setHospitals(res.data.data);
+          console.log("Fetched Registered Hospitals:", res.data.data);
+        }
+
+      }catch(e){
+        console.error("Error fetching registered hospitals:", e);
+      }
+    }
+
+    fetchHospitals();
+  }, []);
   return (
     <div style={{ display: 'flex', fontFamily: 'poppins' }}>
       
@@ -36,7 +63,54 @@ const RegisteredUsers = () => {
             </thead>
             
               <tbody>
-                <tr style={{ borderBottom: '1px solid #eee' }}>
+                {hospitals.map((hospital)=>(
+                  <tr style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>{hospital.registrationNumber}</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>{hospital.hospitalName}</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>{hospital.name}</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>{hospital.phone}</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>{hospital.status ? hospital.status:"-"}</td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <a 
+                    href={`${API_ROUTES.BASE_URL}${hospital.registrationDocument}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ 
+                      backgroundColor: '#190f8aff', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '20px', 
+                      padding: '12px 12px', 
+                      cursor: 'pointer', 
+                      fontFamily:'poppins',
+                      textDecoration:'none' }}>Download</a>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <a 
+                    href={`${API_ROUTES.BASE_URL}${hospital.officeLetter}`}
+                    target="_blank"
+                    rel="noopener noreferrer" 
+                    style={{ 
+                      backgroundColor: '#190f8aff', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '20px', 
+                      padding: '12px 12px', 
+                      cursor: 'pointer', 
+                      fontFamily:'poppins',
+                      textDecoration:'none' }}>Download</a>
+                  </td>
+                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
+                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
+                  </td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>{new Date(hospital.createdAt).toLocaleDateString()}</td>
+                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
+                    <button style={{ backgroundColor: '#8a0f15ff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Delete</button>
+                  </td>
+                </tr>
+                ))}
+                
+                {/* <tr style={{ borderBottom: '1px solid #eee' }}>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>A12345678</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>ClientOnboarding - Circle</td>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}>Samanta J.</td>
@@ -95,27 +169,7 @@ const RegisteredUsers = () => {
                   <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
                     <button style={{ backgroundColor: '#8a0f15ff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Delete</button>
                   </td>
-                </tr>
-                <tr style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>A12345678</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>ClientOnboarding - Circle</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>Samanta J.</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>0123456789</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>In progress</td>
-                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
-                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
-                  </td>
-                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
-                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
-                  </td>
-                   <td style={{ padding: '10px 8px', fontSize: '14px', color: '#007bff' }}>
-                    <button style={{ backgroundColor: '#190f8aff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Download</button>
-                  </td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px' }}>10/05/2025</td>
-                  <td style={{ padding: '10px 8px', fontSize: '14px', textAlign: 'center' }}>
-                    <button style={{ backgroundColor: '#8a0f15ff', color: 'white', border: 'none', borderRadius: '20px', padding: '12px 12px', cursor: 'pointer', fontFamily:'poppins' }}>Delete</button>
-                  </td>
-                </tr>
+                </tr> */}
 
                 {/* <tr style={{ borderBottom: '1px solid #eee' }}>
                   <td style={{ padding: '10px 8px', fontSize: '14px' }}><input type="checkbox" /></td>

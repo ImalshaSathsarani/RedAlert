@@ -11,6 +11,11 @@ const userSchema = new mongoose.Schema(
       enum: ["donor", "receiver", "hospital"],
       default: "donor",
     },
+    status:{
+      type: String,
+      enum:["active","inactive"],
+      default:"active"
+    },
     bloodType: { type: String },
     lastDonationDate: { type: Date },
     location: { type: String },
