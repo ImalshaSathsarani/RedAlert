@@ -250,3 +250,78 @@ exports.inactivateDonor = async(req,res) =>{
     console.log("Error inactivating donor:",e)
   }
 }
+
+exports.downloadHospitalHistoryReport = async (req, res) => {
+  try {
+    const hospitalId = req.params.id;
+    const hospital = await Hospital.findById(hospitalId);
+    if (!hospital) {
+      return res.status(404).json({ message: 'Hospital not found' });
+    }
+
+    // Fetch hospital-related blood requests
+    const requests = await BloodRequest.find({ hospitalId }).sort({ createdAt: -1 });
+
+    const doc = new PDFDocument({ margin: 40, size: 'A4' });
+    const filename = `Hospital_History_${hospital.hospitalName}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+
+    doc.pipe(res);
+
+    doc.fontSize(20).text("Hospital History Report", { align: "center" });
+    doc.moveDown();
+
+    doc.fontSize(14).text(`Hospital Name: ${hospital.hospitalName}`);
+    doc.text(`Registration Number: ${hospital.registrationNumber}`);
+    doc.text(`District: ${hospital.district}`);
+    doc.text(`Address: ${hospital.address || "N/A"}`);
+    doc.text(`Contact Person: ${hospital.name}`);
+    doc.text(`Phone: ${hospital.phone}`);
+    doc.text(`Email: ${hospital.email}`);
+    doc.text(`Approved: ${hospital.isApproved ? "Yes" : "No"}`);
+    doc.moveDown();
+
+    doc.fontSize(16).text("Blood Request History", { underline: true });
+    doc.moveDown(0.5);
+
+    if (requests.length === 0) {
+      doc.fontSize(12).text("No history available.");
+    } else {
+      requests.forEach((req, index) => {
+        doc.fontSize(12).text(`Request #${index + 1}`);
+        doc.text(`Donor Name: ${req.donorName || '-'}`);
+        doc.text(`Blood Type: ${req.bloodType}`);
+        doc.text(`Quantity: ${req.quantity}`);
+        doc.text(`Status: ${req.status}`);
+        doc.text(`Request Date: ${req.createdAt.toDateString()}`);
+        doc.moveDown();
+      });
+    }
+
+    doc.end();
+
+  } catch (e) {
+    console.error("Error generating hospital history report:", e);
+    res.status(500).json({ message: "Error generating hospital history report" });
+  }
+};
+
+exports.inactivateHospital = async (req, res) => {
+  try {
+    const hospitalId = req.params.hospitalId;
+    const hospital = await Hospital.findById(hospitalId);
+    if (!hospital) {
+      return res.status(404).json({ message: "Hospital not found" });
+    }
+
+    hospital.status = "inactive"; // mark as inactive
+    await hospital.save();
+
+    res.status(200).json({ message: "Hospital inactivated successfully" });
+  } catch (e) {
+    console.error("Error inactivating hospital:", e);
+    res.status(500).json({ message: "Error inactivating hospital" });
+  }
+};

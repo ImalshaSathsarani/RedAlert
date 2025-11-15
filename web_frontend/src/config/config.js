@@ -32,6 +32,7 @@ export const API_ROUTES = {
   GET_REGISTERED_HOSPITALS:`${API_BASE_URL}/admin/hospitals-registered`,
   DOWNLOAD_DONOR_REPORT:`${API_BASE_URL}/admin/donor-report`,
   DELETE_DONOR: (donorId) => `${API_BASE_URL}/admin/delete-donor/${donorId}`,
-
+  HOSPITAL_HISTORY: (hospitalId) => `${API_BASE_URL}/admin/hospital-history/${hospitalId}`,
+  DELETE_HOSPITAL: (hospitalId) => `${API_BASE_URL}/admin/delete-hospital/${hospitalId}`,
 
 };
