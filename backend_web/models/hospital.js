@@ -30,7 +30,7 @@ const hospitalSchema = new mongoose.Schema(
       required: true,
     },
     status:{
-      type:String, enum:["pending","approved","rejected"],
+      type:String, enum:["pending","approved","rejected,","active","inactive"],
       default:"pending"
     }
   },
