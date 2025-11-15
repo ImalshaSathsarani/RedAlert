@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminAuth = require('../middlewares/adminAuth');
-const { getAllRequests, approveRequest, rejectRequest, getPendingRequests, pendingHospitalReport, getBloodDonors, getRegisteredHospitals, downloadDonorReport, inactivateDonor } = require('../controllers/admin/hospitalRequestController');
+const { getAllRequests, approveRequest, rejectRequest, getPendingRequests, pendingHospitalReport, getBloodDonors, getRegisteredHospitals, downloadDonorReport, inactivateDonor, downloadHospitalHistoryReport,inactivateHospital } = require('../controllers/admin/hospitalRequestController');
 
 // Admin authentication middleware
 //router.use(adminAuth);
@@ -15,5 +15,7 @@ router.get('/hospital-report/:id', pendingHospitalReport);
 router.put('/hospital-requests/:requestId/approve', approveRequest);
 router.put('/hospital-requests/:requestId/reject', rejectRequest);
 router.put('/delete-donor/:donorId', inactivateDonor);
+router.get('/hospital-history/:id', downloadHospitalHistoryReport);
+router.put('/delete-hospital/:hospitalId', inactivateHospital);
 
 module.exports = router;
