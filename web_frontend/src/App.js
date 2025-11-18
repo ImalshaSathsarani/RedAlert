@@ -22,6 +22,9 @@ import AdminSideBar from './pages/Admin/AdminSideBar';
 import FindDonorsPage from './pages/FindDonors';
 import RequestDetailsPage from './pages/BloodRequestDetails';
 import RegistrationRequests from './pages/Admin/RegistrationRequests';
+import AdminRegistration from './pages/Admin/AdminRegistration';
+import AdminLogin from './pages/Admin/AdminLogin';
+import ProtectedAdminRoute from './pages/Admin/ProtectedAdminRoute';
 
 
 function App() {
@@ -42,14 +45,31 @@ function App() {
         <Route path = '/requestHistory' element={<RequestHistory/>}/>
         <Route path ="/profileDetails" element={<ProfileDetails/>}/>
         <Route path ="/editProfile" element={<EditProfile/>}/>
-        <Route path ="/adminDashboard" element={<AdminDashboard/>}/>
-        <Route path ="/adminRegisteredUsers" element={<RegisteredUsers/>}/>
-        <Route path ="/adminRegisteredHospitals" element={<RegisteredHospitals/>}/>
-        <Route path ="/adminInquiries" element={<Inquiries/>}/>
-        <Route path="/adminSidebar" element={<AdminSideBar/>}/>
+        <Route 
+           path ="/adminDashboard" 
+           element={
+           <ProtectedAdminRoute>  <AdminDashboard/></ProtectedAdminRoute>
+         }/>
+        <Route 
+        path ="/adminRegisteredUsers" 
+        element={
+        <ProtectedAdminRoute><RegisteredUsers/></ProtectedAdminRoute>
+        }/>
+        <Route path ="/adminRegisteredHospitals" element={
+          <ProtectedAdminRoute> <RegisteredHospitals/></ProtectedAdminRoute>
+         }/>
+        <Route path ="/adminInquiries" element={
+          <ProtectedAdminRoute> <Inquiries/></ProtectedAdminRoute>
+         }/>
+        <Route path="/adminSidebar" element={
+          <ProtectedAdminRoute><AdminSideBar/></ProtectedAdminRoute>
+          }/>
         <Route path="/findDonors" element = {<FindDonorsPage/>}/>
         <Route path="/requests/:id" element={<RequestDetailsPage />} />
-        <Route path="/registrationRequests" element={<RegistrationRequests/>} />
+        <Route path="/registrationRequests" element={
+          <ProtectedAdminRoute><RegistrationRequests/></ProtectedAdminRoute>} />
+        <Route path="/adminRegistration" element={<AdminRegistration/>}/>
+        <Route path ="/adminLogin" element={<AdminLogin/>}/>
       </Routes>
     </Router>
   )

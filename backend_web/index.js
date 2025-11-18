@@ -141,6 +141,9 @@ const communityroutes = require("./routes/communityroutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const notificationRoutes = require("./routes/notificationroutes");
 
+console.log("Admin router loaded:", adminRouter);
+
+
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/request", bloodRequestRoutes);

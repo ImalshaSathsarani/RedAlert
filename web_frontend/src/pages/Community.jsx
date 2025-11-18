@@ -8,6 +8,8 @@ import {
   FiImage,
   FiSmile,
   FiPlus,
+  FiArrowRightCircle,
+  FiSend,
 } from "react-icons/fi";
 import story from "../assets/story1.png";
 import profile from "../assets/image1.png";
@@ -137,6 +139,8 @@ const Community = () => {
                 border: "none",
                 outline: "none",
                 paddingLeft: 20,
+                paddingTop:'50px',
+                paddingBottom:'50px',
                 fontSize: 14,
                 color: "#000",
                 backgroundColor: "transparent",
@@ -145,7 +149,7 @@ const Community = () => {
           </div>
 
           {/* Stories */}
-          <div
+          {/* <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -170,7 +174,7 @@ const Community = () => {
               >
                 <span style={{ fontSize: 30, color: "#000" }}>+</span>
               </div>
-              {/* Empty spacer for alignment */}
+           
               <div style={{ fontSize: 12, color: "transparent" }}>&nbsp;</div>
             </div>
 
@@ -194,7 +198,7 @@ const Community = () => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
 
         {/* Feed Title */}
@@ -332,6 +336,7 @@ const Community = () => {
             value={newPostMessage}
             onChange={(e) => setNewPostMessage(e.target.value)}
             placeholder="Type here..."
+            className="customInput"
             style={{
               flex: 1,
               marginRight: 20,
@@ -354,9 +359,9 @@ const Community = () => {
               marginRight: 10,
             }}
           >
-            <FiImage size={22} style={{ cursor: "pointer" }} title="Add Image" />
-            <FiSmile size={22} style={{ cursor: "pointer" }} title="Add Sticker" />
-            <FiPlus
+            {/* <FiImage size={22} style={{ cursor: "pointer" }} title="Add Image" />
+            <FiSmile size={22} style={{ cursor: "pointer" }} title="Add Sticker" /> */}
+            <FiSend
               size={22}
               style={{ cursor: "pointer" }}
               title="Post"
@@ -366,6 +371,11 @@ const Community = () => {
         </div>
 
       </div>
+
+      <style>{`.customInput::placeholder {
+  color: #cccccc; /* your desired placeholder color */
+  opacity: 1;     /* ensures full visibility */
+}`}</style>
     </>
   );
 };

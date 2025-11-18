@@ -3,6 +3,101 @@ const Hospital = require("../../models/hospital");
 const PDFDocument = require("pdfkit");
 const User = require("../../models/user");
 const BloodRequest = require("../../models/bloodrequest");
+const Admin = require("../../models/admin");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { sendEmail} = require("../../utils/mailer");
+const { approvalSubject, approvalText, approvalHtml } = require("../../utils/emailTemplates");
+const { rejectionSubject, rejectionText, rejectionHtml } = require("../../utils/rejectionTemplates");
+
+
+exports.registerAdmin = async(req,res)=>{
+  try{
+    console.log("Request body:", req.body); // Add this line
+    const {name, email, phone,password} = req.body;
+
+    if(!name || !email || !phone || !password){
+      return res.status(400).json({message:"All fields are required"});
+    }
+
+    const existing = await Admin.findOne({ email})
+    if(existing){
+      return res.status(400).json({message:"Admin with this email already exists"});
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newAdmin = await Admin.create({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+    });
+    const token = jwt.sign(
+      { id: newAdmin._id, email: newAdmin.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+
+    return res.status(201).json({message:"Admin registered successfully", admin:newAdmin,token});
+
+  }catch(e){
+    console.error("Error registering admin:", e);
+    res.status(500).json({message:"Error registering admin", error: e.message});
+  }
+}
+
+exports.loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: admin._id, email: admin.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return res.status(200).json({ 
+      message: "Login successful", 
+      admin,
+      token 
+    });
+
+  } catch (error) {
+    console.error("Error logging in admin:", error);
+    return res.status(500).json({ message: "Error logging in", error: error.message });
+  }
+};
+
+// exports.logoutAdmin = async (req, res) => {
+//   try {
+//     // If using cookies to store JWT, clear the cookie
+//     // res.clearCookie("token");
+
+//     // If token is stored in localStorage (frontend), just remove it there
+//     return res.status(200).json({ message: "Logout successful" });
+//   } catch (error) {
+//     console.error("Error logging out admin:", error);
+//     return res.status(500).json({ message: "Error logging out", error: error.message });
+//   }
+// };
+
 
 exports.getAllRequests = async (req, res) => {
   try {
@@ -16,44 +111,124 @@ exports.getAllRequests = async (req, res) => {
   }
 };
 
+// exports.approveRequest = async (req, res) => {
+//   try {
+//     const { requestId } = req.params;
+//     console.log(req.url);
+    
+//     const request = await Hospital.findById(requestId);
+//     if (!request) {
+//       return res.status(404).json({ message: 'Request not found' });
+//     }
+
+//     request.isApproved = true;
+//     request.status = 'approved';
+//     request.reason = 'Request approved by admin';
+//     await request.save();
+
+//     res.status(200).json({ message: 'Request approved successfully' });
+//   } catch (error) {
+//       console.error("Error approving request:", error);
+//       res.status(500).json({message:"Error approving", error: error.message});
+//   }
+// };
 exports.approveRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
-    console.log(req.url);
-    
-    const request = await Hospital.findById(requestId);
-    if (!request) {
+
+    const updated = await Hospital.findByIdAndUpdate(
+      requestId,
+      { isApproved: true, status: 'approved', reason: 'Request approved by admin' },
+      { new: true, runValidators: false } // Don't validate the whole document
+    );
+
+    if (!updated) {
       return res.status(404).json({ message: 'Request not found' });
     }
 
-    request.isApproved = true;
-    request.status = 'approved';
-    request.reason = 'Request approved by admin';
-    await request.save();
+     // Email details
+    const to = updated.email;
+    const hospitalName = updated.hospitalName || "Hospital";
+    const appUrl = process.env.APP_URL;
+
+    const subject = approvalSubject(hospitalName);
+    const text = approvalText(hospitalName, appUrl);
+    const html = approvalHtml(hospitalName, appUrl);
+
+    try {
+      await sendEmail({ to, subject, text, html });
+      console.log("Approval email sent to", to);
+    } catch (mailError) {
+      console.error("Email Error:", mailError);
+    }
 
     res.status(200).json({ message: 'Request approved successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error approving request' });
+    console.error("Error approving request:", error);
+    res.status(500).json({ message: "Error approving", error: error.message });
   }
 };
+
+// exports.rejectRequest = async (req, res) => {
+//   try {
+//     const { requestId } = req.params;
+//     const { reason } = req.body;
+    
+//     const request = await Hospital.findById(requestId);
+//     if (!request) {
+//       return res.status(404).json({ message: 'Request not found' });
+//     }
+
+//     request.status = 'rejected';
+//     request.reason = reason || 'Request rejected by admin';
+//     await request.save();
+
+//     res.status(200).json({ message: 'Request rejected successfully' });
+//   } catch (error) {
+//       console.error("Error rejecting request:", error);
+//      res.status(500).json({message:"Error rejecting", error: error.message});
+//   }
+// };
 
 exports.rejectRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
     const { reason } = req.body;
-    
-    const request = await Hospital.findById(requestId);
-    if (!request) {
+
+     if (!reason) {
+      return res.status(400).json({ message: "Rejection reason is required" });
+    }
+
+    const updated = await Hospital.findByIdAndUpdate(
+      requestId,
+      { status: 'rejected', rejectionReason: reason },
+      { new: true, runValidators: false } // Don't validate the whole document
+    );
+
+    if (!updated) {
       return res.status(404).json({ message: 'Request not found' });
     }
 
-    request.status = 'rejected';
-    request.reason = reason || 'Request rejected by admin';
-    await request.save();
+     // Prepare email details
+    const to = updated.email;
+    const hospitalName = updated.hospitalName || "Hospital";
+    const appUrl = process.env.APP_URL;
 
-    res.status(200).json({ message: 'Request rejected successfully' });
+    const subject = rejectionSubject(hospitalName);
+    const text = rejectionText(hospitalName, reason, appUrl);
+    const html = rejectionHtml(hospitalName, reason, appUrl);
+
+    try {
+      await sendEmail({ to, subject, text, html });
+      console.log("Rejection email sent to", to);
+    } catch (mailError) {
+      console.error("Email Error:", mailError);
+    }
+
+    res.status(200).json({ message: 'Request rejected and email sent' });
   } catch (error) {
-    res.status(500).json({ message: 'Error rejecting request' });
+    console.error("Error rejected request:", error);
+    res.status(500).json({ message: "Error rejecting", error: error.message });
   }
 };
 
@@ -323,5 +498,94 @@ exports.inactivateHospital = async (req, res) => {
   } catch (e) {
     console.error("Error inactivating hospital:", e);
     res.status(500).json({ message: "Error inactivating hospital" });
+  }
+};
+
+exports.getDashboardStats = async(req,res)=>{
+  try{
+    const donorCount = await User.countDocuments({role:'donor', status:'active'});
+    const hospitalCount = await Hospital.countDocuments({isApproved:true, status:'active'});
+    const pendingRequests = await Hospital.countDocuments({isApproved:false});
+
+    res.status(200).json({
+      success: true,
+      donorCount,
+      hospitalCount,
+      pendingRequests,
+    })
+
+  }catch(e){
+    console.error("Error fetching dashboard stats:", e);
+  }
+}
+
+exports.getMonthlyRegistrations = async(req,res)=>{
+  try{
+
+    const donorStats = await User.aggregate([
+      {
+       $match:{role:'donor'}
+        }
+      ,{
+        $group: {
+          _id: { month: { $month: "$createdAt" } },
+          count: { $sum: 1 }
+        }
+      },
+       { $sort: { "_id.month": 1 } }
+    ]);
+
+      const hospitalStats = await Hospital.aggregate([
+      {
+        $group: {
+          _id: { month: { $month: "$createdAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.month": 1 } }
+    ]);
+
+     const formattedData = {
+      donors: Array(12).fill(0),
+      hospitals: Array(12).fill(0),
+    };
+
+    donorStats.forEach(item => {
+      formattedData.donors[item._id.month - 1] = item.count;
+    });
+
+    hospitalStats.forEach(item => {
+      formattedData.hospitals[item._id.month - 1] = item.count;
+    });
+
+
+    res.status(200).json({
+      success:true,
+      monthly: formattedData,
+    });
+  }catch(e){
+    console.error("Error fetching monthly stats:", e);
+  }
+}
+
+
+
+exports.getUserDistribution = async (req, res) => {
+  try {
+    const donorCount = await User.countDocuments({ role: "donor" });
+    const hospitalCount = await Hospital.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      donors: donorCount,
+      hospitals: hospitalCount,
+      chartData: {
+        labels: ["Donors", "Hospitals"],
+        data: [donorCount, hospitalCount],
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

@@ -142,10 +142,38 @@ exports.signup = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Hospital registered successfully",
+      message: "Hospital registration request send successfully",
       result,
       hospitalId: result._id,
     });
+
+    // 5. Generate JWT token (same structure as signin)
+    // const token = jwt.sign(
+    //   { id: result._id, email: result.email, role: "hospital" },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "1d" }
+    // );
+
+    // res.cookie('token', token,{
+    //   httpOnly: true,
+    //   secure: false, // Set to true in production with HTTPS
+    //   sameSite: 'Lax',
+    //   maxAge: 24 * 60 * 60 * 1000, // 1 day
+    // });
+
+    //   // 7. Response
+    // res.status(201).json({
+    //   success: true,
+    //   message: "Hospital registered successfully",
+    //   token, // optional (you already stored cookie)
+    //   hospital: {
+    //     id: result._id,
+    //     hospitalName: result.hospitalName,
+    //     email: result.email,
+    //     isApproved: result.isApproved,
+    //   },
+    // });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -220,14 +248,30 @@ exports.signin = async (req, res) => {
         .json({ success: false, message: "Invalid credentials" });
     }
 
-    // 3. Generate token
+     // 3. Check if hospital is approved
+    if (!hospital.isApproved) {
+      return res.status(403).json({
+        success: false,
+        message: "Your account is not approved yet. Please wait for admin approval.",
+      });
+    }
+
+    // 4. Check if hospital is inactive
+    if (hospital.status === "inactive") {
+      return res.status(403).json({
+        success: false,
+        message: "Your account is inactive. Please contact the administrator."
+      });
+    }
+
+    // 5. Generate token
     const token = jwt.sign(
       { id: hospital._id, email: hospital.email, role: "hospital" },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    // 4. Set token in HttpOnly cookie
+    // 6. Set token in HttpOnly cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: false, // Set to true in production with HTTPS
@@ -244,6 +288,7 @@ exports.signin = async (req, res) => {
         hospitalName: hospital.hospitalName,
         email: hospital.email,
         isApproved: hospital.isApproved,
+        status: hospital.status
       },
     });
   } catch (error) {
