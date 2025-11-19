@@ -8,10 +8,31 @@ const RegistrationRequests = () => {
 
   const[requests, setRequests] = useState([]);
   const { id } = useParams();
-  const handleDownloadReport = (id)=>{
-    window.open(`${API_ROUTES.BASE_URL}api/admin/hospital-report/${id}`, "_blank");
-  }
+  // const handleDownloadReport = (id)=>{
+  //   window.open(`${API_ROUTES.BASE_URL}api/admin/hospital-report/${id}`, "_blank");
+  // }
 
+   const handleDownloadReport = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${API_ROUTES.BASE_URL}api/admin/hospital-report/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      responseType: "blob" // important for files
+    });
+
+    // Create a download link
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `report_${id}.pdf`); // set file name
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error("Download failed:", error);
+    alert("Failed to download report");
+  }
+};
   const handleApprove = async(requestId) =>{
     try{
       const token = localStorage.getItem('token');
@@ -23,7 +44,7 @@ const RegistrationRequests = () => {
         }
       )
 
-      alert("Request approved successfully");
+      alert("Request approved successfully and sent approval email.");
        // Update the requests list locally — remove the approved one
       setRequests((prevRequests) =>
         prevRequests.filter((req) => req._id !== requestId)
@@ -35,17 +56,21 @@ const RegistrationRequests = () => {
   }
   const handleReject = async(requestId) =>{
     try{
-      if(!window.confirm("Are you sure you want to reject this request?")) return;
+      // if(!window.confirm("Are you sure you want to reject this request?")) return;
+       const reason = window.prompt("Enter the reason for rejection:");
+       if (!reason) return alert("Rejection reason is required.");
       const token = localStorage.getItem('token');
       await axios.put(
-        API_ROUTES.REJECT_HOSPITAL_REQUEST(requestId),{},{
+        API_ROUTES.REJECT_HOSPITAL_REQUEST(requestId),
+        { reason },
+        {
           headers:{
             Authorization: `Bearer ${token}`,
           }
         }
       )
 
-      alert("Request  rejected");
+      alert("Request rejected and email sent to hospital");
        // Update the requests list locally — remove the approved one
       setRequests((prevRequests) =>
         prevRequests.filter((req) => req._id !== requestId)

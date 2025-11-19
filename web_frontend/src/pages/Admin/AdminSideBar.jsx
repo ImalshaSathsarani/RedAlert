@@ -1,9 +1,11 @@
 import React from 'react'
 import logo from '../../assets/logo.png'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+//import { Cursor } from 'mongoose';
 
 const AdminSideBar = () => {
-  const location = useLocation()
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const linkStyle = {
     textDecoration: 'none',
@@ -14,6 +16,7 @@ const AdminSideBar = () => {
     padding: '10px 15px',
     borderRadius: '8px',
     display: 'block',
+    cursor: 'pointer'
   }
 
   const activeLinkStyle = {
@@ -21,9 +24,15 @@ const AdminSideBar = () => {
     backgroundColor: '#f5b5b5', // darker or highlighted background
   }
 
+  const handleLogout = () =>{
+    localStorage.removeItem('token');
+    alert("Logged out successfully");
+    navigate('/adminLogin');
+  }
+
   return (
     <div>
-      <div style={{ width: '250px', height: '100vh', backgroundColor: '#FFE3E3', padding: '20px' }}>
+      <div style={{ width: '250px', height: '100%', backgroundColor: '#FFE3E3', padding: '20px' }}>
         <img
           src={logo}
           alt="logo"
@@ -75,6 +84,11 @@ const AdminSideBar = () => {
             >
               Inquiries
             </Link>
+          </li>
+           <li style={{ marginBottom: '30px' }}>
+            
+             <span onClick={handleLogout} style={linkStyle}>Log out</span>
+           
           </li>
         </ul>
       </div>

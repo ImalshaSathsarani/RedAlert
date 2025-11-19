@@ -31,33 +31,33 @@ const RegisteredUsers = () => {
   
   },[]);
 
-  const handleDownload = async (donorId) =>{
-    try{
-    //   const token = localStorage.getItem('token');
-    //   console.log(`${API_ROUTES.DOWNLOAD_DONOR_REPORT}/${donorId}`);
+  // const handleDownload = async (donorId) =>{
+  //   try{
+  //   //   const token = localStorage.getItem('token');
+  //   //   console.log(`${API_ROUTES.DOWNLOAD_DONOR_REPORT}/${donorId}`);
 
-    //   const response = await axios.get(`{API_ROUTES.DOWNLOAD_DONOR_REPORT}${donorId}`,{
-    //     headers:{
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //     responseType:'blob',
-    //   });
+  //   //   const response = await axios.get(`{API_ROUTES.DOWNLOAD_DONOR_REPORT}${donorId}`,{
+  //   //     headers:{
+  //   //       Authorization: `Bearer ${token}`,
+  //   //     },
+  //   //     responseType:'blob',
+  //   //   });
 
-    //   // Create a file download
-    // const url = window.URL.createObjectURL(new Blob([response.data]));
-    // const link = document.createElement("a");
-    // link.href = url;
-    // link.setAttribute("download", `donor-report-${donorId}.pdf`);
-    // document.body.appendChild(link);
-    // link.click();
-    window.open(`${API_ROUTES.BASE_URL}api/admin/donor-report/${donorId}`, "_blank");
+  //   //   // Create a file download
+  //   // const url = window.URL.createObjectURL(new Blob([response.data]));
+  //   // const link = document.createElement("a");
+  //   // link.href = url;
+  //   // link.setAttribute("download", `donor-report-${donorId}.pdf`);
+  //   // document.body.appendChild(link);
+  //   // link.click();
+  //   window.open(`${API_ROUTES.BASE_URL}api/admin/donor-report/${donorId}`, "_blank");
 
 
 
-    }catch(e){
-      console.error("Error downloading donor report:",e)
-    }
-  }
+  //   }catch(e){
+  //     console.error("Error downloading donor report:",e)
+  //   }
+  // }
 
   const handleDelete = async (donorId)=>{
     try{
@@ -82,6 +82,28 @@ const RegisteredUsers = () => {
       console.error("Error deleting donor:",e)
     }
   }
+
+     const handleDownload = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${API_ROUTES.BASE_URL}api/admin/donor-report/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      responseType: "blob" // important for files
+    });
+
+    // Create a download link
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `report_${id}.pdf`); // set file name
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error("Download failed:", error);
+    alert("Failed to download report");
+  }
+};
   return (
     <div style={{ display: 'flex', fontFamily: 'poppins' }}>
       
