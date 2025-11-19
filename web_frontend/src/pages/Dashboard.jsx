@@ -100,6 +100,15 @@ const Dashboard = () => {
           ),
         ]);
 
+        console.log("Trends response:", trendsRes.data);
+console.log("Blood group response:", bloodGroupRes.data);
+console.log("Summary response:", summaryRes.data);
+console.log("Matched donors count:", matchedCountRes.data);
+console.log("Recent requests:", recentReqRes.data);
+console.log("Matched donors:", matchedDonorRes.data);
+console.log("Hospital Profile:", hospitalDataRes.data);
+
+
         // Format trend data to match chart structure
         const formattedTrends = trendsRes.data.data.map((entry) => ({
           date: entry._id,
