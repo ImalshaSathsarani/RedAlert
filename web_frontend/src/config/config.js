@@ -1,7 +1,7 @@
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000/api";
 
 export const API_ROUTES = {
-  BASE_URL  :`redalert-production-7dab.up.railway.app/`,
+  BASE_URL  :`https://redalert-production-7dab.up.railway.app/`,
   LOGIN: `${API_BASE_URL}/auth/signin`,
   REGISTER: `${API_BASE_URL}/auth/signup`,
   CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
