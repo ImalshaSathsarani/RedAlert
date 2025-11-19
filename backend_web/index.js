@@ -115,9 +115,14 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://red-alert2.vercel.app",   // your Vercel production domain
+];
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // Your web/React frontend
+    origin:allowedOrigins, // Your web/React frontend
     credentials: true
   })
 );
