@@ -82,20 +82,20 @@ const Dashboard = () => {
           matchedDonorRes,
           hospitalDataRes
         ] = await Promise.all([
-          axios.get("redalert-production-7dab.up.railway.app/api/dashboard/trends", config),
-          axios.get("redalert-production-7dab.up.railway.app/api/dashboard/blood-groups", config),
-          axios.get("redalert-production-7dab.up.railway.app/api/dashboard/summary", config),
+          axios.get("https://redalert-production-7dab.up.railway.app/api/dashboard/trends", config),
+          axios.get("https://redalert-production-7dab.up.railway.app/api/dashboard/blood-groups", config),
+          axios.get("https://redalert-production-7dab.up.railway.app/api/dashboard/summary", config),
           axios.get(
-            "redalert-production-7dab.up.railway.app/api/dashboard/matched-donors-count",
+            "https://redalert-production-7dab.up.railway.app/api/dashboard/matched-donors-count",
             config
           ),
-          axios.get("redalert-production-7dab.up.railway.app/api/dashboard/recent", config),
+          axios.get("https://redalert-production-7dab.up.railway.app/api/dashboard/recent", config),
           axios.get(
-            "hredalert-production-7dab.up.railway.app/api/dashboard/matched-donors",
+            "https://redalert-production-7dab.up.railway.app/api/dashboard/matched-donors",
             config
           ),
           axios.get(
-            "redalert-production-7dab.up.railway.app/api/hospital/profile",
+            "https://redalert-production-7dab.up.railway.app/api/hospital/profile",
             config
           ),
         ]);
