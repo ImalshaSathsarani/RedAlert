@@ -82,20 +82,20 @@ const Dashboard = () => {
           matchedDonorRes,
           hospitalDataRes
         ] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/dashboard/trends`, config),
-          axios.get(`${process.env.REACT_APP_API_URL}/dashboard/blood-groups`, config),
-          axios.get(`${process.env.REACT_APP_API_URL}/dashboard/summary`, config),
+          axios.get(`${process.env.REACT_APP_API_BASE_URL}/dashboard/trends`, config),
+          axios.get(`${process.env.REACT_APP_API_BASE_URL}/dashboard/blood-groups`, config),
+          axios.get(`${process.env.REACT_APP_API_BASE_URL}/dashboard/summary`, config),
           axios.get(
-           `${process.env.REACT_APP_API_URL}/dashboard/matched-donors-count`,
+           `${process.env.REACT_APP_API_BASE_URL}/dashboard/matched-donors-count`,
             config
           ),
-          axios.get(`${process.env.REACT_APP_API_URL}/dashboard/recent`, config),
+          axios.get(`${process.env.REACT_APP_API_BASE_URL}/dashboard/recent`, config),
           axios.get(
-            `${process.env.REACT_APP_API_URL}/dashboard/matched-donors`,
+            `${process.env.REACT_APP_API_BASE_URL}/dashboard/matched-donors`,
             config
           ),
           axios.get(
-           `${process.env.REACT_APP_API_URL}/hospital/profile`,
+           `${process.env.REACT_APP_API_BASE_URL}/hospital/profile`,
             config
           ),
         ]);
