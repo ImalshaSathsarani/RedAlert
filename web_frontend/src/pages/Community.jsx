@@ -456,7 +456,7 @@ const Community = () => {
         style={{
           backgroundColor: "#F9F9F9",
           minHeight: "100vh",
-          fontFamily: "Inter, Arial, sans-serif",
+          fontFamily: "poppins",
         }}
       >
         {/* Sticky Top Search Section */}
