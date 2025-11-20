@@ -191,7 +191,7 @@ const EditProfile = () => {
             htmlFor="profileImage"
             style={{
               position: "absolute",
-              bottom: "30px",
+              bottom: "70px",
               right: "10px",
               backgroundColor: "#B43929",
               borderRadius: "50%",
