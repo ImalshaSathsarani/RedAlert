@@ -831,6 +831,7 @@ const Dashboard = () => {
               color: hospitalData.isApproved ? "#155724" : "#721c24",
               fontWeight: "bold",
               borderRadius: 20,
+              marginTop: 2,
             }}
           >
             {hospitalData.isApproved ? "Verified" : "Not Verified"}
