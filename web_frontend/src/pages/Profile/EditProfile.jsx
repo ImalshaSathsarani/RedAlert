@@ -164,7 +164,7 @@ const EditProfile = () => {
             right: "40px",
             height: "220px",
             width: "220px",
-            top: "50px",
+            top: "30px",
             backgroundColor: "white",
             borderRadius: "100%",
             border: "1px solid #B43929",
