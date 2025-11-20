@@ -82,20 +82,20 @@ const Dashboard = () => {
           matchedDonorRes,
           hospitalDataRes
         ] = await Promise.all([
-          axios.get("https://redalert-production-7dab.up.railway.app/api/dashboard/trends", config),
-          axios.get("https://redalert-production-7dab.up.railway.app/api/dashboard/blood-groups", config),
-          axios.get("https://redalert-production-7dab.up.railway.app/api/dashboard/summary", config),
+          axios.get(`${process.env.REACT_APP_API_URL}/dashboard/trends`, config),
+          axios.get(`${process.env.REACT_APP_API_URL}/dashboard/blood-groups`, config),
+          axios.get(`${process.env.REACT_APP_API_URL}/dashboard/summary`, config),
           axios.get(
-            "https://redalert-production-7dab.up.railway.app/api/dashboard/matched-donors-count",
+           `${process.env.REACT_APP_API_URL}/dashboard/matched-donors-count`,
             config
           ),
-          axios.get("https://redalert-production-7dab.up.railway.app/api/dashboard/recent", config),
+          axios.get(`${process.env.REACT_APP_API_URL}/dashboard/recent`, config),
           axios.get(
-            "https://redalert-production-7dab.up.railway.app/api/dashboard/matched-donors",
+            `${process.env.REACT_APP_API_URL}/dashboard/matched-donors`,
             config
           ),
           axios.get(
-            "https://redalert-production-7dab.up.railway.app/api/hospital/profile",
+           `${process.env.REACT_APP_API_URL}/hospital/profile`,
             config
           ),
         ]);
@@ -127,7 +127,7 @@ console.log("Hospital Profile:", hospitalDataRes.data);
         setSummary(summaryRes.data.data);
         setMatchedDonorsCount(matchedCountRes.data.count);
         setRecentRequests(recentReqRes.data.data);
-        setMatchedDonors(matchedDonorRes.data,data);
+        setMatchedDonors(matchedDonorRes.data.data);
         setHospitalData(hospitalDataRes.data.data);
 
       } catch (error) {
