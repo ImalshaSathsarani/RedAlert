@@ -389,6 +389,7 @@ import {
   FiHeart,
   FiMessageCircle,
   FiSend,
+  FiUser,
 } from "react-icons/fi";
 import profile from "../assets/image1.png";
 import MainHeader from "./Headers/MainHeader";
@@ -535,8 +536,8 @@ const Community = () => {
             >
               {/* Header */}
               <div style={{ display: "flex", alignItems: "center" }}>
-                <img
-                  src={profile}
+                {/* <img
+                  src={post.hospitalId?.profilePicture? `${API_ROUTES.BASE_URL}/${post.hospitalId.profilePicture}` : <FiUser size={20} color="#B43929" />}
                   alt="profile"
                   style={{
                     width: 48,
@@ -544,7 +545,36 @@ const Community = () => {
                     borderRadius: "50%",
                     marginRight: 15,
                   }}
-                />
+                /> */}
+                <div style={{ width: 48, height: 48, marginRight: 15 }}>
+  {post.hospitalId?.profilePicture ? (
+    <img
+      src={`${API_ROUTES.BASE_URL}/${post.hospitalId.profilePicture}`}
+      alt="profile"
+      style={{
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        objectFit: "cover",
+      }}
+    />
+  ) : (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        backgroundColor: "#f2f2f2",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <FiUser size={22} color="#B43929" />
+    </div>
+  )}
+</div>
+
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, fontSize: 16 }}>
                     {post.hospitalName}

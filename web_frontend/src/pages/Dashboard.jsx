@@ -726,6 +726,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
 
 const COLORS = [
   "#FF6384",
@@ -746,7 +747,7 @@ const Dashboard = () => {
   const [recentRequests, setRecentRequests] = useState([]);
   const [matchedDonors, setMatchedDonors] = useState([]);
   const [hospitalData, setHospitalData] = useState({});
-
+  const navigate = useNavigate();
   //====================
   // FETCH DASHBOARD DATA
   //====================
@@ -819,13 +820,14 @@ const Dashboard = () => {
            HOSPITAL WELCOME SECTION
         ===============================*/}
         <h1 style={{ fontSize: 36, fontWeight: 700 }}>
-          Welcome, {hospitalData.name} 👋
+          Welcome, {hospitalData.name} 
         </h1>
 
-        <div style={{ marginTop: 10, fontSize: 18, display: "flex", gap: 0 }}>
-          <span>Status:</span>
-          <span
+        <div style={{ marginTop: 5, fontSize: 18, display: "flex", alignItems: "center", gap: 10 }}>
+          <p style={{ margin: 0 }}>Status:</p>
+          <p
             style={{
+              margin: 0,
               padding: "4px 12px",
               backgroundColor: hospitalData.isApproved ? "#d4edda" : "#f8d7da",
               color: hospitalData.isApproved ? "#155724" : "#721c24",
@@ -835,7 +837,7 @@ const Dashboard = () => {
             }}
           >
             {hospitalData.isApproved ? "Verified" : "Not Verified"}
-          </span>
+          </p>
         </div>
 
         {/*=============================
@@ -1066,6 +1068,10 @@ const Dashboard = () => {
             </div>
 
             <button
+             onClick={()=>{
+              navigate('/request-blood');
+
+             }}
               style={{
                 border: "2px solid red",
                 background: "white",
@@ -1074,12 +1080,16 @@ const Dashboard = () => {
                 borderRadius: 30,
                 fontSize: 16,
                 cursor: "pointer",
+                fontFamily:'poppins'
               }}
             >
               Request Blood
             </button>
 
             <button
+            onClick={()=>{
+              navigate('/findDonors');
+            }}
               style={{
                 border: "2px solid red",
                 background: "white",
@@ -1088,6 +1098,7 @@ const Dashboard = () => {
                 borderRadius: 30,
                 fontSize: 16,
                 cursor: "pointer",
+                fontFamily:'poppins'
               }}
             >
               Search Donors
