@@ -164,7 +164,7 @@ const EditProfile = () => {
             right: "40px",
             height: "220px",
             width: "220px",
-            top: "110px",
+            top: "140px",
             backgroundColor: "white",
             borderRadius: "100%",
             border: "1px solid #B43929",
@@ -191,7 +191,7 @@ const EditProfile = () => {
             htmlFor="profileImage"
             style={{
               position: "absolute",
-              bottom: "70px",
+              bottom: "50px",
               right: "10px",
               backgroundColor: "#B43929",
               borderRadius: "50%",
