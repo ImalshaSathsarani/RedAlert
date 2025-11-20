@@ -860,6 +860,18 @@ const token = localStorage.getItem("token");
           >
             Request and add to Community
           </button>
+          {/* Message */}
+{message && (
+  <p
+    style={{
+      color: message.includes("success") ? "green" : "red",
+      marginBottom: "20px",
+      fontWeight: 600,
+    }}
+  >
+    {message}
+  </p>
+)}
 
           <p
             style={{
