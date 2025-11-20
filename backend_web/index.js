@@ -117,7 +117,8 @@ app.use(express.urlencoded({ extended: true }));
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://red-alert2.vercel.app",   // your Vercel production domain
+  "https://red-alert2.vercel.app", 
+  "https://red-alert-zeta.vercel.app"  // your Vercel production domain
 ];
 
 app.use(
