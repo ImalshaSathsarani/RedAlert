@@ -208,7 +208,7 @@ const EditProfile = () => {
               id="profileImage"
               accept="image/*"
               onChange={handleImageChange}
-              style={{ display: "none" }}
+              //style={{ display: "none" }}
             />
           </label>
         </div>
