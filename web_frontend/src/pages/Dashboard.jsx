@@ -822,7 +822,7 @@ const Dashboard = () => {
           Welcome, {hospitalData.name} 👋
         </h1>
 
-        <div style={{ marginTop: 10, fontSize: 18, display: "flex", gap: 10 }}>
+        <div style={{ marginTop: 10, fontSize: 18, display: "flex", gap: 0 }}>
           <span>Status:</span>
           <span
             style={{
@@ -831,7 +831,7 @@ const Dashboard = () => {
               color: hospitalData.isApproved ? "#155724" : "#721c24",
               fontWeight: "bold",
               borderRadius: 20,
-              marginTop: 2,
+             
             }}
           >
             {hospitalData.isApproved ? "Verified" : "Not Verified"}
