@@ -202,13 +202,13 @@ const EditProfile = () => {
               cursor: "pointer",
             }}
           >
-            <FaCamera size={20} color="white" />
+            <FaCamera size={20} color="white" style={{zIndex:1000}} />
             <input
               type="file"
               id="profileImage"
               accept="image/*"
               onChange={handleImageChange}
-              //style={{ display: "none" }}
+              style={{ display: "none" }}
             />
           </label>
         </div>
