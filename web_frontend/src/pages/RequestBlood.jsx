@@ -57,14 +57,16 @@ const RequestBlood = () => {
       }
 
       console.log("Sending request to backend...");
-
+const token = localStorage.getItem("token"); 
       const response = await axios.post(
         API_ROUTES.CREATE_BLOOD_REQUEST,
         submitData,
         {
           withCredentials: true, // needed for cookies
           headers: {
+            Accept: "application/json",
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
