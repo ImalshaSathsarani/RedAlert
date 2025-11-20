@@ -162,7 +162,7 @@ const handleLogoutCancel = () => {
           <ul style={{ listStyle: 'none', padding: 0, margin:0, display:'flex', flexDirection:'column', gap:'20px',paddingTop:'20px' }}>
             <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={location.pathname ==='/dashboard' ? activeSidebarLinkStyle : sidebarLinkStyle}>Dashboard</Link></li>
             <li style ={{width:'100%'}}><Link to="/request-blood" onClick={toggleSidebar} style={location.pathname ==='/request-blood' ? activeSidebarLinkStyle : sidebarLinkStyle}>Request Blood</Link></li>
-            <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={location.pathname ==='/dashboard' ? activeSidebarLinkStyle : sidebarLinkStyle}>My Requests</Link></li>
+            {/* <li style ={{width:'100%'}}><Link to="/dashboard" onClick={toggleSidebar} style={location.pathname ==='/dashboard' ? activeSidebarLinkStyle : sidebarLinkStyle}>My Requests</Link></li> */}
             <li style ={{width:'100%'}}><Link to="/findDonors" onClick={toggleSidebar} style={location.pathname ==='/findDonors' ? activeSidebarLinkStyle : sidebarLinkStyle}>Find Donors</Link></li>
             <li style ={{width:'100%'}}><Link to="/community" onClick={toggleSidebar} style={location.pathname ==='/community' ? activeSidebarLinkStyle : sidebarLinkStyle}>Community</Link></li>
             <li style ={{width:'100%'}}><Link to="/profileDetails" onClick={toggleSidebar} style={location.pathname ==='/profileDetails' || location.pathname ==='/editProfile' || location.pathname ==='/changePassword' || location.pathname ==='/requestHistory' ? activeSidebarLinkStyle : sidebarLinkStyle}>Profile</Link></li>
