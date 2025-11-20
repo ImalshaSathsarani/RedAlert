@@ -121,13 +121,13 @@ console.log("Hospital Profile:", hospitalDataRes.data);
           value: entry.count,
         }));
 
-        console.log("Hospital Data:", hospitalDataRes.data.data);
+        console.log("Hospital Data:", hospitalDataRes.data);
         setRequestData(formattedTrends);
         setBloodGroupData(formattedGroups);
         setSummary(summaryRes.data.data);
         setMatchedDonorsCount(matchedCountRes.data.count);
         setRecentRequests(recentReqRes.data.data);
-        setMatchedDonors(matchedDonorRes.data.data);
+        setMatchedDonors(matchedDonorRes.data,data);
         setHospitalData(hospitalDataRes.data.data);
 
       } catch (error) {
