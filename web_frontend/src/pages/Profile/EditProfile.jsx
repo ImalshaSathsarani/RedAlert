@@ -171,7 +171,7 @@ const EditProfile = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            position: "relative",
+            //position: "relative",
             overflow: "hidden",
           }}
         >
@@ -208,7 +208,7 @@ const EditProfile = () => {
               id="profileImage"
               accept="image/*"
               onChange={handleImageChange}
-              style={{ display: "none" }}
+              //style={{ display: "none" }}
             />
           </label>
         </div>
