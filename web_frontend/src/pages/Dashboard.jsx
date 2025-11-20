@@ -918,12 +918,14 @@ const Dashboard = () => {
                 cy="50%"
                 outerRadius={110}
                 dataKey="value"
-                label
+                label= {({name,value}) => `${name}: ${value}`}
               >
                 {bloodGroupData.map((entry, index) => (
                   <Cell key={index} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
+              <Tooltip />
+
             </PieChart>
           </div>
         </div>
