@@ -10,6 +10,7 @@ exports.createPost = async (req, res) => {
         .json({ success: false, message: "Message is required" });
     }
 
+     const { id, hospitalName, email, emergencyPhone } = req.user;
     const newPost = new CommunityPost({
       hospitalId: req.user.id,
       hospitalName: req.user.hospitalName, // Add hospitalName in authMiddleware or fetch it here
@@ -33,7 +34,9 @@ exports.createPost = async (req, res) => {
 // ➤ Get all posts
 exports.getPosts = async (req, res) => {
   try {
-    const posts = await CommunityPost.find().sort({ createdAt: -1 });
+    const posts = await CommunityPost.find()
+    .populate("hospitalId","hospitalName profilePicture")
+    .sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: posts });
   } catch (error) {
     console.error("Get Posts Error:", error.message);

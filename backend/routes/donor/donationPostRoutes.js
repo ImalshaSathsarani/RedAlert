@@ -8,6 +8,8 @@ const {
   getPostsByLocation,
   updatePostAvailability,
   deleteDonationPost,
+  getEmergencyBloodRequests,
+  getPendingBloodRequests,
 } = require('../../controllers/donor/donationPostController');
 
 // Create new donation post
@@ -27,5 +29,8 @@ router.put('/:postId/availability', protect, updatePostAvailability);
 
 // Delete donation post
 router.delete('/:postId', protect, deleteDonationPost);
+
+router.get("/emergency", protect, getEmergencyBloodRequests);
+router.get("/pending/blood-requests", protect, getPendingBloodRequests);
 
 module.exports = router;

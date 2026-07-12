@@ -56,7 +56,7 @@ exports.getProfile = async (req, res) => {
     const hospitalId = req.user.id;
 
     const hospital = await Hospital.findById(hospitalId).select(
-      "hospitalName type registrationNumber district address phone profilePicture"
+      "hospitalName type registrationNumber district address phone profilePicture isApproved"
     );
 
     if (!hospital) {
@@ -78,6 +78,7 @@ exports.getProfile = async (req, res) => {
         city: hospital.district,
         phoneNumber: hospital.phone,
         image: hospital.profilePicture || "", // send image string
+        isApproved: hospital.isApproved,
       },
     });
   } catch (error) {

@@ -115,12 +115,22 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://red-alert2.vercel.app", 
+  "https://red-alert-zeta.vercel.app"  // your Vercel production domain
+];
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // Your web/React frontend
+    origin:allowedOrigins, // Your web/React frontend
     credentials: true
   })
 );
+
+// Add this line to serve static files from "uploads" folder
+const path = require("path");
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Connect to MongoDB
 mongoose
@@ -129,13 +139,16 @@ mongoose
   .catch((err) => console.error(err));
 
 // Routes
-const authRouter = require("./routers/authroutes");
-const adminRouter = require("./routers/admin");
-const bloodRequestRoutes = require("./routers/requestroutes");
-const hospitalRoutes = require("./routers/hospitalroutes");
-const communityroutes = require("./routers/communityroutes");
-const dashboardRoutes = require("./routers/dashboardRoutes");
-const notificationRoutes = require("./routers/notificationroutes");
+const authRouter = require("./routes/authroutes");
+const adminRouter = require("./routes/admin");
+const bloodRequestRoutes = require("./routes/requestroutes");
+const hospitalRoutes = require("./routes/hospitalroutes");
+const communityroutes = require("./routes/communityroutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const notificationRoutes = require("./routes/notificationroutes");
+
+console.log("Admin router loaded:", adminRouter);
+
 
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
@@ -144,6 +157,7 @@ app.use("/api/hospital", hospitalRoutes);
 app.use("/api/community", communityroutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/donors", require("./routes/donorRoutes"))
 
 // Test route
 app.get("/", (req, res) => {

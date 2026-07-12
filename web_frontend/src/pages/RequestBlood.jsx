@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import MainHeader from "./Headers/MainHeader";
+import { API_ROUTES } from "../config/config";
 
 const RequestBlood = () => {
   const [formData, setFormData] = useState({
@@ -56,14 +57,16 @@ const RequestBlood = () => {
       }
 
       console.log("Sending request to backend...");
-
+const token = localStorage.getItem("token"); 
       const response = await axios.post(
-        "http://localhost:8000/api/request/request-blood",
+        API_ROUTES.CREATE_BLOOD_REQUEST,
         submitData,
         {
           withCredentials: true, // needed for cookies
           headers: {
+            Accept: "application/json",
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -857,6 +860,18 @@ const RequestBlood = () => {
           >
             Request and add to Community
           </button>
+          {/* Message */}
+{message && (
+  <p
+    style={{
+      color: message.includes("success") ? "green" : "red",
+      marginBottom: "20px",
+      fontWeight: 600,
+    }}
+  >
+    {message}
+  </p>
+)}
 
           <p
             style={{

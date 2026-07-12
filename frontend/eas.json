@@ -15,3 +15,21 @@
     }
   }
 }
+
+{
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
+      }
+    },
+    "simulator": {
+      "ios": {
+        "simulator": true
+      }
+    }
+  }
+}

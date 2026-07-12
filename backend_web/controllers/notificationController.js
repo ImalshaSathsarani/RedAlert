@@ -3,7 +3,7 @@ const multer = require("multer");
 const Notification = require("../models/notification");
 const notificationHospital = require("../models/notificationHospital");
 const { Expo } = require('expo-server-sdk');
-const User = require("../../backend/models/User");
+const User =  require("../models/user");
 const notification = require("../models/notification");
 let expo = new Expo();
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import logo2 from "../assets/logo2.png";
 import { useNavigate } from "react-router-dom";
+import { API_ROUTES } from "../config/config";
 
 const WebPortal = () => {
   const navigate = useNavigate();
@@ -24,6 +25,22 @@ const WebPortal = () => {
   const [registerFileName, setRegisterFileName] = useState(null);
   const [letterFile, setLetterFile] = useState(null);
   const [letterFileName, setLetterFileName] = useState(null);
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordValid, setPasswordValid] = useState(true);
+
+const validatePassword = (password) => {
+  // Password must be at least 8 characters, include letters & numbers
+  const regex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+  if (!regex.test(password)) {
+    setPasswordMessage("Password is too weak. Use at least 8 characters including letters and numbers.");
+    setPasswordValid(false);
+  } else {
+    setPasswordMessage("Your password looks good."); 
+    setPasswordValid(true);
+  }
+};
+
 
   const handleRegisterFileChange = (event) => {
     const file = event.target.files[0];
@@ -65,7 +82,13 @@ const WebPortal = () => {
     }
 
     try {
+      if (!passwordValid) {
+  alert("Your password is too weak. Please make it stronger.");
+  return;
+}
       const formData = new FormData();
+      
+
       Object.entries(formDataValues).forEach(([key, value]) => {
         formData.append(key, value);
       });
@@ -73,7 +96,7 @@ const WebPortal = () => {
       if (letterFile) formData.append("officeLetter", letterFile);
 
       const response = await axios.post(
-        "http://localhost:8000/api/auth/signup",
+        API_ROUTES.REGISTER,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -81,11 +104,12 @@ const WebPortal = () => {
       );
 
       console.log(response.data);
-     
+
+     //localStorage.setItem("token", response.data.token);
      localStorage.setItem("hospitalId", response.data.hospitalId);
 
-      alert("Registration Successful!");
-      navigate("/login");
+      alert("Registration request send Successfully!.We will send you a confirmation email once your account is approved.");
+      navigate("/");
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);
       alert("Registration Failed. Please try again.");
@@ -187,6 +211,7 @@ const WebPortal = () => {
             placeholder="XYZ Hospital"
             value={formDataValues.hospitalName}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -220,6 +245,7 @@ const WebPortal = () => {
             name="type"
             value={formDataValues.type}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -265,6 +291,7 @@ const WebPortal = () => {
             placeholder="1234567"
             value={formDataValues.registrationNumber}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -299,6 +326,7 @@ const WebPortal = () => {
             placeholder="Colombo"
             value={formDataValues.district}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -333,6 +361,7 @@ const WebPortal = () => {
             placeholder="XYZ Hospital,Colombo"
             value={formDataValues.address}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -395,6 +424,7 @@ const WebPortal = () => {
             placeholder="A.B.C.Perera"
             value={formDataValues.name}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -430,6 +460,7 @@ const WebPortal = () => {
             placeholder="07xxxxxxxx"
             value={formDataValues.phone}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -465,6 +496,7 @@ const WebPortal = () => {
             placeholder="Medical Officer"
             value={formDataValues.designation}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -527,6 +559,7 @@ const WebPortal = () => {
             placeholder="abcprerera@example.com"
             value={formDataValues.email}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -539,6 +572,16 @@ const WebPortal = () => {
             }}
           />
         </label>
+        <div style={{
+  background: "#e8f4ff",
+  padding: "10px",
+  borderRadius: "8px",
+  marginBottom: "20px",
+  border: "1px solid #bcdcff"
+}}>
+  <strong>Note:</strong> Your password must contain at least 8 characters, including letters and numbers.
+</div>
+
 
         <label
           style={{
@@ -561,7 +604,12 @@ const WebPortal = () => {
             type="password"
             placeholder="****************"
             value={formDataValues.password}
-            onChange={handleInputChange}
+             onChange={(e) => {
+    handleInputChange(e);     // existing state update
+    validatePassword(e.target.value);  // new validation
+  }}
+            //onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -574,6 +622,15 @@ const WebPortal = () => {
             }}
           />
         </label>
+        {!passwordValid && (
+  <p style={{ 
+    color: passwordValid?"green":"red", 
+    fontSize: "12px", 
+    marginTop: "4px" }}>
+    {passwordMessage}
+  </p>
+)}
+
 
         <label
           style={{
@@ -598,6 +655,7 @@ const WebPortal = () => {
             placeholder="****************"
             value={formDataValues.confirmPassword}
             onChange={handleInputChange}
+            required
             style={{
               display: "block",
               backgroundColor: "#FFE2E2",
@@ -661,6 +719,7 @@ const WebPortal = () => {
             id="registration-pdf"
             onChange={handleRegisterFileChange}
             style={{ display: "none" }}
+            required
           />
           <div
             style={{
@@ -725,6 +784,7 @@ const WebPortal = () => {
             id="office-pdf"
             onChange={handleLetterFileChange}
             style={{ display: "none" }}
+            required
           />
           <div
             style={{
@@ -782,6 +842,7 @@ const WebPortal = () => {
             type="checkbox"
             id="agree"
             style={{ width: "16px", height: "16px" }}
+            required
           />
           <label htmlFor="agree">
             I agree to the{" "}

@@ -29,6 +29,16 @@ const hospitalSchema = new mongoose.Schema(
       type: String, // File path or cloud URL
       required: true,
     },
+    status:{
+      type:String, enum:["pending","approved","rejected,","active","inactive"],
+      default:"pending"
+    },
+    
+      rejectionReason:{
+        type:String,
+        default:null
+      },
+    
   },
   { timestamps: true }
 );

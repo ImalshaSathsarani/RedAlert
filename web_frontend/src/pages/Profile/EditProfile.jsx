@@ -4,6 +4,7 @@ import MainHeader from "../Headers/MainHeader";
 import { FaCamera, FaEdit, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SubFooter from "../Footers/SubFooter";
+import { API_ROUTES } from "../../config/config";
 
 const EditProfile = () => {
   const location = useLocation();
@@ -34,7 +35,7 @@ const EditProfile = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:8000/api/hospital/profile",
+         API_ROUTES.HOSPITAL_PROFILE,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -80,12 +81,12 @@ const EditProfile = () => {
     }
   };
 
-  // ✅ Submit updated profile including profilePicture base64
+  //  Submit updated profile including profilePicture base64
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        "http://localhost:8000/api/hospital/update-profile",
+        API_ROUTES.UPDATE_PROFILE,
         formData,
         {
           headers: {
@@ -157,13 +158,13 @@ const EditProfile = () => {
         </p>
         <div
           style={{
-            position: "absolute",
+           // position: "absolute",
             bottom: "0px",
             left: "1200px",
             right: "40px",
             height: "220px",
             width: "220px",
-            top: "110px",
+            top: "30px",
             backgroundColor: "white",
             borderRadius: "100%",
             border: "1px solid #B43929",
@@ -190,7 +191,7 @@ const EditProfile = () => {
             htmlFor="profileImage"
             style={{
               position: "absolute",
-              bottom: "10px",
+              bottom: "30px",
               right: "10px",
               backgroundColor: "#B43929",
               borderRadius: "50%",
@@ -201,7 +202,7 @@ const EditProfile = () => {
               cursor: "pointer",
             }}
           >
-            <FaCamera size={20} color="white" />
+            <FaCamera size={20} color="white" style={{zIndex:1000}} />
             <input
               type="file"
               id="profileImage"

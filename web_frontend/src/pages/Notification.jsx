@@ -663,6 +663,7 @@ import { useNavigate } from "react-router-dom";
 import image1 from "../assets/image1.png";
 import axios from "axios";
 import { FaUserCircle } from "react-icons/fa";
+import { API_ROUTES } from "../config/config";
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
@@ -689,7 +690,7 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/notifications/hospital/${hospitalId}`
+         API_ROUTES.GET_NOTIFICATIONS(hospitalId)
         );
         setNotifications(res.data);
       } catch (err) {
@@ -704,7 +705,7 @@ const Notification = () => {
     const fetchSentNotifications = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/notifications/hospital/sentbox/${hospitalId}`
+         API_ROUTES.SENT_NOTIFICATIONS(hospitalId)
         );
         setSentNotifications(res.data);
       } catch (err) {
