@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch --trace-warnings index.js"
+    "start": "node init && node index.js",
+    "dev": "node init && node --watch --trace-warnings index.js"
   },
   "author": "",
   "license": "ISC",
