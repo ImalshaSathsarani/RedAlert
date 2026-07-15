@@ -1,4 +1,4 @@
-# RedAlert / ReadAlert
+# RedAlert 
 
 RedAlert is a full-stack blood donation and emergency-response platform designed to connect donors and hospitals through a mobile app, a web portal, and an intelligent eligibility prediction system.
 
